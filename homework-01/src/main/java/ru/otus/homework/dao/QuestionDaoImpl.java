@@ -19,8 +19,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     @Override
     public List<Question> readAllQuestions() {
-        try {
-            InputStream resourseInputStream = getResourseInputStream();
+        try (InputStream resourseInputStream = getResourseInputStream()) {
             CsvSchema schema = CsvSchema.builder().addColumn("Question").addArrayColumn("Answers", ",")
                     .build().withSkipFirstDataRow(true);
             MappingIterator<Question> iterator = new CsvMapper().readerFor(Question.class).with(schema)
