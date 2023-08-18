@@ -7,11 +7,18 @@
         <constructor-arg index="0" value="/questions.csv"/>
     </bean>
 
-    <bean name="questionReaderService" class="ru.otus.homework.service.QuestionReaderServiceImpl">
-        <constructor-arg index="0" ref="questionDao"/>
+    <bean name="outputService" class="ru.otus.homework.service.OutputServiceStream">
+        <constructor-arg index="0" value="#{T(java.lang.System).out}"/>
     </bean>
 
-    <bean name="consoleWriterService" class="ru.otus.homework.service.ConsoleWriterServiceImpl">
-        <constructor-arg index="0" ref="questionReaderService"/>
+    <bean name="questionFromSourceConverter" class="ru.otus.homework.service.QuestionFromSourceConverterImpl"/>
+
+    <bean name="questionToStringConverter" class="ru.otus.homework.service.QuestionToStringConverterImpl"/>
+
+    <bean name="questionService" class="ru.otus.homework.service.QuestionServiceImpl">
+        <constructor-arg index="0" ref="questionDao"/>
+        <constructor-arg index="1" ref="questionFromSourceConverter"/>
+        <constructor-arg index="2" ref="questionToStringConverter"/>
+        <constructor-arg index="3" ref="outputService"/>
     </bean>
 </beans>

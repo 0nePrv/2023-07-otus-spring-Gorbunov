@@ -1,12 +1,11 @@
 package ru.otus.homework;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.otus.homework.service.ConsoleWriterService;
+import ru.otus.homework.service.QuestionService;
 
 public class Main {
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("/spring-context.xml");
-        context.getBean(ConsoleWriterService.class).printQuestions();
+        var context = new ClassPathXmlApplicationContext("/spring-context.xml");
+        context.getBean(QuestionService.class).printQuestions();
     }
 }

@@ -1,5 +1,6 @@
 package ru.otus.homework.service;
 
-public interface ConsoleWriterService {
+public interface QuestionService {
+
     void printQuestions();
 }
