@@ -1,8 +1,9 @@
 package ru.otus.homework.dao;
 
+import ru.otus.homework.domain.Question;
+
 import java.util.List;
-import java.util.Map;
 
 public interface QuestionDao {
-    List<Map<String, String>> readAllQuestions();
+    List<Question> readAllQuestions();
 }

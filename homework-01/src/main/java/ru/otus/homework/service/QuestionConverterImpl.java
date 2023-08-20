@@ -3,14 +3,14 @@ package ru.otus.homework.service;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 
-public class QuestionToStringConverterImpl implements QuestionToStringConverter {
+public class QuestionConverterImpl implements QuestionConverter {
 
-    private int questionNumber = 0;
+    private int questionNumber = 1;
 
     @Override
     public String convert(Question question) {
         var outputBuilder = new StringBuilder();
-        outputBuilder.append("#").append(++questionNumber).append(" ")
+        outputBuilder.append("#").append(questionNumber++).append(" ")
                 .append(question.getText()).append("\n");
 
         for (int i = 0; i < question.getAnswerList().size(); i++) {

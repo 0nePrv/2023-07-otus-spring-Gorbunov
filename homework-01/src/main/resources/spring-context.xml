@@ -11,14 +11,11 @@
         <constructor-arg index="0" value="#{T(java.lang.System).out}"/>
     </bean>
 
-    <bean name="questionFromSourceConverter" class="ru.otus.homework.service.QuestionFromSourceConverterImpl"/>
-
-    <bean name="questionToStringConverter" class="ru.otus.homework.service.QuestionToStringConverterImpl"/>
+    <bean name="questionConverter" class="ru.otus.homework.service.QuestionConverterImpl"/>
 
     <bean name="questionService" class="ru.otus.homework.service.QuestionServiceImpl">
         <constructor-arg index="0" ref="questionDao"/>
-        <constructor-arg index="1" ref="questionFromSourceConverter"/>
-        <constructor-arg index="2" ref="questionToStringConverter"/>
-        <constructor-arg index="3" ref="outputService"/>
+        <constructor-arg index="1" ref="questionConverter"/>
+        <constructor-arg index="2" ref="outputService"/>
     </bean>
 </beans>
