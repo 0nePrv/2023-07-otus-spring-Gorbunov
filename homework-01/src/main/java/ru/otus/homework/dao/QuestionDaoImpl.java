@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class QuestionDaoImpl implements QuestionDao {
 
@@ -33,15 +32,21 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     public List<Question> readAllQuestions() {
-        try (var inputStream = getResourseInputStream()) {
-            var schema = CsvSchema.builder()
-                    .addColumns(List.of(QUESTION_HEADER, ANSWERS_HEADER, CORRECT_ANSWER_HEADER),
-                            CsvSchema.ColumnType.STRING).build().withHeader();
-            MappingIterator<Map<String, String>> iterator = new CsvMapper().readerFor(Map.class)
-                    .with(schema).readValues(inputStream);
-            return iterator.readAll().stream().map(this::convertToQuestion).collect(Collectors.toList());
+        var schema = CsvSchema.builder().addColumns(List.of(QUESTION_HEADER, ANSWERS_HEADER, CORRECT_ANSWER_HEADER),
+                CsvSchema.ColumnType.STRING).build().withHeader();
+        try (var inputStream = getResourseInputStream();
+             MappingIterator<Map<String, String>> iterator = new CsvMapper()
+                     .readerFor(Map.class).with(schema).readValues(inputStream)) {
+            if (!iterator.hasNext()) {
+                throw new NullPointerException();
+            }
+            return iterator.readAll().stream().map(this::convertToQuestion).toList();
         } catch (IOException ex) {
             throw new QuestionDataReadingException("An error occurred while reading CSV data", ex);
+        } catch (NumberFormatException ex) {
+            throw new QuestionDataReadingException("Invalid value of correct answer index", ex);
+        } catch (NullPointerException ex) {
+            throw new QuestionDataReadingException("Invalid CSV file structure", ex);
         }
     }
 

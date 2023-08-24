@@ -1,3 +1,4 @@
+
 package ru.otus.homework.service;
 
 import org.junit.jupiter.api.*;
@@ -5,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.convert.ConversionService;
 import ru.otus.homework.dao.QuestionDao;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
@@ -26,7 +28,7 @@ public class QuestionServiceImplTest {
     private QuestionDao mockQuestionDao;
 
     @Mock
-    private QuestionConverter mockConverterToString;
+    private ConversionService conversionService;
 
     @Mock
     private OutputService mockOutputService;
@@ -39,12 +41,12 @@ public class QuestionServiceImplTest {
         Question question = new Question("Question Text",
                 Collections.singletonList(new Answer("Answer Text", true)));
         when(mockQuestionDao.readAllQuestions()).thenReturn(Collections.singletonList(question));
-        when(mockConverterToString.convert(question)).thenReturn("Converted Question");
+        when(conversionService.convert(question, String.class)).thenReturn("Converted Question");
 
         questionService.printQuestions();
 
         verify(mockQuestionDao, times(1)).readAllQuestions();
-        verify(mockConverterToString, times(1)).convert(question);
+        verify(conversionService, times(1)).convert(question, String.class);
         verify(mockOutputService, times(1)).outputString("Converted Question");
     }
 
