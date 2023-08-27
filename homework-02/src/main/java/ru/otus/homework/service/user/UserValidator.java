@@ -15,7 +15,7 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors e) {
-        User user = (User) target;
+        var user = (User) target;
         validateStringField("name", user.getName(), 2, 10, e);
         validateStringField("surname", user.getSurname(), 3, 15, e);
     }
@@ -25,7 +25,7 @@ public class UserValidator implements Validator {
         if (!e.getFieldErrors(field).isEmpty()) {
             return;
         }
-        int length = value.length();
+        var length = value.length();
         if (length < minLength || length > maxLength || Character.isLowerCase(value.charAt(0)) || value.contains(" ")) {
             e.rejectValue(field, field + ".incorrect", "Wrong " + field + " format");
         }

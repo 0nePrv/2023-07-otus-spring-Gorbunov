@@ -1,23 +1,16 @@
 package ru.otus.homework.service.test;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.stereotype.Service;
-import ru.otus.homework.domain.Answer;
-import ru.otus.homework.domain.Question;
+import ru.otus.homework.dao.QuestionDao;
 import ru.otus.homework.domain.TestResult;
-import ru.otus.homework.domain.User;
 import ru.otus.homework.exceptions.InvalidCorrectAnswerException;
 import ru.otus.homework.exceptions.InvalidTestConfigurationException;
-import ru.otus.homework.service.question.QuestionService;
 import ru.otus.homework.service.user.UserService;
 
-import java.util.List;
 
-@Service
 public class TestServiceImpl implements TestService {
 
-    private final QuestionService questionService;
+    private final QuestionDao questionDao;
 
     private final UserService userService;
 
@@ -25,12 +18,10 @@ public class TestServiceImpl implements TestService {
 
     private final TestResult testResult;
 
-    public TestServiceImpl(QuestionService questionService,
-                           UserService userService,
+    public TestServiceImpl(QuestionDao questionDao, UserService userService,
                            ConversionService conversionService,
-                           @Value("${total.test.number}") int totalQuestionsNumber,
-                           @Value("${passing.score.number}") int passingScoreNumber) {
-        this.questionService = questionService;
+                           int totalQuestionsNumber, int passingScoreNumber) {
+        this.questionDao = questionDao;
         this.userService = userService;
         this.conversionService = conversionService;
         testResult = new TestResult(totalQuestionsNumber, passingScoreNumber);
@@ -38,8 +29,8 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public void validateAnswer(int questionIndex, int answerIndex) {
-        Question targetQuestion = questionService.getQuestion(questionIndex);
-        List<Answer> answerList = targetQuestion.getAnswerList();
+        var targetQuestion = questionDao.getQuestion(questionIndex);
+        var answerList = targetQuestion.getAnswerList();
         if (answerIndex >= answerList.size() || answerIndex < 0) {
             throw new InvalidCorrectAnswerException("Answer index is out of range");
         }
@@ -48,13 +39,13 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public String getQuestionRepresentation(int questionIndex) {
-        Question question = questionService.getQuestion(questionIndex);
+        var question = questionDao.getQuestion(questionIndex);
         return "\n#" + ++questionIndex + " " + conversionService.convert(question, String.class);
     }
 
     @Override
     public String getTestResultRepresentation() {
-        User currentUser = userService.getCurrentUser();
+        var currentUser = userService.getCurrentUser();
         testResult.setUser(currentUser);
         return conversionService.convert(testResult, String.class);
     }
@@ -66,15 +57,15 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public void restartTest() {
-        questionService.refreshQuestions();
+        questionDao.refreshQuestions();
         testResult.clearTestMap();
     }
 
     @Override
     public void validateTestConfiguration() {
-        int total = testResult.getTotalQuestionsNumber();
-        int quantity = questionService.getQuantity();
-        int passing = testResult.getPassingScoreNumber();
+        var total = testResult.getTotalQuestionsNumber();
+        var quantity = questionDao.getQuantity();
+        var passing = testResult.getPassingScoreNumber();
         if (total > quantity) {
             throw new InvalidTestConfigurationException("Too many test questions: " + total + " > " + quantity);
         }

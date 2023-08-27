@@ -9,7 +9,7 @@ import ru.otus.homework.service.io.OutputService;
 import ru.otus.homework.service.user.UserService;
 
 @Service
-public class RegistrationProcessor implements CommandProcessor {
+public class RegistrationProcessor implements ApplicationModeProcessor {
 
     private final ApplicationModeService applicationModeService;
 
@@ -26,7 +26,7 @@ public class RegistrationProcessor implements CommandProcessor {
     }
 
     @Override
-    public void processCommand() {
+    public void processApplicationMode() {
         while (applicationModeService.isRegistrationRunning()) {
             try {
                 userService.registerUser();

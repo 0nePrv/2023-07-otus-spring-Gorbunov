@@ -4,8 +4,6 @@ package ru.otus.homework.dao;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.exceptions.QuestionDataReadingException;
@@ -14,10 +12,11 @@ import ru.otus.homework.exceptions.QuestionFormatException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@Repository
+
 public class QuestionDaoImpl implements QuestionDao {
 
     private static final String QUESTION_HEADER = "Question";
@@ -30,11 +29,37 @@ public class QuestionDaoImpl implements QuestionDao {
 
     private final String resourcePath;
 
-    public QuestionDaoImpl(@Value("${file.resource.path}") String resourcePath) {
+    private final List<Question> questionList;
+
+    public QuestionDaoImpl(String resourcePath) {
         this.resourcePath = resourcePath;
+        questionList = new ArrayList<>();
     }
 
-    public List<Question> readAllQuestions() {
+    @Override
+    public Question getQuestion(int index) {
+        checkIfQuestionListIsEmpty();
+        return questionList.get(index);
+    }
+
+    @Override
+    public int getQuantity() {
+        checkIfQuestionListIsEmpty();
+        return questionList.size();
+    }
+
+    @Override
+    public void refreshQuestions() {
+        Collections.shuffle(questionList);
+    }
+
+    private void checkIfQuestionListIsEmpty() {
+        if (questionList.isEmpty()) {
+            readAllQuestions();
+        }
+    }
+
+    private void readAllQuestions() {
         var schema = CsvSchema.builder().addColumns(List.of(QUESTION_HEADER, ANSWERS_HEADER, CORRECT_ANSWER_HEADER),
                 CsvSchema.ColumnType.STRING).build().withHeader();
         try (var inputStream = getResourseInputStream();
@@ -43,7 +68,8 @@ public class QuestionDaoImpl implements QuestionDao {
             if (!iterator.hasNext()) {
                 throw new NullPointerException();
             }
-            return iterator.readAll().stream().map(this::convertToQuestion).toList();
+            var questions = iterator.readAll().stream().map(this::convertToQuestion).toList();
+            questionList.addAll(questions);
         } catch (IOException ex) {
             throw new QuestionDataReadingException("An error occurred while reading CSV data", ex);
         } catch (NumberFormatException ex) {

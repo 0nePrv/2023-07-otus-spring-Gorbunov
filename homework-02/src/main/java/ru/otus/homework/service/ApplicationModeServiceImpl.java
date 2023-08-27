@@ -10,24 +10,24 @@ public class ApplicationModeServiceImpl implements ApplicationModeService {
 
     private final AtomicBoolean resultProcessingFlag;
 
-    private final AtomicBoolean registrationFlag;
+    private final AtomicBoolean registrationProcessingFlag;
 
-    private final AtomicBoolean questionProcessingFlag;
+    private final AtomicBoolean testProcessingFlag;
 
     public ApplicationModeServiceImpl() {
-        this.registrationFlag = new AtomicBoolean(true);
-        this.questionProcessingFlag = new AtomicBoolean(false);
+        this.registrationProcessingFlag = new AtomicBoolean(true);
+        this.testProcessingFlag = new AtomicBoolean(false);
         this.resultProcessingFlag = new AtomicBoolean(false);
     }
 
     @Override
     public boolean isRegistrationRunning() {
-        return registrationFlag.get();
+        return registrationProcessingFlag.get();
     }
 
     @Override
     public boolean isTestProcessingRunning() {
-        return questionProcessingFlag.get();
+        return testProcessingFlag.get();
     }
 
     @Override
@@ -42,26 +42,26 @@ public class ApplicationModeServiceImpl implements ApplicationModeService {
 
     @Override
     public void stopRegistrationProcessing() {
-        registrationFlag.set(false);
-        questionProcessingFlag.set(true);
+        registrationProcessingFlag.set(false);
+        testProcessingFlag.set(true);
     }
 
     @Override
     public void stopTestProcessing() {
-        questionProcessingFlag.set(false);
+        testProcessingFlag.set(false);
         resultProcessingFlag.set(true);
     }
 
     @Override
     public void restartTestProcessing() {
         resultProcessingFlag.set(false);
-        questionProcessingFlag.set(true);
+        testProcessingFlag.set(true);
     }
 
     @Override
     public void stopApplication() {
-        registrationFlag.set(false);
-        questionProcessingFlag.set(false);
+        registrationProcessingFlag.set(false);
+        testProcessingFlag.set(false);
         resultProcessingFlag.set(false);
     }
 }

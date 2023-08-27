@@ -11,15 +11,13 @@ import ru.otus.homework.service.io.IOService;
 import ru.otus.homework.service.test.TestService;
 
 @Service
-public class TestProcessor implements CommandProcessor {
+public class TestProcessor implements ApplicationModeProcessor {
 
     private final TestService testService;
 
     private final ApplicationModeService applicationModeService;
 
     private final IOService ioService;
-
-    private int currentQuestionIndex;
 
     @Autowired
     public TestProcessor(TestService testService,
@@ -31,12 +29,12 @@ public class TestProcessor implements CommandProcessor {
     }
 
     @Override
-    public void processCommand() {
-        currentQuestionIndex = 0;
+    public void processApplicationMode() {
+        int currentQuestionIndex = 0;
+        testService.validateTestConfiguration();
         while (applicationModeService.isTestProcessingRunning()) {
             try {
-                testService.validateTestConfiguration();
-                processQuestion();
+                currentQuestionIndex = processQuestion(currentQuestionIndex);
             } catch (InvalidCorrectAnswerException exception) {
                 ioService.outputExceptionLine(exception.getMessage());
             } catch (NumberFormatException exception) {
@@ -49,16 +47,16 @@ public class TestProcessor implements CommandProcessor {
         }
     }
 
-    private void processQuestion() {
+    private int processQuestion(int currentQuestionIndex) {
         if (currentQuestionIndex < testService.getTotalNumberOfQuestions()) {
-            String questionRepresentation =
-                    testService.getQuestionRepresentation(currentQuestionIndex);
+            var questionRepresentation = testService.getQuestionRepresentation(currentQuestionIndex);
             ioService.outputStringLine(questionRepresentation);
-            int answerIdx = ioService.readIntWithPrompt("Enter answer: ") - 1;
+            var answerIdx = ioService.readIntWithPrompt("Enter answer: ") - 1;
             testService.validateAnswer(currentQuestionIndex, answerIdx);
             currentQuestionIndex++;
         } else {
             applicationModeService.stopTestProcessing();
         }
+        return currentQuestionIndex;
     }
 }

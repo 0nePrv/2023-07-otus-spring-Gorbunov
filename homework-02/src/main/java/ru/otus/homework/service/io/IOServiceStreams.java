@@ -1,20 +1,16 @@
 package ru.otus.homework.service.io;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-@Service
+
 public class IOServiceStreams implements IOService {
     private final PrintStream output;
 
     private final Scanner input;
 
-    public IOServiceStreams(@Value("${io.output.stream}") PrintStream outputStream,
-                            @Value("${io.input.stream}") InputStream inputStream) {
+    public IOServiceStreams(PrintStream outputStream, InputStream inputStream) {
         output = outputStream;
         input = new Scanner(inputStream);
     }
@@ -32,11 +28,6 @@ public class IOServiceStreams implements IOService {
     @Override
     public void outputString(String s) {
         output.print(s);
-    }
-
-    @Override
-    public int readInt() {
-        return Integer.parseInt(input.nextLine());
     }
 
     @Override

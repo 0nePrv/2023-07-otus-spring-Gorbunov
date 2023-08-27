@@ -7,7 +7,7 @@ import ru.otus.homework.service.io.IOService;
 import ru.otus.homework.service.test.TestService;
 
 @Service
-public class ResultProcessor implements CommandProcessor {
+public class ResultProcessor implements ApplicationModeProcessor {
 
     private final TestService testService;
 
@@ -17,7 +17,8 @@ public class ResultProcessor implements CommandProcessor {
 
 
     @Autowired
-    public ResultProcessor(TestService testService, IOService ioService,
+    public ResultProcessor(TestService testService,
+                           IOService ioService,
                            ApplicationModeService applicationModeService) {
         this.testService = testService;
         this.ioService = ioService;
@@ -25,7 +26,7 @@ public class ResultProcessor implements CommandProcessor {
     }
 
     @Override
-    public void processCommand() {
+    public void processApplicationMode() {
         if (applicationModeService.isResultProcessingRunning()) {
             String testResult = testService.getTestResultRepresentation();
             ioService.outputStringLine(testResult);
@@ -35,7 +36,7 @@ public class ResultProcessor implements CommandProcessor {
 
     private void suggestToRestart() {
         while (applicationModeService.isResultProcessingRunning()) {
-            String again = ioService.readStringWithPrompt("Try again? [Y/N] ");
+            var again = ioService.readStringWithPrompt("Try again? [Y/N] ");
             if (again.equalsIgnoreCase("n")) {
                 applicationModeService.stopApplication();
             }
