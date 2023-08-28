@@ -11,14 +11,13 @@ import ru.otus.homework.service.io.IOService;
 import ru.otus.homework.service.io.IOServiceStreams;
 import ru.otus.homework.service.test.TestService;
 import ru.otus.homework.service.test.TestServiceImpl;
-import ru.otus.homework.service.user.UserService;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 
 @Configuration
 @PropertySource("classpath:app-config.properties")
-public class AppConfig {
+public class ApplicationConfig {
 
     @Value("${resource.path}")
     private String resourcePath;
@@ -29,10 +28,10 @@ public class AppConfig {
     @Value("${test.passing}")
     private int passingScoreNumber;
 
-    @Value("${output.stream}")
+    @Value("#{T(java.lang.System).out}")
     private PrintStream outputStream;
 
-    @Value("${input.stream}")
+    @Value("#{T(java.lang.System).in}")
     private InputStream inputStream;
 
 
@@ -42,10 +41,8 @@ public class AppConfig {
     }
 
     @Bean
-    TestService testService(QuestionDao questionDao, UserService userService,
-                            ConversionService conversionService) {
-        return new TestServiceImpl(questionDao, userService, conversionService,
-                totalQuestionsNumber, passingScoreNumber);
+    TestService testService(ConversionService conversionService) {
+        return new TestServiceImpl(conversionService, totalQuestionsNumber, passingScoreNumber);
     }
 
     @Bean

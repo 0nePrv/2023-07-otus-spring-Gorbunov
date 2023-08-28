@@ -21,11 +21,6 @@ public class IOServiceStreams implements IOService {
     }
 
     @Override
-    public void outputExceptionLine(String s) {
-        output.printf("\nAn error occurred: %s\n\n", s);
-    }
-
-    @Override
     public void outputString(String s) {
         output.print(s);
     }

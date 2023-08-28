@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 public class TestResult {
 
-    private User user;
+    private final User user;
 
     private final Map<Question, Boolean> testMap;
 
@@ -14,34 +14,27 @@ public class TestResult {
 
     private final int totalQuestionsNumber;
 
-    public TestResult(int totalQuestionsNumber, int passingScoreNumber) {
+    public TestResult(int totalQuestionsNumber, int passingScoreNumber, User user) {
         this.passingScoreNumber = passingScoreNumber;
         this.totalQuestionsNumber = totalQuestionsNumber;
+        this.user = user;
         testMap = new LinkedHashMap<>(totalQuestionsNumber);
-    }
-
-    public void addUserAnswer(Question question, boolean isCorrect) {
-        testMap.put(question, isCorrect);
     }
 
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public Map<Question, Boolean> getTestMap() {
+        return testMap;
     }
 
     public int getTotalQuestionsNumber() {
         return totalQuestionsNumber;
     }
 
-    public int getPassingScoreNumber() {
-        return passingScoreNumber;
-    }
-
-    public Map<Question, Boolean> getTestMap() {
-        return testMap;
+    public void addUserAnswer(Question question, boolean isCorrect) {
+        testMap.put(question, isCorrect);
     }
 
     public int getActualScore() {
@@ -50,9 +43,5 @@ public class TestResult {
 
     public boolean isPassed() {
         return getActualScore() >= passingScoreNumber;
-    }
-
-    public void clearTestMap() {
-        testMap.clear();
     }
 }

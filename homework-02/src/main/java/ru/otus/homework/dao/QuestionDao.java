@@ -2,11 +2,8 @@ package ru.otus.homework.dao;
 
 import ru.otus.homework.domain.Question;
 
+import java.util.List;
+
 public interface QuestionDao {
-
-    void refreshQuestions();
-
-    Question getQuestion(int index);
-
-    int getQuantity();
+    List<Question> readAllQuestions();
 }

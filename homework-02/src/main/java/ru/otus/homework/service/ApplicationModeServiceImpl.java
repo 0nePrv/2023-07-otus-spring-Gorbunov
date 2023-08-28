@@ -36,11 +36,6 @@ public class ApplicationModeServiceImpl implements ApplicationModeService {
     }
 
     @Override
-    public boolean isApplicationRunning() {
-        return isRegistrationRunning() || isTestProcessingRunning() || isResultProcessingRunning();
-    }
-
-    @Override
     public void stopRegistrationProcessing() {
         registrationProcessingFlag.set(false);
         testProcessingFlag.set(true);
@@ -50,12 +45,6 @@ public class ApplicationModeServiceImpl implements ApplicationModeService {
     public void stopTestProcessing() {
         testProcessingFlag.set(false);
         resultProcessingFlag.set(true);
-    }
-
-    @Override
-    public void restartTestProcessing() {
-        resultProcessingFlag.set(false);
-        testProcessingFlag.set(true);
     }
 
     @Override

@@ -6,9 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 import ru.otus.homework.domain.User;
-import ru.otus.homework.exceptions.UnsupportedValidationTypeException;
 import ru.otus.homework.exceptions.UserValidationException;
-import ru.otus.homework.service.io.InputService;
+import ru.otus.homework.exceptions.fatal.UnsupportedValidationTypeException;
 
 import java.util.stream.Collectors;
 
@@ -17,28 +16,13 @@ public class UserServiceImpl implements UserService {
 
     private final Validator userValidator;
 
-    private final InputService inputService;
-
-    private User currentUser;
-
     @Autowired
-    public UserServiceImpl(Validator userValidator,
-                           InputService inputService) {
+    public UserServiceImpl(Validator userValidator) {
         this.userValidator = userValidator;
-        this.inputService = inputService;
-    }
-
-    @Override
-    public void registerUser() {
-        var name = inputService.readStringWithPrompt("Enter your name: ").trim();
-        var surname = inputService.readStringWithPrompt("Enter your surname: ").trim();
-        validateUser(new User(name, surname));
     }
 
     public void validateUser(User user) {
-        if (!userValidator.supports(User.class)) {
-            throw new UnsupportedValidationTypeException("User validation not supported");
-        }
+        checkTypeSupport();
         var errors = new BeanPropertyBindingResult(user, "user");
         userValidator.validate(user, errors);
         if (errors.hasErrors()) {
@@ -46,16 +30,12 @@ public class UserServiceImpl implements UserService {
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(", "));
             throw new UserValidationException(errorString);
-        } else {
-            currentUser = user;
         }
     }
 
-    @Override
-    public User getCurrentUser() {
-        if (currentUser == null) {
-            registerUser();
+    private void checkTypeSupport() {
+        if (!userValidator.supports(User.class)) {
+            throw new UnsupportedValidationTypeException("User validation not supported");
         }
-        return currentUser;
     }
 }

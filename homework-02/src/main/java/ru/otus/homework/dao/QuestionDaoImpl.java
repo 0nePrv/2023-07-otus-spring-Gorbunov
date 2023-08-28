@@ -4,15 +4,15 @@ package ru.otus.homework.dao;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import org.springframework.cache.annotation.Cacheable;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
-import ru.otus.homework.exceptions.QuestionDataReadingException;
-import ru.otus.homework.exceptions.QuestionFormatException;
+import ru.otus.homework.exceptions.fatal.QuestionDataReadingException;
+import ru.otus.homework.exceptions.fatal.QuestionFormatException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,37 +29,13 @@ public class QuestionDaoImpl implements QuestionDao {
 
     private final String resourcePath;
 
-    private final List<Question> questionList;
-
     public QuestionDaoImpl(String resourcePath) {
         this.resourcePath = resourcePath;
-        questionList = new ArrayList<>();
     }
 
     @Override
-    public Question getQuestion(int index) {
-        checkIfQuestionListIsEmpty();
-        return questionList.get(index);
-    }
-
-    @Override
-    public int getQuantity() {
-        checkIfQuestionListIsEmpty();
-        return questionList.size();
-    }
-
-    @Override
-    public void refreshQuestions() {
-        Collections.shuffle(questionList);
-    }
-
-    private void checkIfQuestionListIsEmpty() {
-        if (questionList.isEmpty()) {
-            readAllQuestions();
-        }
-    }
-
-    private void readAllQuestions() {
+    @Cacheable("questionCache")
+    public List<Question> readAllQuestions() {
         var schema = CsvSchema.builder().addColumns(List.of(QUESTION_HEADER, ANSWERS_HEADER, CORRECT_ANSWER_HEADER),
                 CsvSchema.ColumnType.STRING).build().withHeader();
         try (var inputStream = getResourseInputStream();
@@ -68,14 +44,13 @@ public class QuestionDaoImpl implements QuestionDao {
             if (!iterator.hasNext()) {
                 throw new NullPointerException();
             }
-            var questions = iterator.readAll().stream().map(this::convertToQuestion).toList();
-            questionList.addAll(questions);
+            return iterator.readAll().stream().map(this::convertToQuestion).toList();
         } catch (IOException ex) {
-            throw new QuestionDataReadingException("An error occurred while reading CSV data", ex);
+            throw new QuestionDataReadingException("An error occurred while reading data", ex);
         } catch (NumberFormatException ex) {
             throw new QuestionFormatException("Invalid value of correct answer index", ex);
         } catch (NullPointerException ex) {
-            throw new QuestionDataReadingException("Invalid CSV file structure", ex);
+            throw new QuestionDataReadingException("Invalid data source structure", ex);
         }
     }
 

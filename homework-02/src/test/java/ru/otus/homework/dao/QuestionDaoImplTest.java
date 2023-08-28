@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 
@@ -17,13 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("Question dao")
 class QuestionDaoImplTest {
 
-    private final List<Question> questionList;
+    private final QuestionDao dao = new QuestionDaoImpl("/questions.csv");
 
-    private final QuestionDao dao;
-
-    public QuestionDaoImplTest() {
-        dao = new QuestionDaoImpl("/questions.csv");
-        this.questionList = List.of(
+    @Test
+    void should_provide_correct_questions() {
+        List<Question> expectedQuestionList = List.of(
                 new Question("How many planets are there in the Solar System?",
                         List.of(new Answer("7", false),
                                 new Answer("8", false),
@@ -40,20 +36,7 @@ class QuestionDaoImplTest {
                                 new Answer("Elephant", false)
                         ))
         );
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {0, 1, 2})
-    void should_provide_correct_question_by_index(int index) {
-        Question actualQuestion = dao.getQuestion(index);
-        Question expectedQuestion = questionList.get(index);
-        assertEquals(expectedQuestion, actualQuestion);
-    }
-
-    @Test
-    void should_return_correct_question_quantity() {
-        int expectedQuantity = questionList.size();
-        int actualQuantity = dao.getQuantity();
-        assertEquals(expectedQuantity, actualQuantity);
+        List<Question> actualQuestionList = dao.readAllQuestions();
+        assertEquals(expectedQuestionList, actualQuestionList);
     }
 }

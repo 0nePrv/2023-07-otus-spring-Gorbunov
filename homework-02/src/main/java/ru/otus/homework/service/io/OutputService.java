@@ -4,6 +4,4 @@ public interface OutputService {
     void outputStringLine(String s);
 
     void outputString(String s);
-
-    void outputExceptionLine(String s);
 }

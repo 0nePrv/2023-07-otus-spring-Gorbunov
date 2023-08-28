@@ -1,16 +1,21 @@
 package ru.otus.homework.service.test;
 
+import ru.otus.homework.domain.Question;
+import ru.otus.homework.domain.TestResult;
+
 public interface TestService {
 
-    void validateAnswer(int questionIndex, int answerIndex);
+    boolean validateAnswer(Question question, int answerIndex);
 
-    int getTotalNumberOfQuestions();
+    String getQuestionRepresentation(int questionIndex, Question question);
 
-    String getQuestionRepresentation(int questionIndex);
+    String getTestResultRepresentation(TestResult testResult);
 
-    String getTestResultRepresentation();
+    String getLineInExceptionFormat(String s, boolean fatal);
 
-    void restartTest();
+    int getTotalQuestionsNumber();
 
-    void validateTestConfiguration();
+    int getPassingScoreNumber();
+
+    void validateTestConfiguration(int quantity);
 }

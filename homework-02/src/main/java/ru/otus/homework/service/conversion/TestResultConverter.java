@@ -4,7 +4,6 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.TestResult;
-import ru.otus.homework.exceptions.QuestionFormatException;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,7 +17,8 @@ public class TestResultConverter implements Converter<TestResult, String> {
         String score = "\nResult: " + source.getActualScore() + " / " + source.getTotalQuestionsNumber();
         String mistakes = convertMistakes(source);
         return topic + score +
-                (source.getActualScore() == source.getTotalQuestionsNumber() ? "\nNo mistakes!\n" : mistakes);
+                (source.getActualScore() == source.getTotalQuestionsNumber() ? "\nNo mistakes!\n" : mistakes)
+                 + "\nBye";
     }
 
     private String convertMistakes(TestResult source) {
@@ -28,8 +28,7 @@ public class TestResultConverter implements Converter<TestResult, String> {
                         .map(Map.Entry::getKey)
                         .map(q -> q.getText() + " " +
                                 q.getAnswerList().stream().filter(Answer::isCorrect)
-                                        .findFirst()
-                                        .orElseThrow(() -> new QuestionFormatException("No correct answer"))
+                                        .findFirst().orElse(new Answer("", false))
                                         .getText())
                         .collect(Collectors.joining("\n")) + "\n";
     }

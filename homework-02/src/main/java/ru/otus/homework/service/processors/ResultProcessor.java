@@ -1,13 +1,15 @@
 package ru.otus.homework.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
+import ru.otus.homework.domain.TestResult;
+import ru.otus.homework.exceptions.fatal.InvalidApplicationModeStateException;
 import ru.otus.homework.service.ApplicationModeService;
 import ru.otus.homework.service.io.IOService;
 import ru.otus.homework.service.test.TestService;
 
-@Service
-public class ResultProcessor implements ApplicationModeProcessor {
+@Component
+public class ResultProcessor {
 
     private final TestService testService;
 
@@ -25,25 +27,13 @@ public class ResultProcessor implements ApplicationModeProcessor {
         this.applicationModeService = applicationModeService;
     }
 
-    @Override
-    public void processApplicationMode() {
+    public void processResult(TestResult testResult) {
         if (applicationModeService.isResultProcessingRunning()) {
-            String testResult = testService.getTestResultRepresentation();
-            ioService.outputStringLine(testResult);
-            suggestToRestart();
-        }
-    }
-
-    private void suggestToRestart() {
-        while (applicationModeService.isResultProcessingRunning()) {
-            var again = ioService.readStringWithPrompt("Try again? [Y/N] ");
-            if (again.equalsIgnoreCase("n")) {
-                applicationModeService.stopApplication();
-            }
-            if (again.equalsIgnoreCase("y")) {
-                applicationModeService.restartTestProcessing();
-                testService.restartTest();
-            }
+            String testResultRepresentation = testService.getTestResultRepresentation(testResult);
+            ioService.outputStringLine(testResultRepresentation);
+            applicationModeService.stopApplication();
+        } else {
+            throw new InvalidApplicationModeStateException("Attempt to get result without result mode running");
         }
     }
 }
