@@ -36,19 +36,19 @@ public class ApplicationModeServiceImpl implements ApplicationModeService {
     }
 
     @Override
-    public void stopRegistrationProcessing() {
+    public synchronized void stopRegistrationProcessing() {
         registrationProcessingFlag.set(false);
         testProcessingFlag.set(true);
     }
 
     @Override
-    public void stopTestProcessing() {
+    public synchronized void stopTestProcessing() {
         testProcessingFlag.set(false);
         resultProcessingFlag.set(true);
     }
 
     @Override
-    public void stopApplication() {
+    public synchronized void stopApplication() {
         registrationProcessingFlag.set(false);
         testProcessingFlag.set(false);
         resultProcessingFlag.set(false);

@@ -14,6 +14,12 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final String USER_GREETING = """
+            Welcome to our testing program!
+            Test your knowledge in various fields, evaluate your results, and pinpoint areas for improvement.
+            Register now to dive into the world of learning and self-assessment.
+            """;
+
     private final Validator userValidator;
 
     @Autowired
@@ -31,6 +37,11 @@ public class UserServiceImpl implements UserService {
                     .collect(Collectors.joining(", "));
             throw new UserValidationException(errorString);
         }
+    }
+
+    @Override
+    public String getNewUserGreeting() {
+        return USER_GREETING;
     }
 
     private void checkTypeSupport() {

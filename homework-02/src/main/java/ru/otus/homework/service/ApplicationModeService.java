@@ -7,10 +7,6 @@ public interface ApplicationModeService {
 
     boolean isResultProcessingRunning();
 
-    default boolean isApplicationRunning() {
-        return isRegistrationRunning() || isTestProcessingRunning() || isResultProcessingRunning();
-    }
-
     void stopRegistrationProcessing();
 
     void stopTestProcessing();

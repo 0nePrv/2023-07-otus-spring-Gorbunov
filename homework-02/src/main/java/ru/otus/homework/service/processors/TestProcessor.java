@@ -1,11 +1,11 @@
 package ru.otus.homework.service.processors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.otus.homework.domain.TestResult;
 import ru.otus.homework.domain.User;
-import ru.otus.homework.exceptions.InvalidCorrectAnswerException;
-import ru.otus.homework.exceptions.fatal.InvalidApplicationModeStateException;
+import ru.otus.homework.exceptions.InvalidAnswerException;
+import ru.otus.homework.exceptions.fatal.IllegalApplicationStateException;
 import ru.otus.homework.exceptions.fatal.InvalidTestConfigurationException;
 import ru.otus.homework.exceptions.fatal.QuestionDataReadingException;
 import ru.otus.homework.exceptions.fatal.QuestionFormatException;
@@ -14,7 +14,7 @@ import ru.otus.homework.service.io.IOService;
 import ru.otus.homework.service.question.QuestionService;
 import ru.otus.homework.service.test.TestService;
 
-@Component
+@Service
 public class TestProcessor {
 
     private final TestService testService;
@@ -38,24 +38,33 @@ public class TestProcessor {
 
     public TestResult processTesting(User user) {
         if (applicationModeService.isTestProcessingRunning()) {
-            var testResult = checkTestConfiguration(user);
-            int currentQuestionIndex = 0;
-            while (applicationModeService.isTestProcessingRunning()) {
-                try {
-                    currentQuestionIndex = processQuestion(testResult, currentQuestionIndex);
-                } catch (InvalidCorrectAnswerException exception) {
-                    processException(exception.getMessage(), false);
-                } catch (NumberFormatException exception) {
-                    processException("Invalid number entered", false);
-                } catch (QuestionFormatException | QuestionDataReadingException exception) {
-                    processException(exception.getMessage(), true);
-                }
-            }
-            return testResult;
+            return runTest(user);
         } else {
-            throw new InvalidApplicationModeStateException("Attempt to test user without test mode running");
+            throw new IllegalApplicationStateException
+                    ("Inner error occurred: Attempt to test user without test mode running");
         }
     }
+
+    private TestResult runTest(User user) {
+        var testResult = checkTestConfiguration(user);
+        String testDescription = testService.getTestDescription(user,
+                testService.getTotalQuestionsNumber(), testService.getPassingScoreNumber());
+        ioService.readStringWithPrompt(testDescription);
+        int currentQuestionIndex = 0;
+        while (applicationModeService.isTestProcessingRunning()) {
+            try {
+                currentQuestionIndex = processQuestion(testResult, currentQuestionIndex);
+            } catch (InvalidAnswerException exception) {
+                processException(exception.getMessage(), false);
+            } catch (NumberFormatException exception) {
+                processException("Invalid number entered", false);
+            } catch (QuestionFormatException | QuestionDataReadingException exception) {
+                processException(exception.getMessage(), true);
+            }
+        }
+        return testResult;
+    }
+
 
     private TestResult checkTestConfiguration(User user) {
         try {
@@ -69,11 +78,13 @@ public class TestProcessor {
                 testService.getPassingScoreNumber(), user);
     }
 
-    private void processException(String exceptionMsg, boolean isFatal) {
-        var exceptionStr = testService.getLineInExceptionFormat(exceptionMsg, isFatal);
-        ioService.outputStringLine(exceptionStr);
+    private void processException(String message, boolean isFatal) {
+        var formattedException = testService.formatException(message, isFatal);
         if (isFatal) {
             applicationModeService.stopApplication();
+            throw new IllegalApplicationStateException(formattedException);
+        } else {
+            ioService.outputStringLine(formattedException);
         }
     }
 

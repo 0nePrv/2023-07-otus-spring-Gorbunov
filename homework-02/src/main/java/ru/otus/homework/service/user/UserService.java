@@ -4,4 +4,6 @@ import ru.otus.homework.domain.User;
 
 public interface UserService {
     void validateUser(User user);
+
+    String getNewUserGreeting();
 }

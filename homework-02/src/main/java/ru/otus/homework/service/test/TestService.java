@@ -2,6 +2,7 @@ package ru.otus.homework.service.test;
 
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.domain.TestResult;
+import ru.otus.homework.domain.User;
 
 public interface TestService {
 
@@ -11,11 +12,13 @@ public interface TestService {
 
     String getTestResultRepresentation(TestResult testResult);
 
-    String getLineInExceptionFormat(String s, boolean fatal);
+    String formatException(String s, boolean fatal);
 
     int getTotalQuestionsNumber();
 
     int getPassingScoreNumber();
 
     void validateTestConfiguration(int quantity);
+
+    String getTestDescription(User user, int totalQuestionsNumber, int passingScoreNumber);
 }
