@@ -1,4 +1,4 @@
-package ru.otus.homework.exceptions.fatal;
+package ru.otus.homework.exceptions;
 
 public class InvalidTestConfigurationException extends RuntimeException {
     public InvalidTestConfigurationException(String message) {

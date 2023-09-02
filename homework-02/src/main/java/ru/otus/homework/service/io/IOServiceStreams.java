@@ -1,16 +1,20 @@
 package ru.otus.homework.service.io;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-
+@Service
 public class IOServiceStreams implements IOService {
     private final PrintStream output;
 
     private final Scanner input;
 
-    public IOServiceStreams(PrintStream outputStream, InputStream inputStream) {
+    public IOServiceStreams(@Value("#{T(java.lang.System).out}") PrintStream outputStream,
+                            @Value("#{T(java.lang.System).in}") InputStream inputStream) {
         output = outputStream;
         input = new Scanner(inputStream);
     }

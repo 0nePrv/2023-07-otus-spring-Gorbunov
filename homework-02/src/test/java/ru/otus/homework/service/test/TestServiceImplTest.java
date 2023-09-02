@@ -6,91 +6,77 @@ import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.domain.TestResult;
 import ru.otus.homework.domain.User;
-import ru.otus.homework.exceptions.InvalidAnswerException;
-import ru.otus.homework.exceptions.fatal.InvalidTestConfigurationException;
+import ru.otus.homework.exceptions.InvalidTestConfigurationException;
+import ru.otus.homework.service.io.IOService;
+import ru.otus.homework.service.question.QuestionService;
+import ru.otus.homework.service.testing.TestService;
+import ru.otus.homework.service.testing.TestServiceImpl;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("Test service")
 public class TestServiceImplTest {
 
-    private ConversionService conversionService;
+    private IOService ioService;
+
+    private QuestionService questionService;
+
     private TestService testService;
 
     @BeforeEach
     public void setup() {
-        conversionService = mock(ConversionService.class);
-        testService = new TestServiceImpl(conversionService, 10, 7);
+        ConversionService conversionService = mock(ConversionService.class);
+        questionService = mock(QuestionService.class);
+        ioService = mock(IOService.class);
+        testService = new TestServiceImpl(conversionService, ioService, questionService, 3, 1);
     }
 
     @Test
-    public void should_throw_exception_when_answer_index_is_out_of_range() {
-        Question question = new Question("Question", Collections.singletonList(new Answer("A", true)));
-        assertThrows(InvalidAnswerException.class, () -> testService.validateAnswer(question, 1));
+    void runTest_ValidInput_ReturnsTestResult() {
+        User user = new User("John", "Johns");
+        List<Question> questionList = List.of(
+                new Question("Question 1",
+                        List.of(new Answer("1", false),
+                                new Answer("2", false),
+                                new Answer("3", true)
+                        )),
+                new Question("Question 2",
+                        List.of(new Answer("3", false),
+                                new Answer("2", true),
+                                new Answer("1", false)
+                        )),
+                new Question("Question 3",
+                        List.of(new Answer("1", false),
+                                new Answer("3", true),
+                                new Answer("2", false)
+                        ))
+        );
+
+        when(questionService.getQuestion(0)).thenReturn(questionList.get(0));
+        when(questionService.getQuestion(1)).thenReturn(questionList.get(1));
+        when(questionService.getQuestion(2)).thenReturn(questionList.get(2));
+        when(ioService.readStringWithPrompt(any())).thenReturn("");
+        when(ioService.readIntWithPrompt(any())).thenReturn(2);
+
+        TestResult result = testService.runTest(user);
+
+        assertEquals(user, result.getUser());
+        assertEquals(result.getTotalQuestionsNumber(),3);
+        assertEquals(result.getActualScore(),2);
+        verify(ioService, atLeastOnce()).readStringWithPrompt(any());
+        verify(ioService, times(3)).readIntWithPrompt(any());
+        verify(questionService, times(3)).getQuestion(anyInt());
     }
 
     @Test
-    public void should_return_correctly_check_user_answer() {
-        Answer correctAnswer = new Answer("Correct Answer", true);
-        Answer wrongAnswer = new Answer("Wrong Answer", false);
-        Question question = new Question("Question", List.of(correctAnswer, wrongAnswer));
+    public void should_throw_exception_when_questions_quantity_is_not_enough() {
+        when(questionService.getQuantity()).thenReturn(2);
 
-        assertTrue(testService.validateAnswer(question, 0));
-        assertFalse(testService.validateAnswer(question, 1));
-    }
-
-    @Test
-    public void should_return_correct_question_representation() {
-        Question question = new Question("Question",
-                Collections.singletonList(new Answer("Answer", true)));
-        when(conversionService.convert(question, String.class)).thenReturn("Converted Question");
-
-        String representation = testService.getQuestionRepresentation(0, question);
-
-        assertEquals("#1 Converted Question", representation);
-    }
-
-    @Test
-    public void should_return_correct_test_result_representation() {
-        TestResult testResult = new TestResult(10, 7,
-                new User("John", "Johns"));
-        when(conversionService.convert(testResult, String.class)).thenReturn("Converted Result");
-
-        String representation = testService.getTestResultRepresentation(testResult);
-
-        assertEquals("Converted Result", representation);
-    }
-
-    @Test
-    public void should_return_correct_formatted_fatal_error_message() {
-        String formattedLine = testService.formatException("Error message", true);
-
-        assertEquals("Fatal error occurred: Error message", formattedLine);
-    }
-
-    @Test
-    public void should_return_correct_formatted_non_fatal_error_message() {
-        String formattedLine = testService.formatException("Error message", false);
-
-        assertEquals("An error occurred: Error message", formattedLine);
-    }
-
-    @Test
-    public void should_throw_an_exception_when_test_configuration_is_invalid() {
-        int invalidQuantity = testService.getTotalQuestionsNumber() - 1;
-        assertThrows(InvalidTestConfigurationException.class, () ->
-                testService.validateTestConfiguration(invalidQuantity));
-    }
-
-    @Test
-    public void should_not_throw_an_exception_when_test_configuration_is_valid() {
-        int minValidQuantity = testService.getTotalQuestionsNumber();
-        assertDoesNotThrow(() -> testService.validateTestConfiguration(minValidQuantity));
+        assertThrows(InvalidTestConfigurationException.class, () -> testService.checkTestConfiguration());
+        verify(questionService).getQuantity();
     }
 }

@@ -4,19 +4,22 @@ package ru.otus.homework.dao;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Repository;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
-import ru.otus.homework.exceptions.fatal.QuestionDataReadingException;
-import ru.otus.homework.exceptions.fatal.QuestionFormatException;
+import ru.otus.homework.exceptions.QuestionDataReadingException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 
+@Repository
 public class QuestionDaoImpl implements QuestionDao {
 
     private static final String QUESTION_HEADER = "Question";
@@ -29,7 +32,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     private final String resourcePath;
 
-    public QuestionDaoImpl(String resourcePath) {
+    public QuestionDaoImpl(@Value("${resource.path}") String resourcePath) {
         this.resourcePath = resourcePath;
     }
 
@@ -44,11 +47,13 @@ public class QuestionDaoImpl implements QuestionDao {
             if (!iterator.hasNext()) {
                 throw new NullPointerException();
             }
-            return iterator.readAll().stream().map(this::convertToQuestion).toList();
+            List<Question> questionList = new ArrayList<>(iterator.readAll().stream().map(this::convertToQuestion).toList());
+            Collections.shuffle(questionList);
+            return questionList;
         } catch (IOException ex) {
             throw new QuestionDataReadingException("An error occurred while reading data", ex);
         } catch (NumberFormatException ex) {
-            throw new QuestionFormatException("Invalid value of correct answer index", ex);
+            throw new QuestionDataReadingException("Answer index is not a number", ex);
         } catch (NullPointerException ex) {
             throw new QuestionDataReadingException("Invalid data source structure", ex);
         }
@@ -80,7 +85,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     private void checkCorrectAnswerIndex(String[] answers, int correctAnswerIndex) {
         if (correctAnswerIndex >= answers.length || correctAnswerIndex < 0) {
-            throw new QuestionFormatException("Correct answer is out of range");
+            throw new QuestionDataReadingException("Correct answer is out of range");
         }
     }
 }

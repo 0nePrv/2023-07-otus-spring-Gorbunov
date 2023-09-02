@@ -1,7 +1,6 @@
 package ru.otus.homework.service.question;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
@@ -15,13 +14,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@DisplayName("Question service")
 class QuestionServiceImplTest {
 
-    QuestionDao questionDao;
+    private QuestionDao questionDao;
 
-    QuestionService questionService;
+    private QuestionService questionService;
 
-    List<Question> questions;
+    private List<Question> questions;
 
     @BeforeEach
     void setUp() {

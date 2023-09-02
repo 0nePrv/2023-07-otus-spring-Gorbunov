@@ -1,6 +1,7 @@
 package ru.otus.homework.domain;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -25,8 +26,10 @@ public class TestResult {
         return user;
     }
 
-    public Map<Question, Boolean> getTestMap() {
-        return testMap;
+    public List<Question> getIncorrectAnswerQuestionList() {
+        return testMap.entrySet().stream()
+                .filter(e -> e.getValue().equals(false))
+                .map(Map.Entry::getKey).toList();
     }
 
     public int getTotalQuestionsNumber() {
