@@ -25,7 +25,7 @@ class QuestionServiceImplTest {
     private List<Question> questions;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         questionDao = Mockito.mock(QuestionDao.class);
         questionService = new QuestionServiceImpl(questionDao);
         questions = List.of(

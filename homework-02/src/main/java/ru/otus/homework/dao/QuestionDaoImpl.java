@@ -14,7 +14,6 @@ import ru.otus.homework.exceptions.QuestionDataReadingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -47,15 +46,13 @@ public class QuestionDaoImpl implements QuestionDao {
             if (!iterator.hasNext()) {
                 throw new NullPointerException();
             }
-            List<Question> questionList = new ArrayList<>(iterator.readAll().stream().map(this::convertToQuestion).toList());
-            Collections.shuffle(questionList);
-            return questionList;
+            return iterator.readAll().stream().map(this::convertToQuestion).toList();
         } catch (IOException ex) {
             throw new QuestionDataReadingException("An error occurred while reading data", ex);
         } catch (NumberFormatException ex) {
             throw new QuestionDataReadingException("Answer index is not a number", ex);
         } catch (NullPointerException ex) {
-            throw new QuestionDataReadingException("Invalid data source structure", ex);
+            throw new QuestionDataReadingException("Invalid data structure", ex);
         }
     }
 

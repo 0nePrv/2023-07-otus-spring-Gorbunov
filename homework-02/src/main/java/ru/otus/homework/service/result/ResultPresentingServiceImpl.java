@@ -2,7 +2,6 @@ package ru.otus.homework.service.result;
 
 import org.springframework.stereotype.Service;
 import ru.otus.homework.domain.Answer;
-import ru.otus.homework.domain.Question;
 import ru.otus.homework.domain.TestResult;
 import ru.otus.homework.service.io.OutputService;
 
@@ -32,11 +31,10 @@ public class ResultPresentingServiceImpl implements ResultPresentingService {
 
     private String getMistakes(TestResult source) {
         String topic = "Mistakes and correct answers:";
-        Stream<Question> questionStream = source.getIncorrectAnswerQuestionList().stream();
-        Stream<String> stringStream = questionStream.map(q ->
-                q.getText() + " " + q.getAnswerList().stream()
+        Stream<String> mistakesStream = source.getIncorrectAnswerQuestionList().stream()
+                .map(q -> q.getText() + " " + q.getAnswerList().stream()
                         .filter(Answer::isCorrect).findFirst()
                         .orElse(new Answer("", false)).getText());
-        return topic + "\n" + stringStream.collect(Collectors.joining("\n"));
+        return topic + "\n" + mistakesStream.collect(Collectors.joining("\n"));
     }
 }

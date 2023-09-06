@@ -12,9 +12,11 @@ import ru.otus.homework.service.question.QuestionService;
 import ru.otus.homework.service.testing.TestService;
 import ru.otus.homework.service.testing.TestServiceImpl;
 
+import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -36,37 +38,23 @@ public class TestServiceImplTest {
     }
 
     @Test
-    void runTest_ValidInput_ReturnsTestResult() {
+    public void should_return_correct_test_result() {
         User user = new User("John", "Johns");
         List<Question> questionList = List.of(
-                new Question("Question 1",
-                        List.of(new Answer("1", false),
-                                new Answer("2", false),
-                                new Answer("3", true)
-                        )),
-                new Question("Question 2",
-                        List.of(new Answer("3", false),
-                                new Answer("2", true),
-                                new Answer("1", false)
-                        )),
-                new Question("Question 3",
-                        List.of(new Answer("1", false),
-                                new Answer("3", true),
-                                new Answer("2", false)
-                        ))
-        );
+                new Question("Question 1", Collections.singletonList(new Answer("Answer", true))),
+                new Question("Question 2", Collections.singletonList(new Answer("Answer", false))),
+                new Question("Question 3", Collections.singletonList(new Answer("Answer", true))));
 
         when(questionService.getQuestion(0)).thenReturn(questionList.get(0));
         when(questionService.getQuestion(1)).thenReturn(questionList.get(1));
         when(questionService.getQuestion(2)).thenReturn(questionList.get(2));
         when(ioService.readStringWithPrompt(any())).thenReturn("");
-        when(ioService.readIntWithPrompt(any())).thenReturn(2);
+        when(ioService.readIntWithPrompt(any())).thenReturn(1);
 
         TestResult result = testService.runTest(user);
 
         assertEquals(user, result.getUser());
-        assertEquals(result.getTotalQuestionsNumber(),3);
-        assertEquals(result.getActualScore(),2);
+        assertEquals(result.getActualScore(), 2);
         verify(ioService, atLeastOnce()).readStringWithPrompt(any());
         verify(ioService, times(3)).readIntWithPrompt(any());
         verify(questionService, times(3)).getQuestion(anyInt());

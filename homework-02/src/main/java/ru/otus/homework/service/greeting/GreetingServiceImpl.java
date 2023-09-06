@@ -26,11 +26,10 @@ public class GreetingServiceImpl implements GreetingService {
         User user;
         while (true) {
             user = getNewUser();
-            if (user.getName().isBlank() && user.getSurname().isBlank()) {
-                ioService.outputStringLine("Incorrect name or surname. Please try again");
-            } else {
+            if (!user.getName().isBlank() && !user.getSurname().isBlank()) {
                 break;
             }
+            ioService.outputStringLine("Incorrect name or surname. Please try again");
         }
         return user;
     }

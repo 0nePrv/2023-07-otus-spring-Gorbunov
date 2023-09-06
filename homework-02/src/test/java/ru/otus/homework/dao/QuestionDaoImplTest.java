@@ -18,7 +18,7 @@ class QuestionDaoImplTest {
     private final QuestionDao dao = new QuestionDaoImpl("/questions.csv");
 
     @Test
-    void should_provide_correct_questions() {
+    public void should_provide_correct_questions() {
         List<Question> expectedQuestionList = List.of(
                 new Question("How many planets are there in the Solar System?",
                         List.of(new Answer("7", false),
