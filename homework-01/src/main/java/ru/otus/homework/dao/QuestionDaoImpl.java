@@ -42,11 +42,11 @@ public class QuestionDaoImpl implements QuestionDao {
             }
             return iterator.readAll().stream().map(this::convertToQuestion).toList();
         } catch (IOException ex) {
-            throw new QuestionDataReadingException("An error occurred while reading CSV data", ex);
+            throw new QuestionDataReadingException("An error occurred while reading data", ex);
         } catch (NumberFormatException ex) {
-            throw new QuestionDataReadingException("Invalid value of correct answer index", ex);
+            throw new QuestionDataReadingException("Answer index is not a number", ex);
         } catch (NullPointerException ex) {
-            throw new QuestionDataReadingException("Invalid CSV file structure", ex);
+            throw new QuestionDataReadingException("Invalid data structure", ex);
         }
     }
 
