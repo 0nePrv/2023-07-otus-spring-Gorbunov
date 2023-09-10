@@ -1,0 +1,16 @@
+custom:
+  testing:
+    score-total: 10
+    score-passing: 7
+    locale-tag: ru-RU
+    resource-path-map:
+      en-US: /data/questions_en-US.csv
+      ru-RU: /data/questions_ru-RU.csv
+      default: /data/questions_en-US.csv
+spring:
+  messages:
+    basename: messages
+    fallback-to-system-locale: false
+logging:
+  level:
+    root: error
