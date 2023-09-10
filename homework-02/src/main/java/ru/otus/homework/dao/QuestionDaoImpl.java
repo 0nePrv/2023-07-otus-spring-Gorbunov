@@ -4,9 +4,11 @@ package ru.otus.homework.dao;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Repository;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
-import ru.otus.homework.exceptions.InvalidCorrectAnswerIndexException;
 import ru.otus.homework.exceptions.QuestionDataReadingException;
 
 import java.io.IOException;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+@Repository
 public class QuestionDaoImpl implements QuestionDao {
 
     private static final String QUESTION_HEADER = "Question";
@@ -27,10 +31,12 @@ public class QuestionDaoImpl implements QuestionDao {
 
     private final String resourcePath;
 
-    public QuestionDaoImpl(String resourcePath) {
+    public QuestionDaoImpl(@Value("${resource.path}") String resourcePath) {
         this.resourcePath = resourcePath;
     }
 
+    @Override
+    @Cacheable("questionCache")
     public List<Question> readAllQuestions() {
         var schema = CsvSchema.builder().addColumns(List.of(QUESTION_HEADER, ANSWERS_HEADER, CORRECT_ANSWER_HEADER),
                 CsvSchema.ColumnType.STRING).build().withHeader();
@@ -76,7 +82,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     private void checkCorrectAnswerIndex(String[] answers, int correctAnswerIndex) {
         if (correctAnswerIndex >= answers.length || correctAnswerIndex < 0) {
-            throw new InvalidCorrectAnswerIndexException("Correct answer is out of range");
+            throw new QuestionDataReadingException("Correct answer is out of range");
         }
     }
 }

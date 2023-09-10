@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
 
     <bean name="questionDao" class="ru.otus.homework.dao.QuestionDaoImpl">
         <constructor-arg index="0" value="/questions.csv"/>
@@ -11,11 +13,17 @@
         <constructor-arg index="0" value="#{T(java.lang.System).out}"/>
     </bean>
 
-    <bean name="questionConverter" class="ru.otus.homework.service.QuestionConverterImpl"/>
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean name="questionConverter" class="ru.otus.homework.service.QuestionConverterImpl"/>
+            </set>
+        </property>
+    </bean>
 
     <bean name="questionService" class="ru.otus.homework.service.QuestionServiceImpl">
         <constructor-arg index="0" ref="questionDao"/>
-        <constructor-arg index="1" ref="questionConverter"/>
+        <constructor-arg index="1" ref="conversionService"/>
         <constructor-arg index="2" ref="outputService"/>
     </bean>
 </beans>
