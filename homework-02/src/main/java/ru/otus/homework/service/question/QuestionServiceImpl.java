@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.otus.homework.dao.QuestionDao;
 import ru.otus.homework.domain.Question;
 
+import java.util.List;
+
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
@@ -16,12 +18,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question getQuestion(int index) {
-        return questionDao.readAllQuestions().get(index);
-    }
-
-    @Override
-    public int getQuantity() {
-        return questionDao.readAllQuestions().size();
+    public List<Question> getQuestions() {
+        return questionDao.readAllQuestions();
     }
 }

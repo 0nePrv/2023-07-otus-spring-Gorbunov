@@ -1,8 +1,6 @@
 package ru.otus.homework.service.question;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import ru.otus.homework.dao.QuestionDao;
 import ru.otus.homework.domain.Answer;
@@ -35,20 +33,10 @@ class QuestionServiceImplTest {
         );
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {0, 1, 2})
-    public void should_return_correct_question_by_index(int index) {
-        when(questionDao.readAllQuestions()).thenReturn(questions);
-
-        assertEquals(questionService.getQuestion(index), questions.get(index));
-    }
-
-
     @Test
-    public void should_return_correct_questions_quantity() {
+    public void should_return_correct_question_list() {
         when(questionDao.readAllQuestions()).thenReturn(questions);
 
-        assertEquals(questionService.getQuantity(), questions.size());
+        assertEquals(questionService.getQuestions(), questions);
     }
-
 }

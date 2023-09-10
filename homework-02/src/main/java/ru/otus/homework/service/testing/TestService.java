@@ -6,6 +6,4 @@ import ru.otus.homework.domain.User;
 public interface TestService {
 
     TestResult runTest(User user);
-
-    void checkTestConfiguration();
 }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
@@ -36,7 +35,6 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     @Override
-    @Cacheable("questionCache")
     public List<Question> readAllQuestions() {
         var schema = CsvSchema.builder().addColumns(List.of(QUESTION_HEADER, ANSWERS_HEADER, CORRECT_ANSWER_HEADER),
                 CsvSchema.ColumnType.STRING).build().withHeader();
