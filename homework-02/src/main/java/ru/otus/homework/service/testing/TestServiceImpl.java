@@ -11,8 +11,6 @@ import ru.otus.homework.exceptions.InvalidTestConfigurationException;
 import ru.otus.homework.service.io.IOService;
 import ru.otus.homework.service.question.QuestionService;
 
-import java.util.List;
-
 
 @Service
 public class TestServiceImpl implements TestService {
@@ -49,19 +47,27 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
+    public void checkTestConfiguration() {
+        int questionQuantity = questionService.getQuantity();
+        if (totalQuestionsNumber > questionQuantity) {
+            throw new InvalidTestConfigurationException("Too many test questions: " + totalQuestionsNumber +
+                                                        " > " + questionQuantity);
+        }
+        if (totalQuestionsNumber <= passingScoreNumber) {
+            throw new InvalidTestConfigurationException("Invalid total and passing questions number ratio");
+        }
+    }
+
+    @Override
     public TestResult runTest(User user) {
-        List<Question> questions = questionService.getQuestions();
-        checkTestConfiguration(questions.size());
-        showTestDescription(user);
-        TestResult testResult = new TestResult(totalQuestionsNumber, passingScoreNumber, user);
+        String testDescription = String.format(TEST_DESCRIPTION_FORMAT, user.getName(),
+                totalQuestionsNumber, passingScoreNumber);
+        ioService.readStringWithPrompt(testDescription);
         int currentQuestionIndex = 0;
+        TestResult testResult = new TestResult(totalQuestionsNumber, passingScoreNumber, user);
         while (currentQuestionIndex < totalQuestionsNumber) {
             try {
-                Question currentQuestion = questions.get(currentQuestionIndex);
-                showQuestion(currentQuestionIndex, currentQuestion);
-                boolean isUserAnswerCorrect = checkAnswer(currentQuestion);
-                testResult.addUserAnswer(currentQuestion, isUserAnswerCorrect);
-                currentQuestionIndex++;
+                currentQuestionIndex = processQuestion(testResult, currentQuestionIndex);
             } catch (InvalidAnswerException exception) {
                 ioService.outputStringLine("Answer index is out of range");
             } catch (NumberFormatException exception) {
@@ -71,29 +77,18 @@ public class TestServiceImpl implements TestService {
         return testResult;
     }
 
-    private void checkTestConfiguration(int size) {
-        if (totalQuestionsNumber > size) {
-            throw new InvalidTestConfigurationException("Too many test questions: " + totalQuestionsNumber +
-                                                        " > " + size);
-        }
-        if (totalQuestionsNumber <= passingScoreNumber) {
-            throw new InvalidTestConfigurationException("Invalid total and passing questions number ratio");
-        }
-    }
-
-    private void showTestDescription(User user) {
-        String testDescription = String.format(TEST_DESCRIPTION_FORMAT, user.getName(),
-                totalQuestionsNumber, passingScoreNumber);
-        ioService.readStringWithPrompt(testDescription);
-    }
-
-    private void showQuestion(int index, Question question) {
-        var questionRepresentation = "#" + (index + 1) + " " + conversionService.convert(question, String.class);
+    private int processQuestion(TestResult testResult, int currentQuestionIndex) {
+        var currentQuestion = questionService.getQuestion(currentQuestionIndex);
+        var questionRepresentation = "#" + (currentQuestionIndex + 1) + " " +
+                                     conversionService.convert(currentQuestion, String.class);
         ioService.outputString(questionRepresentation);
+        var answerIdx = ioService.readIntWithPrompt("Enter answer: ") - 1;
+        boolean isUserAnswerCorrect = checkAnswer(currentQuestion, answerIdx);
+        testResult.addUserAnswer(currentQuestion, isUserAnswerCorrect);
+        return ++currentQuestionIndex;
     }
 
-    private boolean checkAnswer(Question currentQuestion) {
-        var answerIndex = ioService.readIntWithPrompt("Enter answer: ") - 1;
+    private boolean checkAnswer(Question currentQuestion, int answerIndex) {
         var answerList = currentQuestion.getAnswerList();
         if (answerIndex >= answerList.size() || answerIndex < 0) {
             throw new InvalidAnswerException("Answer index is out of range");

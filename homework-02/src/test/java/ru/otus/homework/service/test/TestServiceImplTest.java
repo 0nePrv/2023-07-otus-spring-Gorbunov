@@ -45,7 +45,9 @@ public class TestServiceImplTest {
                 new Question("Question 2", Collections.singletonList(new Answer("Answer", false))),
                 new Question("Question 3", Collections.singletonList(new Answer("Answer", true))));
 
-        when(questionService.getQuestions()).thenReturn(questionList);
+        when(questionService.getQuestion(0)).thenReturn(questionList.get(0));
+        when(questionService.getQuestion(1)).thenReturn(questionList.get(1));
+        when(questionService.getQuestion(2)).thenReturn(questionList.get(2));
         when(ioService.readStringWithPrompt(any())).thenReturn("");
         when(ioService.readIntWithPrompt(any())).thenReturn(1);
 
@@ -55,12 +57,14 @@ public class TestServiceImplTest {
         assertEquals(result.getActualScore(), 2);
         verify(ioService, atLeastOnce()).readStringWithPrompt(any());
         verify(ioService, times(3)).readIntWithPrompt(any());
+        verify(questionService, times(3)).getQuestion(anyInt());
     }
 
     @Test
     public void should_throw_exception_when_questions_quantity_is_not_enough() {
-        when(questionService.getQuestions()).thenReturn(Collections.emptyList());
+        when(questionService.getQuantity()).thenReturn(2);
 
-        assertThrows(InvalidTestConfigurationException.class, () -> testService.runTest(null));
+        assertThrows(InvalidTestConfigurationException.class, () -> testService.checkTestConfiguration());
+        verify(questionService).getQuantity();
     }
 }

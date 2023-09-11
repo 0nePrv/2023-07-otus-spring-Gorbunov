@@ -34,6 +34,7 @@ public class ApplicationRunner {
 
     public void run() {
         try {
+            testService.checkTestConfiguration();
             User user = greetingService.runRegistration();
             TestResult testResult = testService.runTest(user);
             resultPresentingService.outputResult(testResult);
