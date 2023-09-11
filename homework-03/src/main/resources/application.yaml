@@ -3,10 +3,11 @@ custom:
     score-total: 10
     score-passing: 7
     locale-tag: ru-RU
-    resource-path-map:
-      en-US: /data/questions_en-US.csv
-      ru-RU: /data/questions_ru-RU.csv
-      default: /data/questions_en-US.csv
+    data-dir-path: /questions
+    resource-map:
+      en-US: questions_en_US.csv
+      ru-RU: questions_ru_RU.csv
+      default: questions_en_US.csv
 spring:
   messages:
     basename: messages

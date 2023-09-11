@@ -8,7 +8,9 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "custom.testing")
 public class ApplicationPropertiesHolder {
 
-    private final Map<String, String> resourcePathMap;
+    private final Map<String, String> resourceMap;
+
+    private final String dataDirPath;
 
     private final String localeTag;
 
@@ -18,19 +20,21 @@ public class ApplicationPropertiesHolder {
 
 
     @ConstructorBinding
-    public ApplicationPropertiesHolder(Map<String, String> resourcePathMap, String localeTag,
-                                       int scoreTotal, int scorePassing) {
-        this.resourcePathMap = resourcePathMap;
+    public ApplicationPropertiesHolder(Map<String, String> resourceMap, String dataDirPath,
+                                       String localeTag, int scoreTotal, int scorePassing) {
+        this.resourceMap = resourceMap;
+        this.dataDirPath = dataDirPath;
         this.totalScore = scoreTotal;
         this.passingScore = scorePassing;
         this.localeTag = localeTag;
     }
 
     public String getResourcePath() {
-        if (resourcePathMap.containsKey(localeTag)) {
-            return resourcePathMap.get(localeTag);
+        String resourceDir = dataDirPath + (dataDirPath.endsWith("/") ? "" : "/");
+        if (resourceMap.containsKey(localeTag)) {
+            return resourceDir + resourceMap.get(localeTag);
         }
-        return resourcePathMap.get("default");
+        return resourceDir + resourceMap.get("default");
     }
 
     public int getTotalScore() {

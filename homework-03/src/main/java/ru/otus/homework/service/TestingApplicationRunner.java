@@ -45,6 +45,7 @@ public class TestingApplicationRunner implements ApplicationRunner {
         this.localizationService = localizationService;
     }
 
+    @Override
     public void run(ApplicationArguments arguments) {
         try {
             User user = greetingService.runRegistration();
@@ -52,11 +53,11 @@ public class TestingApplicationRunner implements ApplicationRunner {
             resultPresentingService.outputResult(testResult);
         } catch (InvalidTestConfigurationException exception) {
             String invalidTestConfigMessage = localizationService.getMessage("testing.invalid.configuration");
-            outputService.outputString(invalidTestConfigMessage);
+            outputService.outputStringLine(invalidTestConfigMessage);
             LOGGER.catching(Level.ERROR, exception);
         } catch (QuestionDataReadingException exception) {
             String readingErrorMessage = localizationService.getMessage("reading.invalid");
-            outputService.outputString(readingErrorMessage);
+            outputService.outputStringLine(readingErrorMessage);
             LOGGER.catching(Level.ERROR, exception);
         }
     }

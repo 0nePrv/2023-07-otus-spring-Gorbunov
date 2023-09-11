@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
-        <Property name="appInfoFile">target/logging/app_info.log</Property>
+        <Property name="fileName">target/logging/app_info.log</Property>
+        <Property name="defaultPattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
     </Properties>
     <Appenders>
-        <RollingFile name="appInfoFile" fileName="${appInfoFile}"
-                     filepattern="${appInfoFile}_%i">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        <RollingFile name="appInfoFile" fileName="${fileName}" filepattern="${fileName}_%i">
+            <PatternLayout pattern="${defaultPattern}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="5MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="${defaultPattern}"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="ru.otus.homework.service" additivity="false" level="INFO">
+        <Logger name="ru.otus.homework" additivity="false" level="INFO">
             <AppenderRef ref="appInfoFile"/>
         </Logger>
-        <Root level="ERROR">
+        <Root level="OFF">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

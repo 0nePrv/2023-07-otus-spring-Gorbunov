@@ -1,5 +1,6 @@
 package ru.otus.homework.service.greeting;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.homework.domain.User;
 import ru.otus.homework.service.io.IOService;
@@ -12,7 +13,9 @@ public class GreetingServiceImpl implements GreetingService {
 
     private final LocalizationService localizationService;
 
-    public GreetingServiceImpl(IOService ioService, LocalizationService localizationService) {
+    @Autowired
+    public GreetingServiceImpl(IOService ioService,
+                               LocalizationService localizationService) {
         this.ioService = ioService;
         this.localizationService = localizationService;
     }
