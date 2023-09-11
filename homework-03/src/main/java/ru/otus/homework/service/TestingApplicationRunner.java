@@ -1,5 +1,8 @@
 package ru.otus.homework.service;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,6 +19,9 @@ import ru.otus.homework.service.testing.TestService;
 
 @Component
 public class TestingApplicationRunner implements ApplicationRunner {
+
+    private static final Logger LOGGER = LogManager.getLogger(TestingApplicationRunner.class);
+
     private final GreetingService greetingService;
 
     private final TestService testService;
@@ -47,9 +53,11 @@ public class TestingApplicationRunner implements ApplicationRunner {
         } catch (InvalidTestConfigurationException exception) {
             String invalidTestConfigMessage = localizationService.getMessage("testing.invalid.configuration");
             outputService.outputString(invalidTestConfigMessage);
+            LOGGER.catching(Level.ERROR, exception);
         } catch (QuestionDataReadingException exception) {
             String readingErrorMessage = localizationService.getMessage("reading.invalid");
             outputService.outputString(readingErrorMessage);
+            LOGGER.catching(Level.ERROR, exception);
         }
     }
 }

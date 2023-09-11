@@ -19,11 +19,10 @@ class QuestionDaoImplTest {
 
     private QuestionDao dao;
 
-    private ApplicationPropertiesHolder applicationPropertiesHolder;
-
     @BeforeEach
-    void setUp() {
-        applicationPropertiesHolder = mock(ApplicationPropertiesHolder.class);
+    public void setUp() {
+        ApplicationPropertiesHolder applicationPropertiesHolder = mock(ApplicationPropertiesHolder.class);
+        when(applicationPropertiesHolder.getResourcePath()).thenReturn("/questions.csv");
         dao = new QuestionDaoImpl(applicationPropertiesHolder);
     }
 
@@ -46,8 +45,6 @@ class QuestionDaoImplTest {
                                 new Answer("Elephant", false)
                         ))
         );
-
-        when(applicationPropertiesHolder.getResourcePath()).thenReturn("questions.csv");
 
         List<Question> actualQuestionList = dao.readAllQuestions();
         assertEquals(expectedQuestionList, actualQuestionList);

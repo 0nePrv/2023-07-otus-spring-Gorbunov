@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 public class LocalizationServiceImpl implements LocalizationService {
 
     private final LocaleProvider localeProvider;
+
     private final MessageSource messageSource;
 
     public LocalizationServiceImpl(LocaleProvider localeProvider,

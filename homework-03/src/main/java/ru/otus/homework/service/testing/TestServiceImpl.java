@@ -74,8 +74,8 @@ public class TestServiceImpl implements TestService {
                                                         " > " + size);
         }
         if (totalQuestionsNumber <= passingScoreNumber) {
-            throw new InvalidTestConfigurationException("Invalid total and passing questions number ratio:" +
-                                                        totalQuestionsNumber + "<=" + passingScoreNumber);
+            throw new InvalidTestConfigurationException("Invalid total and passing questions number ratio: " +
+                                                        totalQuestionsNumber + " <= " + passingScoreNumber);
         }
     }
 

@@ -12,5 +12,4 @@ spring:
     basename: messages
     fallback-to-system-locale: false
 logging:
-  level:
-    root: error
+  config: src/main/resources/log4j2-spring.xml
