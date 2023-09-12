@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
-        <Property name="fileName">target/logging/app_info.log</Property>
+        <Property name="fileName">${sys:user.home}/logging/app_info.log</Property>
         <Property name="defaultPattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
     </Properties>
     <Appenders>
