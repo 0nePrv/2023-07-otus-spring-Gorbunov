@@ -52,13 +52,15 @@ public class TestingApplicationRunner implements ApplicationRunner {
             TestResult testResult = testService.runTest(user);
             resultPresentingService.outputResult(testResult);
         } catch (InvalidTestConfigurationException exception) {
-            String invalidTestConfigMessage = localizationService.getMessage("testing.invalid.configuration");
-            outputService.outputStringLine(invalidTestConfigMessage);
-            LOGGER.catching(Level.ERROR, exception);
+            processException(exception, "testing.invalid.configuration");
         } catch (QuestionDataReadingException exception) {
-            String readingErrorMessage = localizationService.getMessage("reading.invalid");
-            outputService.outputStringLine(readingErrorMessage);
-            LOGGER.catching(Level.ERROR, exception);
+            processException(exception, "reading.invalid");
         }
+    }
+
+    private void processException(Exception exception, String messageKey) {
+        String message = localizationService.getMessage(messageKey);
+        outputService.outputStringLine(message);
+        LOGGER.catching(Level.ERROR, exception);
     }
 }

@@ -1,16 +1,18 @@
-package ru.otus.homework.config;
+package ru.otus.homework.provider;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
+import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Map;
 
 @ConfigurationProperties(prefix = "custom.testing")
-public class ApplicationPropertiesHolder {
+public class ApplicationPropertiesHolder implements TestConfigurationProvider, ResourcePathProvider, LocaleProvider {
 
     private final Map<String, String> resourceMap;
 
-    private final String dataDirPath;
+    private final String dataDir;
 
     private final String localeTag;
 
@@ -20,32 +22,34 @@ public class ApplicationPropertiesHolder {
 
 
     @ConstructorBinding
-    public ApplicationPropertiesHolder(Map<String, String> resourceMap, String dataDirPath,
+    public ApplicationPropertiesHolder(Map<String, String> resourceMap, String dataDir,
                                        String localeTag, int scoreTotal, int scorePassing) {
         this.resourceMap = resourceMap;
-        this.dataDirPath = dataDirPath;
+        this.dataDir = dataDir;
         this.totalScore = scoreTotal;
         this.passingScore = scorePassing;
         this.localeTag = localeTag;
     }
 
-    public String getResourcePath() {
-        String resourceDir = dataDirPath + (dataDirPath.endsWith("/") ? "" : "/");
-        if (resourceMap.containsKey(localeTag)) {
-            return resourceDir + resourceMap.get(localeTag);
-        }
-        return resourceDir + resourceMap.get("default");
-    }
-
+    @Override
     public int getTotalScore() {
         return totalScore;
     }
 
+    @Override
     public int getPassingScore() {
         return passingScore;
     }
 
-    public String getLocaleTag() {
-        return localeTag;
+    @Override
+    public Path getPath() {
+        var containsLocaleTag = resourceMap.containsKey(localeTag);
+        var resourceName = resourceMap.get(containsLocaleTag ? localeTag : "default");
+        return Path.of(dataDir, resourceName);
+    }
+
+    @Override
+    public Locale getCurrentLocale() {
+        return Locale.forLanguageTag(localeTag);
     }
 }

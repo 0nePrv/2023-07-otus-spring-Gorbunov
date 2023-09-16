@@ -2,12 +2,12 @@ package ru.otus.homework.service.testing;
 
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
-import ru.otus.homework.config.ApplicationPropertiesHolder;
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.domain.TestResult;
 import ru.otus.homework.domain.User;
 import ru.otus.homework.exceptions.InvalidAnswerException;
 import ru.otus.homework.exceptions.InvalidTestConfigurationException;
+import ru.otus.homework.provider.TestConfigurationProvider;
 import ru.otus.homework.service.io.IOService;
 import ru.otus.homework.service.localization.LocalizationService;
 import ru.otus.homework.service.question.QuestionService;
@@ -26,49 +26,59 @@ public class TestServiceImpl implements TestService {
 
     private final LocalizationService localizationService;
 
-    private final int totalQuestionsNumber;
-
-    private final int passingScoreNumber;
+    private final TestConfigurationProvider testConfigurationProvider;
 
     public TestServiceImpl(ConversionService conversionService,
                            IOService ioService,
                            QuestionService questionService,
                            LocalizationService localizationService,
-                           ApplicationPropertiesHolder applicationPropertiesHolder) {
+                           TestConfigurationProvider testConfigurationProvider) {
         this.conversionService = conversionService;
         this.ioService = ioService;
         this.questionService = questionService;
         this.localizationService = localizationService;
-        this.totalQuestionsNumber = applicationPropertiesHolder.getTotalScore();
-        this.passingScoreNumber = applicationPropertiesHolder.getPassingScore();
+        this.testConfigurationProvider = testConfigurationProvider;
     }
 
     @Override
     public TestResult runTest(User user) {
-        List<Question> questions = questionService.getQuestions();
-        checkTestConfiguration(questions.size());
-        showTestDescription(user);
-        TestResult testResult = new TestResult(totalQuestionsNumber, passingScoreNumber, user);
+        var totalQuestionsNumber = testConfigurationProvider.getTotalScore();
+        var passingScoreNumber = testConfigurationProvider.getPassingScore();
+        var questions = questionService.getQuestions();
+        checkTestConfiguration(questions.size(), totalQuestionsNumber, passingScoreNumber);
+        showTestDescription(user, totalQuestionsNumber, passingScoreNumber);
+        var testResult = new TestResult(totalQuestionsNumber, passingScoreNumber, user);
+        return completeTest(totalQuestionsNumber, questions, testResult);
+    }
+
+    private TestResult completeTest(int totalQuestionsNumber, List<Question> questions, TestResult testResult) {
         int currentQuestionIndex = 0;
         while (currentQuestionIndex < totalQuestionsNumber) {
             try {
-                Question currentQuestion = questions.get(currentQuestionIndex);
-                showQuestion(currentQuestionIndex, currentQuestion);
-                boolean isUserAnswerCorrect = checkAnswer(currentQuestion);
-                testResult.addUserAnswer(currentQuestion, isUserAnswerCorrect);
+                var currentQuestion = questions.get(currentQuestionIndex);
+                processQuestion(currentQuestion, currentQuestionIndex, testResult);
                 currentQuestionIndex++;
             } catch (InvalidAnswerException exception) {
-                String invalidAnswerValueMessage = localizationService.getMessage("testing.invalid.answer.value");
-                ioService.outputStringLine(invalidAnswerValueMessage);
+                printLocalizedMessage("testing.invalid.answer.value");
             } catch (NumberFormatException exception) {
-                String invalidAnswerFormatMessage = localizationService.getMessage("testing.invalid.answer.format");
-                ioService.outputStringLine(invalidAnswerFormatMessage);
+                printLocalizedMessage("testing.invalid.answer.format");
             }
         }
         return testResult;
     }
 
-    private void checkTestConfiguration(int size) {
+    private void processQuestion(Question currentQuestion, int currentQuestionIndex, TestResult testResult) {
+        showQuestion(currentQuestionIndex, currentQuestion);
+        boolean isUserAnswerCorrect = checkAnswer(currentQuestion);
+        testResult.addUserAnswer(currentQuestion, isUserAnswerCorrect);
+    }
+
+    private void printLocalizedMessage(String messageKey) {
+        var message = localizationService.getMessage(messageKey);
+        ioService.outputStringLine(message);
+    }
+
+    private void checkTestConfiguration(int size, int totalQuestionsNumber, int passingScoreNumber) {
         if (totalQuestionsNumber > size) {
             throw new InvalidTestConfigurationException("Too many test questions: " + totalQuestionsNumber +
                                                         " > " + size);
@@ -79,8 +89,8 @@ public class TestServiceImpl implements TestService {
         }
     }
 
-    private void showTestDescription(User user) {
-        String testDescription = localizationService.getMessage("testing.description", user.getName(),
+    private void showTestDescription(User user, int totalQuestionsNumber, int passingScoreNumber) {
+        var testDescription = localizationService.getMessage("testing.description", user.getName(),
                 totalQuestionsNumber, passingScoreNumber);
         ioService.readStringWithPrompt(testDescription);
     }
@@ -91,7 +101,7 @@ public class TestServiceImpl implements TestService {
     }
 
     private boolean checkAnswer(Question currentQuestion) {
-        String enterMessage = localizationService.getMessage("testing.enter") + " ";
+        var enterMessage = localizationService.getMessage("testing.enter") + " ";
         var answerIndex = ioService.readIntWithPrompt(enterMessage) - 1;
         var answerList = currentQuestion.getAnswerList();
         if (answerIndex >= answerList.size() || answerIndex < 0) {

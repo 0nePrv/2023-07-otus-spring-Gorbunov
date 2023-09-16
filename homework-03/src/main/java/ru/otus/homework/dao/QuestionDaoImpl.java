@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.springframework.stereotype.Repository;
-import ru.otus.homework.config.ApplicationPropertiesHolder;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.exceptions.QuestionDataReadingException;
+import ru.otus.homework.provider.ResourcePathProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,10 +28,10 @@ public class QuestionDaoImpl implements QuestionDao {
 
     private static final String CORRECT_ANSWER_HEADER = "Correct";
 
-    private final String resourcePath;
+    private final ResourcePathProvider resourcePathProvider;
 
-    public QuestionDaoImpl(ApplicationPropertiesHolder applicationPropertiesHolder) {
-        this.resourcePath = applicationPropertiesHolder.getResourcePath();
+    public QuestionDaoImpl(ResourcePathProvider resourcePathProvider) {
+        this.resourcePathProvider = resourcePathProvider;
     }
 
     @Override
@@ -71,9 +71,10 @@ public class QuestionDaoImpl implements QuestionDao {
     }
 
     private InputStream getResourseInputStream() throws IOException {
-        var inputStream = getClass().getResourceAsStream(resourcePath);
+        var pathStr = resourcePathProvider.getPath().toString();
+        var inputStream = getClass().getResourceAsStream(pathStr);
         if (inputStream == null) {
-            throw new IOException("Incorrect resource path: " + resourcePath);
+            throw new IOException("Incorrect resource path: " + pathStr);
         }
         return inputStream;
     }

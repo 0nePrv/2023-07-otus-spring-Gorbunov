@@ -23,7 +23,7 @@ public class GreetingServiceImpl implements GreetingService {
 
     @Override
     public User runRegistration() {
-        String greetingIntroMessage = localizationService.getMessage("greeting.introduction");
+        var greetingIntroMessage = localizationService.getMessage("greeting.introduction");
         ioService.outputStringLine(greetingIntroMessage);
         User user;
         while (true) {
@@ -31,15 +31,15 @@ public class GreetingServiceImpl implements GreetingService {
             if (!user.getName().isBlank() && !user.getSurname().isBlank()) {
                 break;
             }
-            String greetingInvalidMessage = localizationService.getMessage("greeting.invalid");
+            var greetingInvalidMessage = localizationService.getMessage("greeting.invalid");
             ioService.outputStringLine(greetingInvalidMessage);
         }
         return user;
     }
 
     private User getNewUser() {
-        String nameMessage = localizationService.getMessage("greeting.name");
-        String surnameMessage = localizationService.getMessage("greeting.surname");
+        var nameMessage = localizationService.getMessage("greeting.name");
+        var surnameMessage = localizationService.getMessage("greeting.surname");
         var name = ioService.readStringWithPrompt(nameMessage + " ").trim();
         var surname = ioService.readStringWithPrompt(surnameMessage + " ").trim();
         return new User(name, surname);

@@ -3,7 +3,7 @@ custom:
     score-total: 10
     score-passing: 7
     locale-tag: ru-RU
-    data-dir-path: /questions
+    data-dir: /questions
     resource-map:
       en-US: questions_en_US.csv
       ru-RU: questions_ru_RU.csv

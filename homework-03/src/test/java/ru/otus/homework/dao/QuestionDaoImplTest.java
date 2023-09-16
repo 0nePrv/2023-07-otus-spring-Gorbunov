@@ -1,29 +1,31 @@
 package ru.otus.homework.dao;
 
 import org.junit.jupiter.api.*;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import ru.otus.homework.config.ApplicationPropertiesHolder;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
+import ru.otus.homework.provider.ResourcePathProvider;
 
+import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("Question dao")
 class QuestionDaoImplTest {
 
+    private static final String RESOURCE_PATH = "/questions.csv";
+
     private QuestionDao dao;
+
+    private ResourcePathProvider pathProvider;
 
     @BeforeEach
     public void setUp() {
-        ApplicationPropertiesHolder applicationPropertiesHolder = mock(ApplicationPropertiesHolder.class);
-        when(applicationPropertiesHolder.getResourcePath()).thenReturn("/questions.csv");
-        dao = new QuestionDaoImpl(applicationPropertiesHolder);
+        pathProvider = mock(ResourcePathProvider.class);
+        dao = new QuestionDaoImpl(pathProvider);
     }
 
     @Test
@@ -46,7 +48,10 @@ class QuestionDaoImplTest {
                         ))
         );
 
+        when(pathProvider.getPath()).thenReturn(Path.of(RESOURCE_PATH));
+
         List<Question> actualQuestionList = dao.readAllQuestions();
-        assertEquals(expectedQuestionList, actualQuestionList);
+
+        assertIterableEquals(expectedQuestionList, actualQuestionList);
     }
 }

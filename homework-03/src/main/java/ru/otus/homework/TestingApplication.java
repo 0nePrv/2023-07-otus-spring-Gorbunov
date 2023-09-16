@@ -3,7 +3,7 @@ package ru.otus.homework;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import ru.otus.homework.config.ApplicationPropertiesHolder;
+import ru.otus.homework.provider.ApplicationPropertiesHolder;
 
 @SpringBootApplication
 @EnableConfigurationProperties(ApplicationPropertiesHolder.class)
