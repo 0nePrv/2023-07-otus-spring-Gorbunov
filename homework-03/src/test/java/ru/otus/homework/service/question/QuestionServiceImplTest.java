@@ -20,21 +20,20 @@ class QuestionServiceImplTest {
 
     private QuestionService questionService;
 
-    private List<Question> questions;
-
     @BeforeEach
     public void setUp() {
         questionDao = Mockito.mock(QuestionDao.class);
         questionService = new QuestionServiceImpl(questionDao);
-        questions = List.of(
-                new Question("Question1", Collections.singletonList(new Answer("1", true))),
-                new Question("Question2", Collections.singletonList(new Answer("2", true))),
-                new Question("Question3", Collections.singletonList(new Answer("3", true)))
-        );
     }
 
     @Test
     public void should_return_correct_question_list() {
+        List<Question> questions = List.of(
+                new Question("Question1", Collections.singletonList(new Answer("1", true))),
+                new Question("Question2", Collections.singletonList(new Answer("2", true))),
+                new Question("Question3", Collections.singletonList(new Answer("3", true)))
+        );
+
         when(questionDao.readAllQuestions()).thenReturn(questions);
 
         assertEquals(questionService.getQuestions(), questions);
