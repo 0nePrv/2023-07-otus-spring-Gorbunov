@@ -1,7 +1,7 @@
 custom:
   testing:
     score-total: 10
-    score-passing: 100
+    score-passing: 7
     locale-tag: ru-RU
     data-dir: /questions
     resource-map:

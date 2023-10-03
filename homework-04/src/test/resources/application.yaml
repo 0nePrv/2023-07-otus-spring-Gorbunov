@@ -4,6 +4,3 @@ spring:
       enabled: false
   main:
     banner-mode: off
-logging:
-  level:
-    root: debug
