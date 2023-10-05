@@ -3,14 +3,13 @@ package ru.otus.homework.dao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.provider.ResourcePathProvider;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 
 
 @DisplayName("Question dao")
-@SpringBootTest
+@SpringBootTest(classes = QuestionDaoImpl.class)
 class QuestionDaoImplTest {
 
     @MockBean
@@ -27,11 +26,6 @@ class QuestionDaoImplTest {
 
     @Autowired
     private QuestionDao dao;
-
-    @SpringBootConfiguration
-    @Import(QuestionDaoImpl.class)
-    static class DaoTestConfiguration {
-    }
 
     @Test
     @DisplayName("should provide correct questions")
@@ -54,7 +48,7 @@ class QuestionDaoImplTest {
                         ))
         );
 
-        given(provider.getPath()).willReturn(Path.of("/questions.csv"));
+        given(provider.getPath()).willReturn(Path.of(File.separator + "questions.csv"));
 
         List<Question> actualQuestionList = dao.readAllQuestions();
 

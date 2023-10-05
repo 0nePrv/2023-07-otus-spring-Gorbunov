@@ -3,10 +3,8 @@ package ru.otus.homework.service.question;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import ru.otus.homework.dao.QuestionDao;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
@@ -18,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("Question service")
-@SpringBootTest
+@SpringBootTest(classes = QuestionServiceImpl.class)
 class QuestionServiceImplTest {
 
     @MockBean
@@ -26,11 +24,6 @@ class QuestionServiceImplTest {
 
     @Autowired
     private QuestionService questionService;
-
-    @SpringBootConfiguration
-    @Import(QuestionServiceImpl.class)
-    static class QuestionServiceConfiguration {
-    }
 
     @Test
     @DisplayName("should return correct question list")

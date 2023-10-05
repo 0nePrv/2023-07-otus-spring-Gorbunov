@@ -5,10 +5,8 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.ConversionService;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
@@ -35,7 +33,7 @@ import static org.mockito.Mockito.verify;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DisplayName("Test service")
 @SuppressWarnings("unused")
-@SpringBootTest
+@SpringBootTest(classes = TestServiceImpl.class)
 public class TestServiceImplTest {
 
     private static final int TOTAL_SCORE = 3;
@@ -61,11 +59,6 @@ public class TestServiceImplTest {
 
     @Autowired
     private TestService testService;
-
-    @SpringBootConfiguration
-    @Import(TestServiceImpl.class)
-    static class TestServiceConfiguration {
-    }
 
     @Test
     @DisplayName("should return correct test result")
