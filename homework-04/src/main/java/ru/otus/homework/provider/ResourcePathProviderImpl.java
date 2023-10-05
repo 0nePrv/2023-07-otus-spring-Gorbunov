@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.otus.homework.config.ApplicationPropertiesHolder;
 
-import java.io.File;
 import java.nio.file.Path;
 
 @Component
@@ -22,6 +21,6 @@ public class ResourcePathProviderImpl implements ResourcePathProvider {
 
     @Override
     public Path getPath() {
-        return Path.of(File.separator + dataDir, resourceName);
+        return Path.of(dataDir, resourceName);
     }
 }

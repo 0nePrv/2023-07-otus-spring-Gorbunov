@@ -74,7 +74,7 @@ public class QuestionDaoImpl implements QuestionDao {
 
     private InputStream getResourseInputStream() throws IOException {
         var pathStr = resourcePathProvider.getPath().toString();
-        var inputStream = getClass().getResourceAsStream(pathStr);
+        var inputStream = getClass().getClassLoader().getResourceAsStream(pathStr);
         if (inputStream == null) {
             throw new IOException("Incorrect resource path: " + pathStr);
         }

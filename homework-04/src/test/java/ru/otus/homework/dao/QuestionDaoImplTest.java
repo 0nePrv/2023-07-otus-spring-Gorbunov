@@ -9,7 +9,6 @@ import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.provider.ResourcePathProvider;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -48,7 +47,7 @@ class QuestionDaoImplTest {
                         ))
         );
 
-        given(provider.getPath()).willReturn(Path.of(File.separator + "questions.csv"));
+        given(provider.getPath()).willReturn(Path.of("questions.csv"));
 
         List<Question> actualQuestionList = dao.readAllQuestions();
 
