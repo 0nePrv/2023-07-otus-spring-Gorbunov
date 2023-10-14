@@ -1,5 +1,6 @@
 package ru.otus.homework.service.mapping;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.dto.CommentDto;
@@ -8,7 +9,7 @@ import ru.otus.homework.dto.CommentDto;
 public class CommentToDtoMapper implements Mapper<Comment, CommentDto> {
 
   @Override
-  public CommentDto map(Comment comment) {
+  public CommentDto map(@NonNull Comment comment) {
     return new CommentDto(comment.getId(), comment.getText(), comment.getBook().getName());
   }
 }

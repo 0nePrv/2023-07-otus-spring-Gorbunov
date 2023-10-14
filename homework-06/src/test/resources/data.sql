@@ -1,21 +1,3 @@
-/*
-INSERT INTO PUBLIC.AUTHOR (name)
-VALUES ('William Shakespeare'),
-       ('Fyodor Dostoevsky');
-
-INSERT INTO PUBLIC.GENRE (name)
-VALUES ('Drama'),
-       ('Novel');
-
-INSERT INTO PUBLIC.BOOK (name, author_id, genre_id)
-VALUES ('Hamlet', 1, 1),
-       ('Crime and Punishment', 2, 2);
-
-INSERT INTO PUBLIC.COMMENT (TEXT, BOOK_ID)
-VALUES ('Intriguing and thought-provoking; ' ||
-        'a must-read for anyone who loves a captivating ' ||
-        'blend of science, adventure, and suspense', 1);*/
-
 INSERT INTO author (name)
 VALUES ('William Shakespeare'),
        ('Fyodor Dostoevsky'),

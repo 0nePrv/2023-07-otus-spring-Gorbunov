@@ -50,7 +50,7 @@ public class CommentDaoImpl implements CommentDao {
   @Override
   public List<Comment> getByBookId(long bookId) {
     TypedQuery<Comment> query = entityManager.createQuery(
-        "select distinct c from Comment c join c.book b where b.id = :id", Comment.class);
+        "select c from Comment c where c.book.id = :id", Comment.class);
     query.setParameter("id", bookId);
     return query.getResultList();
   }
