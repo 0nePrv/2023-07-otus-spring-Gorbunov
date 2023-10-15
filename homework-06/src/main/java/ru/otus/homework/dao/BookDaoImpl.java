@@ -28,6 +28,7 @@ public class BookDaoImpl implements BookDao {
   public Book insert(Book book) {
     if (book.getId() == 0) {
       entityManager.persist(book);
+      entityManager.refresh(book);
       return book;
     }
     return entityManager.merge(book);
@@ -48,8 +49,8 @@ public class BookDaoImpl implements BookDao {
   }
 
   @Override
-  public void update(Book book) {
-    entityManager.merge(book);
+  public Book update(Book book) {
+    return entityManager.merge(book);
   }
 
   @Override

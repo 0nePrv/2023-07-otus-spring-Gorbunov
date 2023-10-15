@@ -25,8 +25,8 @@ public class BookServiceImpl implements BookService {
   @Override
   @Transactional
   public BookDto add(Book book) {
-    Book insertedBook = bookDao.insert(book);
-    return mapper.map(insertedBook);
+    book = bookDao.insert(book);
+    return mapper.map(book);
   }
 
   @Override
@@ -45,7 +45,7 @@ public class BookServiceImpl implements BookService {
   @Override
   @Transactional
   public BookDto update(Book book) {
-    bookDao.update(book);
+    book = bookDao.update(book);
     return mapper.map(book);
   }
 

@@ -25,6 +25,7 @@ public class CommentDaoImpl implements CommentDao {
   public Comment insert(Comment comment) {
     if (comment.getId() == 0) {
       entityManager.persist(comment);
+      entityManager.refresh(comment);
       return comment;
     }
     return entityManager.merge(comment);
@@ -37,8 +38,8 @@ public class CommentDaoImpl implements CommentDao {
   }
 
   @Override
-  public void update(Comment comment) {
-    entityManager.merge(comment);
+  public Comment update(Comment comment) {
+    return entityManager.merge(comment);
   }
 
   @Override

@@ -25,14 +25,14 @@ public class CommentServiceImpl implements CommentService {
   @Override
   @Transactional
   public CommentDto add(Comment comment) {
-    Comment insertedComment = commentDao.insert(comment);
-    return mapper.map(insertedComment);
+    comment = commentDao.insert(comment);
+    return mapper.map(comment);
   }
 
   @Override
   @Transactional
   public CommentDto update(Comment comment) {
-    commentDao.update(comment);
+    comment = commentDao.update(comment);
     return mapper.map(comment);
   }
 

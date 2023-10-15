@@ -1,6 +1,5 @@
 package ru.otus.homework.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,13 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 @Data
 @Accessors(chain = true)
@@ -41,8 +36,4 @@ public class Book {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "genre_id")
   private Genre genre;
-
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book", orphanRemoval = true)
-  @Fetch(FetchMode.SUBSELECT)
-  private List<Comment> comments;
 }
