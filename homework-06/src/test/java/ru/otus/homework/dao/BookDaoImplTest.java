@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Book;
@@ -35,10 +35,10 @@ class BookDaoImplTest {
   private static final long EXISTING_GENRE_ID_TO_UPDATE = 2;
 
   @Autowired
-  EntityManager entityManager;
+  private TestEntityManager entityManager;
 
   @Autowired
-  BookDao bookDao;
+  private BookDao bookDao;
 
   @Test
   @DisplayName("should correctly insert new book")

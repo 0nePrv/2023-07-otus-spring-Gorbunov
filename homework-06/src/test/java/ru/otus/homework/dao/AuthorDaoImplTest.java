@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import jakarta.persistence.EntityManager;
 import java.util.Objects;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.homework.domain.Author;
 
@@ -27,10 +27,10 @@ class AuthorDaoImplTest {
   private static final String NEW_AUTHOR_NAME = "Leo Tolstoy";
 
   @Autowired
-  AuthorDao authorDao;
+  private AuthorDao authorDao;
 
   @Autowired
-  EntityManager entityManager;
+  private TestEntityManager entityManager;
 
   @Test
   @DisplayName("should correctly insert new author")
