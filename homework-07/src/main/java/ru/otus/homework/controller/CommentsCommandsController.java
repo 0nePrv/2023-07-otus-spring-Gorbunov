@@ -38,7 +38,7 @@ public class CommentsCommandsController {
     } catch (ObjectNotFoundException exception) {
       return "Comment with id " + id + " not found";
     }
-    return "Comment " + comment.getId() + ": " + comment.getText() + " added";
+    return conversionService.convert(comment, String.class);
   }
 
   @ShellMethod(value = "Get comments by book id", key = {"getCommentsByBookId", "gcb"})

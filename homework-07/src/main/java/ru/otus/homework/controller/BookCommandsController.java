@@ -37,7 +37,7 @@ public class BookCommandsController {
     } catch (ObjectNotFoundException exception) {
       return "Book with id " + id + " not found";
     }
-    return "Book " + book.getId() + ": " + book.getName() + " added";
+    return conversionService.convert(book, String.class);
   }
 
   @ShellMethod(value = "Get all books", key = {"getAllBooks", "gab"})
