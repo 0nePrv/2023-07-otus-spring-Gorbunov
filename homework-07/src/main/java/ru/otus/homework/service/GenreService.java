@@ -13,5 +13,5 @@ public interface GenreService {
 
     Genre get(long id);
 
-    Genre remove(long id);
+    void remove(long id);
 }

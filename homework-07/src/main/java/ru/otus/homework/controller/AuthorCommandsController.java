@@ -59,12 +59,11 @@ public class AuthorCommandsController {
 
   @ShellMethod(value = "Remove author. Enter id", key = {"removeAuthor", "ra"})
   public String remove(long id) {
-    Author author;
     try {
-      author = authorService.remove(id);
+      authorService.remove(id);
     } catch (ObjectNotFoundException exception) {
       return "Author with id " + id + " not found";
     }
-    return conversionService.convert(author, String.class) + " removed";
+    return "Author with id " + id + " removed";
   }
 }

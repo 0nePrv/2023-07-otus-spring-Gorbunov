@@ -14,5 +14,5 @@ public interface BookService {
 
   BookDto update(long id, String name, long authorId, long genreId);
 
-  BookDto remove(long id);
+  void remove(long id);
 }

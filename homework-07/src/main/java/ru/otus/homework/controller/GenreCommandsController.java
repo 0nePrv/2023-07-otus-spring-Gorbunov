@@ -57,12 +57,11 @@ public class GenreCommandsController {
 
   @ShellMethod(value = "Remove genre. Enter id", key = {"removeGenre", "rg"})
   public String remove(long id) {
-    Genre genre;
     try {
-      genre = genreService.remove(id);
+      genreService.remove(id);
     } catch (ObjectNotFoundException exception) {
       return "Genre with id " + id + " not found";
     }
-    return conversionService.convert(genre, String.class) + " removed";
+    return "Genre with id " + id + " removed";
   }
 }

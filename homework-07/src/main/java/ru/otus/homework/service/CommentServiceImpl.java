@@ -61,9 +61,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   @Transactional
-  public CommentDto remove(long id) {
-    CommentDto comment = get(id);
+  public void remove(long id) {
     commentRepository.deleteById(id);
-    return comment;
   }
 }

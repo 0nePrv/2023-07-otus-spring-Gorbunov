@@ -57,12 +57,11 @@ public class BookCommandsController {
 
   @ShellMethod(value = "Remove book. Enter id", key = {"removeBook", "rb"})
   public String remove(long id) {
-    BookDto bookDto;
     try {
-      bookDto = bookService.remove(id);
+      bookService.remove(id);
     } catch (ObjectNotFoundException exception) {
       return "Book with id " + id + " not found";
     }
-    return conversionService.convert(bookDto, String.class) + " removed";
+    return "Book with id " + id + " removed";
   }
 }

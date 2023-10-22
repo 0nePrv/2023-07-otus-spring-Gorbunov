@@ -13,5 +13,5 @@ public interface CommentService {
 
   List<CommentDto> getByBookId(long bookId);
 
-  CommentDto remove(long id);
+  void remove(long id);
 }

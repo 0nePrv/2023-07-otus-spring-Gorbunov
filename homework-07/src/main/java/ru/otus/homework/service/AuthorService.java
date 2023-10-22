@@ -13,5 +13,5 @@ public interface AuthorService {
 
   Author update(long id, String name);
 
-  Author remove(long id);
+  void remove(long id);
 }

@@ -58,12 +58,11 @@ public class CommentsCommandsController {
 
   @ShellMethod(value = "Remove comment. Enter id", key = {"removeComment", "rc"})
   public String remove(long id) {
-    CommentDto commentDto;
     try {
-      commentDto = commentService.remove(id);
+      commentService.remove(id);
     } catch (ObjectNotFoundException exception) {
       return "Comment with id " + id + " not found";
     }
-    return conversionService.convert(commentDto, String.class) + " removed";
+    return "Comment with id " + id + " removed";
   }
 }
