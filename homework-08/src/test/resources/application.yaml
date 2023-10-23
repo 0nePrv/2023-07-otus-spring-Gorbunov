@@ -1,0 +1,13 @@
+spring:
+  data:
+    mongodb:
+      database: library
+      port: 0
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+logging:
+  level:
+    root: error
