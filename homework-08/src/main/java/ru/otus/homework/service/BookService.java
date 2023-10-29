@@ -15,8 +15,4 @@ public interface BookService {
   BookDto update(String id, String name, String authorId, String genreId);
 
   void remove(String id);
-
-  void removeAllByAuthorId(String authorId);
-
-  void removeAllByGenreId(String genreId);
 }

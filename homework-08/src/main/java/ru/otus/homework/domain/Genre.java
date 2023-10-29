@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @Getter
 @Accessors(chain = true)
 @Setter
-@Document(collection = "genres")
+@Document(collection = "genre")
 public class Genre {
 
   @MongoId(FieldType.OBJECT_ID)

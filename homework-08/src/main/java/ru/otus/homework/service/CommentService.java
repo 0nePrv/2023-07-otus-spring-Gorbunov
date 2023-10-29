@@ -14,6 +14,4 @@ public interface CommentService {
   List<CommentDto> getByBookId(String bookId);
 
   void remove(String id);
-
-  void removeAllByBookId(String bookId);
 }

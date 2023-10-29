@@ -2,23 +2,19 @@ package ru.otus.homework.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.exceptions.ObjectNotFoundException;
-import ru.otus.homework.repository.AuthorRepository;
+import ru.otus.homework.repository.base.AuthorRepository;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
   private final AuthorRepository authorRepository;
 
-  private final BookService bookService;
-
   @Autowired
-  public AuthorServiceImpl(AuthorRepository authorRepository, @Lazy BookService bookService) {
+  public AuthorServiceImpl(AuthorRepository authorRepository) {
     this.authorRepository = authorRepository;
-    this.bookService = bookService;
   }
 
   @Override
@@ -40,12 +36,11 @@ public class AuthorServiceImpl implements AuthorService {
   @Override
   public Author update(String id, String name) {
     Author author = new Author().setId(id).setName(name);
-    return authorRepository.save(author);
+    return authorRepository.updateAndCascade(author);
   }
 
   @Override
   public void remove(String id) {
-    bookService.removeAllByAuthorId(id);
-    authorRepository.deleteById(id);
+    authorRepository.deleteByIdAndCascade(id);
   }
 }

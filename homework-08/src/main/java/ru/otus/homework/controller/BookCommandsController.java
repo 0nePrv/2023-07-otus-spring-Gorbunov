@@ -2,6 +2,7 @@ package ru.otus.homework.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
@@ -26,6 +27,9 @@ public class BookCommandsController {
 
   @ShellMethod(value = "Add book. Enter name, authorId, genreId", key = {"addBook", "ab"})
   public String add(String name, String authorId, String genreId) {
+    if (checkIdForInvalidity(authorId, genreId)) {
+      return "Invalid id";
+    }
     BookDto insertedBook;
     try {
       insertedBook = bookService.add(name, authorId, genreId);
@@ -37,6 +41,9 @@ public class BookCommandsController {
 
   @ShellMethod(value = "Get book. Enter id", key = {"getBook", "gb"})
   public String get(String id) {
+    if (checkIdForInvalidity(id)) {
+      return "Invalid id";
+    }
     BookDto book;
     try {
       book = bookService.get(id);
@@ -57,6 +64,9 @@ public class BookCommandsController {
 
   @ShellMethod(value = "Update book. Enter id, name, authorId, genreId", key = {"updateBook", "ub"})
   public String update(String id, String name, String authorId, String genreId) {
+    if (checkIdForInvalidity(id, authorId, genreId)) {
+      return "Invalid id";
+    }
     BookDto bookDto;
     try {
       bookDto = bookService.update(id, name, authorId, genreId);
@@ -68,7 +78,19 @@ public class BookCommandsController {
 
   @ShellMethod(value = "Remove book. Enter id", key = {"removeBook", "rb"})
   public String remove(String id) {
+    if (checkIdForInvalidity(id)) {
+      return "Invalid id";
+    }
     bookService.remove(id);
     return "Book with id " + id + " removed";
+  }
+
+  private boolean checkIdForInvalidity(String ... ids) {
+    for (String id : ids) {
+      if (!ObjectId.isValid(id)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

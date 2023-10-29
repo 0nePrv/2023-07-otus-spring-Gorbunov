@@ -2,6 +2,7 @@ package ru.otus.homework.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
@@ -31,6 +32,9 @@ public class GenreCommandsController {
 
   @ShellMethod(value = "Get genre. Enter id", key = {"getGenre", "gg"})
   public String get(String id) {
+    if (!ObjectId.isValid(id)) {
+      return "Invalid id";
+    }
     Genre genre;
     try {
       genre = genreService.get(id);
@@ -51,12 +55,18 @@ public class GenreCommandsController {
 
   @ShellMethod(value = "Update genre. Enter id, name", key = {"updateGenre", "ug"})
   public String update(String id, String name) {
+    if (!ObjectId.isValid(id)) {
+      return "Invalid id";
+    }
     Genre genre = genreService.update(id, name);
     return conversionService.convert(genre, String.class) + " updated";
   }
 
   @ShellMethod(value = "Remove genre. Enter id", key = {"removeGenre", "rg"})
   public String remove(String id) {
+    if (!ObjectId.isValid(id)) {
+      return "Invalid id";
+    }
     genreService.remove(id);
     return "Genre with id " + id + " removed";
   }

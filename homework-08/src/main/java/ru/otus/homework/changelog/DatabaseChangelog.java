@@ -8,10 +8,10 @@ import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.domain.Genre;
-import ru.otus.homework.repository.AuthorRepository;
-import ru.otus.homework.repository.BookRepository;
-import ru.otus.homework.repository.CommentRepository;
-import ru.otus.homework.repository.GenreRepository;
+import ru.otus.homework.repository.base.AuthorRepository;
+import ru.otus.homework.repository.base.BookRepository;
+import ru.otus.homework.repository.base.CommentRepository;
+import ru.otus.homework.repository.base.GenreRepository;
 
 @ChangeLog
 @SuppressWarnings("unused")

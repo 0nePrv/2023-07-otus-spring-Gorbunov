@@ -3,6 +3,7 @@ package ru.otus.homework.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
@@ -33,6 +34,9 @@ public class AuthorCommandsController {
 
   @ShellMethod(value = "Get author. Enter id", key = {"getAuthor", "ga"})
   public String get(String id) {
+    if (!ObjectId.isValid(id)) {
+      return "Invalid id";
+    }
     Author author;
     try {
       author = authorService.get(id);
@@ -53,12 +57,18 @@ public class AuthorCommandsController {
 
   @ShellMethod(value = "Update author. Enter id, name", key = {"updateAuthor", "ua"})
   public String update(String id, String name) {
+    if (!ObjectId.isValid(id)) {
+      return "Invalid id";
+    }
     Author author = authorService.update(id, name);
     return conversionService.convert(author, String.class) + " updated";
   }
 
   @ShellMethod(value = "Remove author. Enter id", key = {"removeAuthor", "ra"})
   public String remove(String id) {
+    if (!ObjectId.isValid(id)) {
+      return "Invalid id";
+    }
     authorService.remove(id);
     return "Author with id " + id + " removed";
   }

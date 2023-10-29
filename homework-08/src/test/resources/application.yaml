@@ -1,8 +1,9 @@
 spring:
   data:
     mongodb:
-      database: library
+      host: localhost
       port: 0
+      database: test
 de:
   flapdoodle:
     mongodb:
@@ -10,4 +11,11 @@ de:
         version: 4.0.2
 logging:
   level:
-    root: error
+    com.github.cloudyrock.mongock: debug
+    root: info
+mongock:
+  change-logs-scan-package:
+    - ru.otus.homework.changelog
+  runner-type: initializingbean
+
+
