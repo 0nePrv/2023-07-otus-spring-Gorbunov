@@ -31,12 +31,12 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
 
   @Override
   public Book updateWithComments(Book book) {
-    checkAuthor(book.getAuthor().getId());
-    checkGenre(book.getGenre().getId());
-    Query query = new Query(Criteria.where("book._id").is(book.getId()));
+    Author author = checkAuthor(book.getAuthor().getId());
+    Genre genre = checkGenre(book.getGenre().getId());
+    Query query = new Query(Criteria.where("book").is(new ObjectId(book.getId())));
     Update update = new Update().set("book", book);
     mongoOperations.updateMulti(query, update, Comment.class);
-    return mongoOperations.save(book);
+    return mongoOperations.save(book.setAuthor(author).setGenre(genre));
   }
 
   @Override
@@ -48,7 +48,7 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
   }
 
   private Genre checkGenre(String id) {
-    Genre genre = mongoOperations.findById(id, Genre.class);
+    Genre genre = mongoOperations.findById(new ObjectId(id), Genre.class);
     if (genre == null) {
       throw new DataConsistencyException();
     }
@@ -56,7 +56,7 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
   }
 
   private Author checkAuthor(String id) {
-    Author author = mongoOperations.findById(id, Author.class);
+    Author author = mongoOperations.findById(new ObjectId(id), Author.class);
     if (author == null) {
       throw new DataConsistencyException();
     }
