@@ -1,6 +1,5 @@
 package ru.otus.homework.repository.custom;
 
-import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -31,10 +30,10 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
   }
 
   @Override
-  public Book updateAndCascade(Book book) {
+  public Book updateWithComments(Book book) {
     checkAuthor(book.getAuthor().getId());
     checkGenre(book.getGenre().getId());
-    Query query = new Query(Criteria.where("book.id").is(book.getId()));
+    Query query = new Query(Criteria.where("book._id").is(book.getId()));
     Update update = new Update().set("book", book);
     mongoOperations.updateMulti(query, update, Comment.class);
     return mongoOperations.save(book);
@@ -42,10 +41,9 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
 
   @Override
   public void deleteByIdAndCascade(String id) {
-    Query bookQuery = new Query(Criteria.where("id").is(id));
-    List<ObjectId> bookIds = mongoOperations.findAllAndRemove(bookQuery, Book.class)
-        .stream().map(Book::getId).map(ObjectId::new).toList();
-    Query commentQuery = new Query(Criteria.where("book.id").in(bookIds));
+    Query bookQuery = new Query(Criteria.where("_id").is(new ObjectId(id)));
+    mongoOperations.remove(bookQuery, Book.class);
+    Query commentQuery = new Query(Criteria.where("book.id").is(new ObjectId(id)));
     mongoOperations.remove(commentQuery, Comment.class);
   }
 

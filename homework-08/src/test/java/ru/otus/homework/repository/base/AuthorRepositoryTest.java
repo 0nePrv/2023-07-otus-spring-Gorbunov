@@ -3,6 +3,7 @@ package ru.otus.homework.repository.base;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ class AuthorRepositoryTest {
   private static final String NEW_AUTHOR_NAME = "New author name";
 
   @Test
-  @DisplayName("should update and cascade")
-  void shouldCorrectlyUpdateAndCascade() {
+  @DisplayName("should update genre and related books")
+  void shouldCorrectlyUpdateAuthor() {
     List<Author> authors = authorRepository.findAll();
     assertThat(authors).hasSizeGreaterThan(0);
     Author targetAuthor = authors.get(0);
@@ -37,7 +38,7 @@ class AuthorRepositoryTest {
     Author updatedAuthor = authorRepository.updateAndCascade(targetAuthor);
     assertThat(updatedAuthor.getName()).isEqualTo(NEW_AUTHOR_NAME);
 
-    Query query = new Query(Criteria.where("author.id").is(updatedAuthor.getId()));
+    Query query = new Query(Criteria.where("author._id").is(updatedAuthor.getId()));
     List<Book> books = mongoOperations.find(query, Book.class);
     assertThat(books).isNotNull()
         .hasSizeGreaterThan(0)
@@ -51,23 +52,23 @@ class AuthorRepositoryTest {
     assertThat(authors).hasSizeGreaterThan(0);
     Author targetAuthor = authors.get(0);
 
-    Query queryForBooks = new Query(Criteria.where("author.id").is(targetAuthor.getId()));
+    Query queryForBooks = new Query(Criteria.where("author._id").is(targetAuthor.getId()));
     List<Book> booksBeforeDelete = mongoOperations.find(queryForBooks, Book.class);
 
     authorRepository.deleteByIdAndCascade(targetAuthor.getId());
 
     // checking author removed
-    assertThat(mongoOperations.find(new Query(Criteria.where("_id").in(targetAuthor.getId())),
+    assertThat(mongoOperations.find(new Query(Criteria.where("_id").is(targetAuthor.getId())),
         Author.class)).hasSize(0);
 
     // checking books removed
     List<Book> booksAfterDelete = mongoOperations.find(queryForBooks, Book.class);
     assertThat(booksAfterDelete).hasSize(0);
 
-    List<String> bookIds = booksBeforeDelete.stream().map(Book::getId).toList();
+    List<ObjectId> bookIds = booksBeforeDelete.stream().map(b -> new ObjectId(b.getId())).toList();
 
     // checking comments removed
-    Query queryForComments = new Query(Criteria.where("book.id").is(bookIds));
+    Query queryForComments = new Query(Criteria.where("book._id").in(bookIds));
     assertThat(mongoOperations.find(queryForComments, Comment.class)).hasSize(0);
   }
 }

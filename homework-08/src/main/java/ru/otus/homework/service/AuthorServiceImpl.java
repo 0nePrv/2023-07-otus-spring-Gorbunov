@@ -19,7 +19,7 @@ public class AuthorServiceImpl implements AuthorService {
 
   @Override
   public Author add(String name) {
-    Author author = new Author().setName(name);
+    Author author = new Author(name);
     return authorRepository.save(author);
   }
 
@@ -35,7 +35,7 @@ public class AuthorServiceImpl implements AuthorService {
 
   @Override
   public Author update(String id, String name) {
-    Author author = new Author().setId(id).setName(name);
+    Author author = new Author(id, name);
     return authorRepository.updateAndCascade(author);
   }
 

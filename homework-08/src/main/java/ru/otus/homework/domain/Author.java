@@ -1,23 +1,28 @@
 package ru.otus.homework.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 
 @Setter
 @Getter
-@Accessors(chain = true)
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Document(collection = "author")
 public class Author {
 
-  @MongoId(FieldType.OBJECT_ID)
+  @Id
   private String id;
 
   @Field
   private String name;
+
+  public Author(String name) {
+    this.name = name;
+  }
 }

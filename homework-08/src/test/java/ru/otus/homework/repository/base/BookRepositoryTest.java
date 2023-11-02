@@ -37,11 +37,12 @@ class BookRepositoryTest {
     assertThat(genres).hasSizeGreaterThan(0);
     assertThat(authors).hasSizeGreaterThan(0);
 
-    Book book = new Book().setName("New book")
-        .setAuthor(new Author().setId(new ObjectId().toString()))
-        .setGenre(new Genre().setId(new ObjectId().toString()));
+    Author author = new Author();
+    author.setId(new ObjectId().toString());
+    Genre genre = new Genre();
+    genre.setId(new ObjectId().toString());
+    Book book = new Book().setName("New book").setAuthor(author).setGenre(genre);
     assertThrows(DataConsistencyException.class, () -> bookRepository.checkAndInsert(book));
-
     book.setAuthor(authors.get(0)).setGenre(genres.get(0));
     Book insertedBook = assertDoesNotThrow(() -> bookRepository.checkAndInsert(book));
 
@@ -62,11 +63,11 @@ class BookRepositoryTest {
     bookRepository.deleteByIdAndCascade(targetBook.getId());
 
     // checking books removed
-    Query queryForBooks = new Query(Criteria.where("id").is(targetBook.getId()));
+    Query queryForBooks = new Query(Criteria.where("_id").is(targetBook.getId()));
     assertThat(mongoOperations.find(queryForBooks, Book.class)).hasSize(0);
 
     // checking comments removed
-    Query queryForComments = new Query(Criteria.where("book.id").is(targetBook.getId()));
+    Query queryForComments = new Query(Criteria.where("book._id").is(targetBook.getId()));
     assertThat(mongoOperations.find(queryForComments, Comment.class)).hasSize(0);
   }
 }

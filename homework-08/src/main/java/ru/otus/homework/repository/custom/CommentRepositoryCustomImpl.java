@@ -21,6 +21,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
     if (book == null) {
       throw new DataConsistencyException();
     }
-    return mongoOperations.save(comment.setBook(book));
+    comment.setBook(book);
+    return mongoOperations.save(comment);
   }
 }

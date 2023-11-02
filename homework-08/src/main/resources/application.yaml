@@ -12,4 +12,3 @@ mongock:
   change-logs-scan-package:
     - ru.otus.homework.changelog
   runner-type: initializingbean
-

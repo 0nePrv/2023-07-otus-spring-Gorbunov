@@ -31,43 +31,40 @@ public class DatabaseChangelog {
   @ChangeSet(order = "002", id = "insertAuthors", author = "0nePrv", runAlways = true)
   public void insertAuthors(AuthorRepository authorRepository) {
     authors = authorRepository.saveAll(List.of(
-        new Author().setName("William Shakespeare"),
-        new Author().setName("Fyodor Dostoevsky"),
-        new Author().setName("Leo Tolstoy"),
-        new Author().setName("Jane Austen"),
-        new Author().setName("Charles Dickens"),
-        new Author().setName("Gabriel Garcia Marquez"),
-        new Author().setName("George Orwell"),
-        new Author().setName("Ernest Hemingway"),
-        new Author().setName("Henry James")
+        new Author("William Shakespeare"),
+        new Author("Fyodor Dostoevsky"),
+        new Author("Leo Tolstoy"),
+        new Author("Jane Austen"),
+        new Author("Charles Dickens"),
+        new Author("Gabriel Garcia Marquez"),
+        new Author("George Orwell"),
+        new Author("Ernest Hemingway"),
+        new Author("Henry James")
     ));
   }
 
   @ChangeSet(order = "002", id = "insertGenres", author = "0nePrv", runAlways = true)
   public void insertGenres(GenreRepository genreRepository) {
     genres = genreRepository.saveAll(List.of(
-        new Genre().setName("Drama"),
-        new Genre().setName("Novel"),
-        new Genre().setName("Satire"),
-        new Genre().setName("Adventure")
+        new Genre("Drama"),
+        new Genre("Novel"),
+        new Genre("Satire"),
+        new Genre("Adventure")
     ));
   }
 
   @ChangeSet(order = "003", id = "insertBooks", author = "0nePrv", runAlways = true)
   public void insertBooks(BookRepository bookRepository) {
     books = List.of(
-        new Book().setName("Hamlet").setGenre(genres.get(0)).setAuthor(authors.get(0)),
-        new Book().setName("Crime and Punishment").setGenre(genres.get(1))
-            .setAuthor(authors.get(1)),
-        new Book().setName("War and Peace").setGenre(genres.get(1)).setAuthor(authors.get(2)),
-        new Book().setName("Pride and Prejudice").setGenre(genres.get(2)).setAuthor(authors.get(3)),
-        new Book().setName("Oliver Twist").setGenre(genres.get(2)).setAuthor(authors.get(4)),
-        new Book().setName("One Hundred Years of Solitude").setGenre(genres.get(1))
-            .setAuthor(authors.get(5)),
-        new Book().setName("1984").setGenre(genres.get(3)).setAuthor(authors.get(6)),
-        new Book().setName("Farewell to Arms").setGenre(genres.get(3)).setAuthor(authors.get(7)),
-        new Book().setName("The Portrait of a Lady").setGenre(genres.get(1))
-            .setAuthor(authors.get(8))
+        new Book("Hamlet", authors.get(0), genres.get(0)),
+        new Book("Crime and Punishment", authors.get(1), genres.get(1)),
+        new Book("War and Peace", authors.get(2), genres.get(1)),
+        new Book("Pride and Prejudice", authors.get(3), genres.get(2)),
+        new Book("Oliver Twist", authors.get(4), genres.get(2)),
+        new Book("One Hundred Years of Solitude", authors.get(5), genres.get(1)),
+        new Book("1984", authors.get(6), genres.get(3)),
+        new Book("Farewell to Arms", authors.get(7), genres.get(3)),
+        new Book("The Portrait of a Lady", authors.get(8), genres.get(1))
     );
     books = bookRepository.saveAll(books);
   }
@@ -75,26 +72,24 @@ public class DatabaseChangelog {
   @ChangeSet(order = "004", id = "insertComments", author = "0nePrv", runAlways = true)
   public void insertComments(CommentRepository commentRepository) {
     commentRepository.saveAll(List.of(
-        new Comment().setBook(books.get(0))
-            .setText("Intriguing and thought-provoking; a must-read for anyone who loves a"
-                + " captivating blend of science, adventure, and suspense"),
-        new Comment().setBook(books.get(1))
-            .setText("A spellbinding tale that weaves together mystery, romance, and the complexities of human nature"),
-        new Comment().setBook(books.get(2))
-            .setText("An epic of Russian literature that delves deep into the human psyche, "
-                + "exploring the moral dilemmas of its compelling characters"),
-        new Comment().setBook(books.get(3))
-            .setText("A timeless classic exploring the intricacies of societal expectations and the power of love"),
-        new Comment().setBook(books.get(4))
-            .setText("A Dickensian masterpiece filled with vivid characters and a compelling narrative"),
-        new Comment().setBook(books.get(5))
-            .setText("A literary marvel that transports readers to a world of magical realism"),
-        new Comment().setBook(books.get(6))
-            .setText("A dystopian masterpiece that serves as a stark warning about the dangers of totalitarianism"),
-        new Comment().setBook(books.get(7))
-            .setText("Hemingway's poignant portrayal of love and loss during wartime"),
-        new Comment().setBook(books.get(8))
-            .setText("A rich and intricate exploration of society, identity, and personal freedom")
+        new Comment("Intriguing and thought-provoking; a must-read for anyone who loves a"
+            + " captivating blend of science, adventure, and suspense", books.get(0)),
+        new Comment("A spellbinding tale that weaves together mystery, romance, "
+            + "and the complexities of human nature", books.get(1)),
+        new Comment("An epic of Russian literature that delves deep into the human psyche, "
+            + "exploring the moral dilemmas of its compelling characters", books.get(2)),
+        new Comment("A timeless classic exploring the intricacies of societal expectations"
+            + " and the power of love", books.get(3)),
+        new Comment("A Dickensian masterpiece filled with vivid characters and a compelling"
+            + " narrative", books.get(4)),
+        new Comment("A literary marvel that transports readers to a world of magical realism",
+            books.get(5)),
+        new Comment("A dystopian masterpiece that serves as a stark warning about the dangers"
+            + " of totalitarianism", books.get(6)),
+        new Comment("Hemingway's poignant portrayal of love and loss during wartime",
+            books.get(7)),
+        new Comment("A rich and intricate exploration of society, identity, and personal "
+            + "freedom", books.get(8))
     ));
   }
 }

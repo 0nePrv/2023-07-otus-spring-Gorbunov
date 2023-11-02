@@ -47,8 +47,9 @@ class CommentRepositoryTest {
     List<Book> books = mongoOperations.findAll(Book.class);
     assertThat(books).hasSizeGreaterThan(0);
 
-    Comment comment = new Comment().setText("Some text")
-        .setBook(new Book().setId(new ObjectId().toString()));
+    Book book = new Book();
+    book.setId(new ObjectId().toString());
+    Comment comment = new Comment("Some text", book);
     assertThrows(DataConsistencyException.class, () -> commentRepository.checkAndInsert(comment));
 
     comment.setBook(books.get(0));

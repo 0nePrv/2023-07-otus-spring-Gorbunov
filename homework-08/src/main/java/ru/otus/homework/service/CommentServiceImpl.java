@@ -26,7 +26,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   public CommentDto add(String bookId, String text) {
-    Comment comment = new Comment().setBook(new Book().setId(bookId)).setText(text);
+    Comment comment = new Comment(text, new Book(bookId));
     comment = commentRepository.checkAndInsert(comment);
     return conversionService.convert(comment, CommentDto.class);
   }
@@ -45,8 +45,7 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   public CommentDto update(String id, String bookId, String text) {
-    Comment comment = new Comment().setId(id).setText(text)
-        .setBook(new Book().setId(bookId));
+    Comment comment = new Comment(id, text, new Book(bookId));
     comment = commentRepository.checkAndInsert(comment);
     return conversionService.convert(comment, CommentDto.class);
   }

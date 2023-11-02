@@ -26,9 +26,7 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public BookDto add(String name, String authorId, String genreId) {
-    Book book = new Book().setName(name)
-        .setAuthor(new Author().setId(authorId))
-        .setGenre(new Genre().setId(genreId));
+    Book book = new Book(name, new Author(authorId), new Genre(genreId));
     book = bookRepository.checkAndInsert(book);
     return conversionService.convert(book, BookDto.class);
   }
@@ -47,10 +45,8 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public BookDto update(String id, String name, String authorId, String genreId) {
-    Book book = new Book().setId(id).setName(name)
-        .setAuthor(new Author().setId(authorId))
-        .setGenre(new Genre().setId(genreId));
-    book = bookRepository.updateAndCascade(book);
+    Book book = new Book(id, name, new Author(authorId), new Genre(genreId));
+    book = bookRepository.updateWithComments(book);
     return conversionService.convert(book, BookDto.class);
   }
 
