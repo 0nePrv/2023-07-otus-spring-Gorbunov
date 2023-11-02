@@ -4,7 +4,7 @@ import ru.otus.homework.domain.Author;
 
 public interface AuthorRepositoryCustom {
 
-  Author updateAndCascade(Author author);
+  Author updateWithBooks(Author author);
 
   void deleteByIdAndCascade(String id);
 }

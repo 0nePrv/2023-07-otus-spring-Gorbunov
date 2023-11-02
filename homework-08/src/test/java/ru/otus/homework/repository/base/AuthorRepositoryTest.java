@@ -35,7 +35,7 @@ class AuthorRepositoryTest {
     Author targetAuthor = authors.get(0);
 
     targetAuthor.setName(NEW_AUTHOR_NAME);
-    Author updatedAuthor = authorRepository.updateAndCascade(targetAuthor);
+    Author updatedAuthor = authorRepository.updateWithBooks(targetAuthor);
     assertThat(updatedAuthor.getName()).isEqualTo(NEW_AUTHOR_NAME);
 
     Query query = new Query(Criteria.where("author._id").is(updatedAuthor.getId()));

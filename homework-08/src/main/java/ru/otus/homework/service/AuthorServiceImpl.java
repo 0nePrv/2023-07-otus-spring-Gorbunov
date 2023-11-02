@@ -36,7 +36,7 @@ public class AuthorServiceImpl implements AuthorService {
   @Override
   public Author update(String id, String name) {
     Author author = new Author(id, name);
-    return authorRepository.updateAndCascade(author);
+    return authorRepository.updateWithBooks(author);
   }
 
   @Override

@@ -26,7 +26,7 @@ public class AuthorRepositoryCustomImpl implements AuthorRepositoryCustom {
   }
 
   @Override
-  public Author updateAndCascade(Author author) {
+  public Author updateWithBooks(Author author) {
     Query query = new Query(Criteria.where("author._id").is(author.getId()));
     Update update = new Update().set("author", author);
     mongoOperations.updateMulti(query, update, Book.class);
