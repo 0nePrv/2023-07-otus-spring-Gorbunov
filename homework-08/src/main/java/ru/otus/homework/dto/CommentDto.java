@@ -12,4 +12,8 @@ public class CommentDto {
   private final String text;
 
   private final String bookName;
+
+  private final String authorName;
+
+  private final String genreName;
 }

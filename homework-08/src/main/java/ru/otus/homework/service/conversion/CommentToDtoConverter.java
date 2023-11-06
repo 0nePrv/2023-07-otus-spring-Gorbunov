@@ -11,6 +11,9 @@ public class CommentToDtoConverter implements Converter<Comment, CommentDto> {
 
   @Override
   public CommentDto convert(@NonNull Comment comment) {
-    return new CommentDto(comment.getId(), comment.getText(), comment.getBook().getName());
+    return new CommentDto(
+        comment.getId(), comment.getText(), comment.getBook().getName(),
+        comment.getBook().getAuthor().getName(), comment.getBook().getGenre().getName()
+    );
   }
 }

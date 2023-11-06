@@ -9,7 +9,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.homework.domain.Author;
-import ru.otus.homework.exceptions.ObjectNotFoundException;
+import ru.otus.homework.exceptions.AuthorNotExistException;
 import ru.otus.homework.service.AuthorService;
 
 @ShellComponent
@@ -28,6 +28,9 @@ public class AuthorCommandsController {
 
   @ShellMethod(value = "Add author. Enter name", key = {"addAuthor", "aa"})
   public String add(String name) {
+    if (name == null || name.isBlank()) {
+      return "Name can not be blank";
+    }
     Author insertedAuthor = authorService.add(name);
     return conversionService.convert(insertedAuthor, String.class) + " added";
   }
@@ -40,8 +43,8 @@ public class AuthorCommandsController {
     Author author;
     try {
       author = authorService.get(id);
-    } catch (ObjectNotFoundException exception) {
-      return "Author with id " + id + " not found";
+    } catch (AuthorNotExistException exception) {
+      return "Author with id " + id + " does not exist";
     }
     return conversionService.convert(author, String.class);
   }
@@ -60,7 +63,15 @@ public class AuthorCommandsController {
     if (!ObjectId.isValid(id)) {
       return "Invalid id";
     }
-    Author author = authorService.update(id, name);
+    if (name == null || name.isBlank()) {
+      return "Name can not be blank";
+    }
+    Author author;
+    try {
+      author = authorService.update(id, name);
+    } catch (AuthorNotExistException exception) {
+      return "Author with id " + id + " does not exist";
+    }
     return conversionService.convert(author, String.class) + " updated";
   }
 

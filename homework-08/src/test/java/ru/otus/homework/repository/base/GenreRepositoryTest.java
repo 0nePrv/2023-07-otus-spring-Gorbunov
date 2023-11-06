@@ -3,6 +3,7 @@ package ru.otus.homework.repository.base;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,12 @@ import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.domain.Genre;
 
+@Slf4j
 @DataMongoTest
 @DisplayName("Genre repository")
 class GenreRepositoryTest {
+
+  private static final String NEW_GENRE_NAME = "New genre name";
 
   @Autowired
   private GenreRepository genreRepository;
@@ -25,50 +29,52 @@ class GenreRepositoryTest {
   @Autowired
   private MongoOperations mongoOperations;
 
-  private static final String NEW_GENRE_NAME = "New genre name";
 
   @Test
-  @DisplayName("should update genre and related books")
+  @DisplayName("should update genre, related books and comments")
   void shouldCorrectlyUpdateGenre() {
     List<Genre> genres = genreRepository.findAll();
     assertThat(genres).hasSizeGreaterThan(0);
     Genre targetGenre = genres.get(0);
-
+    ObjectId targetGenreObjectId = new ObjectId(targetGenre.getId());
     targetGenre.setName(NEW_GENRE_NAME);
-    Genre updatedGenre = genreRepository.updateWithBooks(targetGenre);
-    assertThat(updatedGenre.getName()).isEqualTo(NEW_GENRE_NAME);
 
-    Query query = new Query(Criteria.where("genre._id").is(updatedGenre.getId()));
+    Genre updatedGenre = genreRepository.updateGenreWithBooksAndComments(targetGenre);
+
+    //checking genre updated
+    assertThat(updatedGenre.getName()).isEqualTo(NEW_GENRE_NAME);
+    // checking books updated
+    Query query = new Query(Criteria.where("genre._id").is(targetGenreObjectId));
     List<Book> books = mongoOperations.find(query, Book.class);
-    assertThat(books).isNotNull()
-        .hasSizeGreaterThan(0)
-        .allMatch(b -> b.getGenre().getName().equals(NEW_GENRE_NAME));
+    assertThat(books).isNotNull();
+    books.forEach(
+        b -> assertThat(b.getGenre()).usingRecursiveComparison().isEqualTo(targetGenre));
+    // checking comments updated
+    Query commentQuery = new Query(Criteria.where("book.genre._id").is(targetGenreObjectId));
+    List<Comment> comments = mongoOperations.find(commentQuery, Comment.class);
+    assertThat(comments).isNotNull();
+    comments.forEach(c -> assertThat(c.getBook().getGenre())
+        .usingRecursiveComparison().isEqualTo(targetGenre));
   }
 
   @Test
-  @DisplayName("should correctly delete by id and cascade")
-  void shouldCorrectlyDeleteByIdAndCascade() {
+  @DisplayName("should correctly delete genre, related books and comments by id")
+  void shouldCorrectlyCascadeDeleteById() {
     List<Genre> genres = genreRepository.findAll();
     assertThat(genres).hasSizeGreaterThan(0);
     Genre targetGenre = genres.get(0);
+    ObjectId targetGenreObjectId = new ObjectId(targetGenre.getId());
 
-    Query queryForBooks = new Query(Criteria.where("genre._id").is(targetGenre.getId()));
-    List<Book> booksBeforeDelete = mongoOperations.find(queryForBooks, Book.class);
-
-    genreRepository.deleteByIdAndCascade(targetGenre.getId());
+    genreRepository.cascadeDeleteById(targetGenre.getId());
 
     // checking books removed
-    List<Book> booksAfterDelete = mongoOperations.find(queryForBooks, Book.class);
-    assertThat(booksAfterDelete).hasSize(0);
-
-    List<ObjectId> bookIds = booksBeforeDelete.stream().map(b -> new ObjectId(b.getId())).toList();
-
+    Query queryForBooks = new Query(Criteria.where("genre._id").is(targetGenreObjectId));
+    assertThat(mongoOperations.find(queryForBooks, Book.class)).hasSize(0);
     // checking comments removed
-    Query queryForComments = new Query(Criteria.where("book._id").in(bookIds));
+    Query queryForComments = new Query(Criteria.where("book.genre._id").is(targetGenreObjectId));
     assertThat(mongoOperations.find(queryForComments, Comment.class)).hasSize(0);
-
     // checking genres removed
-    assertThat(mongoOperations.find(new Query(Criteria.where("_id").is(targetGenre.getId())),
+    assertThat(mongoOperations.find(new Query(Criteria.where("_id").is(targetGenreObjectId)),
         Genre.class)).hasSize(0);
   }
 }

@@ -1,8 +1,6 @@
 package ru.otus.homework.repository.base;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -17,40 +15,48 @@ import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.domain.Genre;
-import ru.otus.homework.exceptions.DataConsistencyException;
 
 @DataMongoTest
 @DisplayName("Book repository")
 class BookRepositoryTest {
 
+  private static final String NEW_BOOK_NAME = "New book name";
+
+  private static final Author NEW_AUTHOR = new Author("New author name");
+
+  private static final Genre NEW_GENRE = new Genre("New genre name");
+
   @Autowired
   private BookRepository bookRepository;
+
+  @Autowired
+  private AuthorRepository authorRepository;
+
+  @Autowired
+  private GenreRepository genreRepository;
 
   @Autowired
   private MongoOperations mongoOperations;
 
   @Test
-  @DisplayName("should correctly insert")
-  void shouldCorrectlyInsert() {
-    List<Genre> genres = mongoOperations.findAll(Genre.class);
-    List<Author> authors = mongoOperations.findAll(Author.class);
-    assertThat(genres).hasSizeGreaterThan(0);
-    assertThat(authors).hasSizeGreaterThan(0);
+  @DisplayName("should update author, related books and comments")
+  void shouldCorrectlyUpdateAuthor() {
+    List<Book> books = bookRepository.findAll();
+    assertThat(books).hasSizeGreaterThan(0);
+    Book targetBook = books.get(0);
+    Author targetAuthor = authorRepository.save(NEW_AUTHOR);
+    Genre targetGenre = genreRepository.save(NEW_GENRE);
+    targetBook.setName(NEW_BOOK_NAME).setAuthor(targetAuthor).setGenre(targetGenre);
 
-    Author author = new Author();
-    author.setId(new ObjectId().toString());
-    Genre genre = new Genre();
-    genre.setId(new ObjectId().toString());
-    Book book = new Book().setName("New book").setAuthor(author).setGenre(genre);
-    assertThrows(DataConsistencyException.class, () -> bookRepository.checkAndInsert(book));
-    book.setAuthor(authors.get(0)).setGenre(genres.get(0));
-    Book insertedBook = assertDoesNotThrow(() -> bookRepository.checkAndInsert(book));
+    Book updatedBook = bookRepository.updateWithComments(targetBook);
 
-    assertThat(insertedBook).isNotNull()
-        .matches(b -> b.getId() != null)
-        .matches(b -> b.getAuthor() != null)
-        .matches(b -> b.getGenre() != null)
-        .matches(b -> b.getName() != null);
+    //checking book updated
+    assertThat(updatedBook).usingRecursiveComparison().isEqualTo(targetBook);
+    // checking comments updated
+    Query commentQuery = new Query(Criteria.where("book._id").is(new ObjectId(targetBook.getId())));
+    List<Comment> comments = mongoOperations.find(commentQuery, Comment.class);
+    assertThat(comments).isNotNull();
+    comments.forEach(c -> assertThat(c.getBook()).usingRecursiveComparison().isEqualTo(targetBook));
   }
 
   @Test
@@ -59,15 +65,15 @@ class BookRepositoryTest {
     List<Book> books = bookRepository.findAll();
     assertThat(books).hasSizeGreaterThan(0);
     Book targetBook = books.get(0);
+    ObjectId targetBookObjectId = new ObjectId(targetBook.getId());
 
-    bookRepository.deleteByIdAndCascade(targetBook.getId());
+    bookRepository.cascadeDeleteById(targetBook.getId());
 
     // checking books removed
-    Query queryForBooks = new Query(Criteria.where("_id").is(targetBook.getId()));
+    Query queryForBooks = new Query(Criteria.where("_id").is(targetBookObjectId));
     assertThat(mongoOperations.find(queryForBooks, Book.class)).hasSize(0);
-
     // checking comments removed
-    Query queryForComments = new Query(Criteria.where("book._id").is(targetBook.getId()));
+    Query queryForComments = new Query(Criteria.where("book._id").is(targetBookObjectId));
     assertThat(mongoOperations.find(queryForComments, Comment.class)).hasSize(0);
   }
 }

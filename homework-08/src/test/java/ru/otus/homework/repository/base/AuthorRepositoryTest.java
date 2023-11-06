@@ -19,56 +19,61 @@ import ru.otus.homework.domain.Comment;
 @DisplayName("Author repository")
 class AuthorRepositoryTest {
 
+  private static final String NEW_AUTHOR_NAME = "New author name";
+
   @Autowired
   private AuthorRepository authorRepository;
 
   @Autowired
   private MongoOperations mongoOperations;
 
-  private static final String NEW_AUTHOR_NAME = "New author name";
 
   @Test
-  @DisplayName("should update genre and related books")
+  @DisplayName("should update author, related books and comments")
   void shouldCorrectlyUpdateAuthor() {
     List<Author> authors = authorRepository.findAll();
     assertThat(authors).hasSizeGreaterThan(0);
     Author targetAuthor = authors.get(0);
-
+    ObjectId targetAuthorObjectId = new ObjectId(targetAuthor.getId());
     targetAuthor.setName(NEW_AUTHOR_NAME);
-    Author updatedAuthor = authorRepository.updateWithBooks(targetAuthor);
-    assertThat(updatedAuthor.getName()).isEqualTo(NEW_AUTHOR_NAME);
 
-    Query query = new Query(Criteria.where("author._id").is(updatedAuthor.getId()));
-    List<Book> books = mongoOperations.find(query, Book.class);
-    assertThat(books).isNotNull()
-        .hasSizeGreaterThan(0)
-        .allMatch(b -> b.getAuthor().getName().equals(NEW_AUTHOR_NAME));
+    Author updatedAuthor = authorRepository.updateAuthorWithBooksAndComments(targetAuthor);
+
+    //checking author updated
+    assertThat(updatedAuthor).isEqualTo(targetAuthor);
+    // checking books updated
+    Query bookQuery = new Query(Criteria.where("author._id").is(targetAuthorObjectId));
+    List<Book> books = mongoOperations.find(bookQuery, Book.class);
+    assertThat(books).isNotNull();
+    books.forEach(
+        b -> assertThat(b.getAuthor()).usingRecursiveComparison().isEqualTo(targetAuthor));
+    // checking comments updated
+    Query commentQuery = new Query(Criteria.where("book.author._id").is(targetAuthorObjectId));
+    List<Comment> comments = mongoOperations.find(commentQuery, Comment.class);
+    assertThat(comments).isNotNull();
+    comments.forEach(c -> assertThat(c.getBook().getAuthor())
+        .usingRecursiveComparison().isEqualTo(targetAuthor));
   }
 
   @Test
-  @DisplayName("should correctly delete by id and cascade")
-  void shouldCorrectlyDeleteByIdAndCascade() {
+  @DisplayName("should correctly delete author, related books and comments by id")
+  void shouldCorrectlyCascadeDeleteByIdAnd() {
     List<Author> authors = authorRepository.findAll();
     assertThat(authors).hasSizeGreaterThan(0);
     Author targetAuthor = authors.get(0);
+    ObjectId targetAuthorObjectId = new ObjectId(targetAuthor.getId());
 
-    Query queryForBooks = new Query(Criteria.where("author._id").is(targetAuthor.getId()));
-    List<Book> booksBeforeDelete = mongoOperations.find(queryForBooks, Book.class);
-
-    authorRepository.deleteByIdAndCascade(targetAuthor.getId());
+    authorRepository.cascadeDeleteById(targetAuthor.getId());
 
     // checking author removed
-    assertThat(mongoOperations.find(new Query(Criteria.where("_id").is(targetAuthor.getId())),
+    assertThat(mongoOperations.find(new Query(Criteria.where("_id").is(targetAuthorObjectId)),
         Author.class)).hasSize(0);
-
     // checking books removed
-    List<Book> booksAfterDelete = mongoOperations.find(queryForBooks, Book.class);
-    assertThat(booksAfterDelete).hasSize(0);
-
-    List<ObjectId> bookIds = booksBeforeDelete.stream().map(b -> new ObjectId(b.getId())).toList();
-
+    Query queryForBooks = new Query(Criteria.where("author._id").is(targetAuthorObjectId));
+    assertThat(mongoOperations.find(queryForBooks, Book.class)).hasSize(0);
     // checking comments removed
-    Query queryForComments = new Query(Criteria.where("book._id").in(bookIds));
+    Query queryForComments = new Query(
+        Criteria.where("book.author._id").is(targetAuthorObjectId));
     assertThat(mongoOperations.find(queryForComments, Comment.class)).hasSize(0);
   }
 }

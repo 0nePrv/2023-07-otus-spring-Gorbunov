@@ -8,8 +8,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.homework.dto.BookDto;
-import ru.otus.homework.exceptions.DataConsistencyException;
-import ru.otus.homework.exceptions.ObjectNotFoundException;
+import ru.otus.homework.exceptions.BookNotExistException;
+import ru.otus.homework.exceptions.BookRelationNotExistException;
 import ru.otus.homework.service.BookService;
 
 @ShellComponent
@@ -30,11 +30,14 @@ public class BookCommandsController {
     if (checkIdForInvalidity(authorId, genreId)) {
       return "Invalid id";
     }
+    if (name == null || name.isBlank()) {
+      return "Name can not be blank";
+    }
     BookDto insertedBook;
     try {
       insertedBook = bookService.add(name, authorId, genreId);
-    } catch (DataConsistencyException exception) {
-      return "Author or genre with entered id may not exist";
+    } catch (BookRelationNotExistException exception) {
+      return exception.getMessage() + " so book can not be added";
     }
     return conversionService.convert(insertedBook, String.class) + " added";
   }
@@ -47,8 +50,8 @@ public class BookCommandsController {
     BookDto book;
     try {
       book = bookService.get(id);
-    } catch (ObjectNotFoundException exception) {
-      return "Book with id " + id + " not found";
+    } catch (BookNotExistException exception) {
+      return "Book with id " + id + " does not exist";
     }
     return conversionService.convert(book, String.class);
   }
@@ -67,11 +70,16 @@ public class BookCommandsController {
     if (checkIdForInvalidity(id, authorId, genreId)) {
       return "Invalid id";
     }
+    if (name == null || name.isBlank()) {
+      return "Name can not be blank";
+    }
     BookDto bookDto;
     try {
       bookDto = bookService.update(id, name, authorId, genreId);
-    } catch (DataConsistencyException exception) {
-      return "Author or genre with entered id may not exist";
+    } catch (BookNotExistException exception) {
+      return "Book with id " + id + " does not exist";
+    } catch (BookRelationNotExistException exception) {
+      return exception.getMessage() + " so book can not be updated";
     }
     return conversionService.convert(bookDto, String.class) + " updated";
   }
@@ -85,7 +93,7 @@ public class BookCommandsController {
     return "Book with id " + id + " removed";
   }
 
-  private boolean checkIdForInvalidity(String ... ids) {
+  private boolean checkIdForInvalidity(String... ids) {
     for (String id : ids) {
       if (!ObjectId.isValid(id)) {
         return true;

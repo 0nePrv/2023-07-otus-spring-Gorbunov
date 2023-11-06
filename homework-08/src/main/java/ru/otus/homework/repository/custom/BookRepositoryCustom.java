@@ -6,7 +6,5 @@ public interface BookRepositoryCustom {
 
   Book updateWithComments(Book book);
 
-  void deleteByIdAndCascade(String id);
-
-  Book checkAndInsert(Book book);
+  void cascadeDeleteById(String id);
 }

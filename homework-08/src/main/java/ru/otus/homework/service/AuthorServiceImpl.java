@@ -4,7 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.homework.domain.Author;
-import ru.otus.homework.exceptions.ObjectNotFoundException;
+import ru.otus.homework.exceptions.AuthorNotExistException;
 import ru.otus.homework.repository.base.AuthorRepository;
 
 @Service
@@ -19,8 +19,7 @@ public class AuthorServiceImpl implements AuthorService {
 
   @Override
   public Author add(String name) {
-    Author author = new Author(name);
-    return authorRepository.save(author);
+    return authorRepository.save(new Author(name));
   }
 
   @Override
@@ -30,17 +29,23 @@ public class AuthorServiceImpl implements AuthorService {
 
   @Override
   public Author get(String id) {
-    return authorRepository.findById(id).orElseThrow(ObjectNotFoundException::new);
+    return getAuthorByIdOrThrowException(id);
   }
 
   @Override
   public Author update(String id, String name) {
-    Author author = new Author(id, name);
-    return authorRepository.updateWithBooks(author);
+    Author author = getAuthorByIdOrThrowException(id);
+    author.setName(name);
+    return authorRepository.updateAuthorWithBooksAndComments(author);
   }
 
   @Override
   public void remove(String id) {
-    authorRepository.deleteByIdAndCascade(id);
+    authorRepository.cascadeDeleteById(id);
+  }
+
+  private Author getAuthorByIdOrThrowException(String id) {
+    return authorRepository.findById(id).orElseThrow(
+        () -> new AuthorNotExistException("Author with id " + id + " does not exist"));
   }
 }

@@ -4,7 +4,7 @@ import ru.otus.homework.domain.Genre;
 
 public interface GenreRepositoryCustom {
 
-  Genre updateWithBooks(Genre genre);
+  Genre updateGenreWithBooksAndComments(Genre genre);
 
-  void deleteByIdAndCascade(String id);
+  void cascadeDeleteById(String id);
 }

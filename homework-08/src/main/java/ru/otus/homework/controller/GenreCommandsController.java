@@ -8,7 +8,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.homework.domain.Genre;
-import ru.otus.homework.exceptions.ObjectNotFoundException;
+import ru.otus.homework.exceptions.GenreNotExistException;
 import ru.otus.homework.service.GenreService;
 
 @ShellComponent
@@ -26,6 +26,9 @@ public class GenreCommandsController {
 
   @ShellMethod(value = "Add genre. Enter name", key = {"addGenre", "ag"})
   public String add(String name) {
+    if (name == null || name.isBlank()) {
+      return "Name can not be blank";
+    }
     Genre insertedGenre = genreService.add(name);
     return conversionService.convert(insertedGenre, String.class) + " added";
   }
@@ -38,8 +41,8 @@ public class GenreCommandsController {
     Genre genre;
     try {
       genre = genreService.get(id);
-    } catch (ObjectNotFoundException exception) {
-      return "Genre with id " + id + " not found";
+    } catch (GenreNotExistException exception) {
+      return "Genre with id " + id + " does not exist";
     }
     return conversionService.convert(genre, String.class);
   }
@@ -58,7 +61,15 @@ public class GenreCommandsController {
     if (!ObjectId.isValid(id)) {
       return "Invalid id";
     }
-    Genre genre = genreService.update(id, name);
+    if (name == null || name.isBlank()) {
+      return "Name can not be blank";
+    }
+    Genre genre;
+    try {
+      genre = genreService.update(id, name);
+    } catch (GenreNotExistException exception) {
+      return "Genre with id " + id + " does not exist";
+    }
     return conversionService.convert(genre, String.class) + " updated";
   }
 

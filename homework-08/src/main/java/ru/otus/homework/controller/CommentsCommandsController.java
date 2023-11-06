@@ -8,8 +8,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.homework.dto.CommentDto;
-import ru.otus.homework.exceptions.DataConsistencyException;
-import ru.otus.homework.exceptions.ObjectNotFoundException;
+import ru.otus.homework.exceptions.BookNotExistException;
+import ru.otus.homework.exceptions.CommentNotFoundException;
 import ru.otus.homework.service.CommentService;
 
 @ShellComponent
@@ -31,11 +31,14 @@ public class CommentsCommandsController {
     if (checkIdForInvalidity(bookId)) {
       return "Invalid id";
     }
+    if (text == null || text.isBlank()) {
+      return "Text can not be blank";
+    }
     CommentDto insertedComment;
     try {
       insertedComment = commentService.add(bookId, text);
-    } catch (DataConsistencyException exception) {
-      return "Book with entered id may not exist";
+    } catch (BookNotExistException exception) {
+      return "Book with id " + bookId + " does not exist so comment can not be added";
     }
     return conversionService.convert(insertedComment, String.class) + " added";
   }
@@ -48,18 +51,23 @@ public class CommentsCommandsController {
     CommentDto comment;
     try {
       comment = commentService.get(id);
-    } catch (ObjectNotFoundException exception) {
-      return "Comment with id " + id + " not found";
+    } catch (CommentNotFoundException exception) {
+      return "Comment with id " + id + " does not exist";
     }
     return conversionService.convert(comment, String.class);
   }
 
   @ShellMethod(value = "Get comments by book id", key = {"getCommentsByBookId", "gcb"})
-  public String getByBookId(String id) {
-    if (checkIdForInvalidity(id)) {
+  public String getByBookId(String bookId) {
+    if (checkIdForInvalidity(bookId)) {
       return "Invalid id";
     }
-    List<CommentDto> comments = commentService.getByBookId(id);
+    List<CommentDto> comments;
+    try {
+      comments = commentService.getByBookId(bookId);
+    } catch (BookNotExistException exception) {
+      return "Book with id " + bookId + " does not exist so related comments can not be found";
+    }
     return comments.isEmpty() ? "There is no comments for this book present" :
         comments.stream()
             .map(genre -> conversionService.convert(genre, String.class))
@@ -71,11 +79,16 @@ public class CommentsCommandsController {
     if (checkIdForInvalidity(id, bookId)) {
       return "Invalid id";
     }
+    if (text == null || text.isBlank()) {
+      return "Text can not be blank";
+    }
     CommentDto commentDto;
     try {
       commentDto = commentService.update(id, bookId, text);
-    } catch (DataConsistencyException exception) {
-      return "Book with entered id may not exist";
+    } catch (CommentNotFoundException exception) {
+      return "Comment with id " + id + " does not exist";
+    } catch (BookNotExistException exception) {
+      return "Book with id " + bookId + " does not exist so comment can not be updated";
     }
     return conversionService.convert(commentDto, String.class) + " updated";
   }
@@ -89,7 +102,7 @@ public class CommentsCommandsController {
     return "Comment with id " + id + " removed";
   }
 
-  private boolean checkIdForInvalidity(String ... ids) {
+  private boolean checkIdForInvalidity(String... ids) {
     for (String id : ids) {
       if (!ObjectId.isValid(id)) {
         return true;
