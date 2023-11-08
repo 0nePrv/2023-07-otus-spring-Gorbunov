@@ -9,6 +9,7 @@ import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Genre;
 import ru.otus.homework.dto.BookDto;
 import ru.otus.homework.exceptions.AuthorNotExistException;
+import ru.otus.homework.exceptions.BookNotExistException;
 import ru.otus.homework.exceptions.GenreNotExistException;
 import ru.otus.homework.repository.base.AuthorRepository;
 import ru.otus.homework.repository.base.BookRepository;
@@ -72,7 +73,7 @@ public class BookServiceImpl implements BookService {
 
   private Book getBookByIdOrThrowException(String bookId) {
     return bookRepository.findById(bookId).orElseThrow(
-        () -> new AuthorNotExistException("Book with id " + bookId + " does not exist"));
+        () -> new BookNotExistException("Book with id " + bookId + " does not exist"));
   }
 
   private Author getAuthorByIdOrThrowException(String authorId) {

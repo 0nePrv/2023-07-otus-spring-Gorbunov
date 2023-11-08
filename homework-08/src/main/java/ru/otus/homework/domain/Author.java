@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.Field.Write;
 
 
 @Setter
@@ -19,7 +20,7 @@ public class Author {
   @Id
   private String id;
 
-  @Field
+  @Field(name = "name", write = Write.NON_NULL)
   private String name;
 
   public Author(String name) {

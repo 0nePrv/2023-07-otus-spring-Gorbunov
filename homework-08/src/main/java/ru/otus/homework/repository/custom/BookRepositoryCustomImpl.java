@@ -20,10 +20,9 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
 
   @Override
   public Book updateWithComments(Book book) {
-    Query query = new Query(Criteria.where("book._id").is(new ObjectId(book.getId())));
-    Update update = new Update().set("book", book);
+    Query query = new Query(Criteria.where("book").is(new ObjectId(book.getId())));
+    Update update = new Update().set("book", new ObjectId(book.getId()));
     mongoOperations.updateMulti(query, update, Comment.class);
-
     return mongoOperations.save(book);
   }
 
@@ -31,8 +30,7 @@ public class BookRepositoryCustomImpl implements BookRepositoryCustom {
   public void cascadeDeleteById(String id) {
     Query bookQuery = new Query(Criteria.where("_id").is(new ObjectId(id)));
     mongoOperations.remove(bookQuery, Book.class);
-
-    Query commentQuery = new Query(Criteria.where("book.id").is(new ObjectId(id)));
+    Query commentQuery = new Query(Criteria.where("book").is(new ObjectId(id)));
     mongoOperations.remove(commentQuery, Comment.class);
   }
 }

@@ -11,7 +11,11 @@ public class BookDto {
 
   private final String name;
 
+  private final String authorId;
+
   private final String authorName;
+
+  private final String genreId;
 
   private final String genreName;
 }

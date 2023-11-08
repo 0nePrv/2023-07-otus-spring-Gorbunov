@@ -53,10 +53,10 @@ class BookRepositoryTest {
     //checking book updated
     assertThat(updatedBook).usingRecursiveComparison().isEqualTo(targetBook);
     // checking comments updated
-    Query commentQuery = new Query(Criteria.where("book._id").is(new ObjectId(targetBook.getId())));
+    Query commentQuery = new Query(Criteria.where("book").is(new ObjectId(targetBook.getId())));
     List<Comment> comments = mongoOperations.find(commentQuery, Comment.class);
     assertThat(comments).isNotNull();
-    comments.forEach(c -> assertThat(c.getBook()).usingRecursiveComparison().isEqualTo(targetBook));
+    comments.forEach(c -> assertThat(c.getBook().getId()).isEqualTo(targetBook.getId()));
   }
 
   @Test
@@ -73,7 +73,27 @@ class BookRepositoryTest {
     Query queryForBooks = new Query(Criteria.where("_id").is(targetBookObjectId));
     assertThat(mongoOperations.find(queryForBooks, Book.class)).hasSize(0);
     // checking comments removed
-    Query queryForComments = new Query(Criteria.where("book._id").is(targetBookObjectId));
+    Query queryForComments = new Query(Criteria.where("book").is(targetBookObjectId));
     assertThat(mongoOperations.find(queryForComments, Comment.class)).hasSize(0);
+  }
+
+  @Test
+  void shouldCorrectlyDetermineIfBookExistsByAuthorId() {
+    List<Author> authors = authorRepository.findAll();
+    assertThat(authors).isNotNull().hasSizeGreaterThan(0);
+    Author author = authors.get(0);
+    Book savedBook = bookRepository.save(new Book(NEW_BOOK_NAME, author, NEW_GENRE));
+    assertThat(bookRepository.existsByAuthorId(savedBook.getAuthor().getId())).isTrue();
+    assertThat(bookRepository.existsByAuthorId(new ObjectId().toString())).isFalse();
+  }
+
+  @Test
+  void shouldCorrectlyDetermineIfBookExistsByGenreId() {
+    List<Genre> genres = genreRepository.findAll();
+    assertThat(genres).isNotNull().hasSizeGreaterThan(0);
+    Genre genre = genres.get(0);
+    Book savedBook = bookRepository.save(new Book(NEW_BOOK_NAME, NEW_AUTHOR, genre));
+    assertThat(bookRepository.existsByGenreId(savedBook.getGenre().getId())).isTrue();
+    assertThat(bookRepository.existsByGenreId(new ObjectId().toString())).isFalse();
   }
 }

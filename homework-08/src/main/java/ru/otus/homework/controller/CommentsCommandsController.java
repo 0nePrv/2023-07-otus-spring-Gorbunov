@@ -104,7 +104,7 @@ public class CommentsCommandsController {
 
   private boolean checkIdForInvalidity(String... ids) {
     for (String id : ids) {
-      if (!ObjectId.isValid(id)) {
+      if (id == null || !ObjectId.isValid(id)) {
         return true;
       }
     }

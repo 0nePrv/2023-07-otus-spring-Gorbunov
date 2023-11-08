@@ -10,6 +10,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.exceptions.AuthorNotExistException;
+import ru.otus.homework.exceptions.AuthorRelatedBookExistException;
 import ru.otus.homework.service.AuthorService;
 
 @ShellComponent
@@ -80,7 +81,11 @@ public class AuthorCommandsController {
     if (!ObjectId.isValid(id)) {
       return "Invalid id";
     }
-    authorService.remove(id);
+    try {
+      authorService.remove(id);
+    } catch (AuthorRelatedBookExistException exception) {
+      return "There are books related to author with id " + id;
+    }
     return "Author with id " + id + " removed";
   }
 }

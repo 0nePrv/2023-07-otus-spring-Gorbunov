@@ -9,6 +9,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.homework.domain.Genre;
 import ru.otus.homework.exceptions.GenreNotExistException;
+import ru.otus.homework.exceptions.GenreRelatedBookExistException;
 import ru.otus.homework.service.GenreService;
 
 @ShellComponent
@@ -78,7 +79,11 @@ public class GenreCommandsController {
     if (!ObjectId.isValid(id)) {
       return "Invalid id";
     }
-    genreService.remove(id);
+    try {
+      genreService.remove(id);
+    } catch (GenreRelatedBookExistException exception) {
+      return "There are books related to genre with id " + id;
+    }
     return "Genre with id " + id + " removed";
   }
 }

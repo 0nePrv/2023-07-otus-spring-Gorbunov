@@ -10,9 +10,6 @@ public class CommentConverter implements Converter<CommentDto, String> {
 
   @Override
   public String convert(@NonNull CommentDto comment) {
-    return comment.getId() + ": \"" + comment.getText()
-        + "\", is associated with the book '" + comment.getBookName()
-        + "' written by author '" + comment.getAuthorName() +
-        "' in the genre of '" + comment.getGenreName();
+    return comment.getId() + ": " + comment.getText();
   }
 }

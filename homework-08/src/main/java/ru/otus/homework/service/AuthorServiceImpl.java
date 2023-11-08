@@ -5,16 +5,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.homework.domain.Author;
 import ru.otus.homework.exceptions.AuthorNotExistException;
+import ru.otus.homework.exceptions.AuthorRelatedBookExistException;
 import ru.otus.homework.repository.base.AuthorRepository;
+import ru.otus.homework.repository.base.BookRepository;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
   private final AuthorRepository authorRepository;
 
+  private final BookRepository bookRepository;
+
   @Autowired
-  public AuthorServiceImpl(AuthorRepository authorRepository) {
+  public AuthorServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository) {
     this.authorRepository = authorRepository;
+    this.bookRepository = bookRepository;
   }
 
   @Override
@@ -36,12 +41,18 @@ public class AuthorServiceImpl implements AuthorService {
   public Author update(String id, String name) {
     Author author = getAuthorByIdOrThrowException(id);
     author.setName(name);
-    return authorRepository.updateAuthorWithBooksAndComments(author);
+    return authorRepository.updateWithBooks(author);
   }
 
   @Override
   public void remove(String id) {
-    authorRepository.cascadeDeleteById(id);
+    authorRepository.findById(id).ifPresent(author -> {
+          if (bookRepository.existsByAuthorId(id)) {
+            throw new AuthorRelatedBookExistException("Books exist for author " + author.getName());
+          }
+          authorRepository.deleteById(id);
+        }
+    );
   }
 
   private Author getAuthorByIdOrThrowException(String id) {

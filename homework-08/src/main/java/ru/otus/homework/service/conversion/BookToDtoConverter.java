@@ -11,7 +11,7 @@ public class BookToDtoConverter implements Converter<Book, BookDto> {
 
   @Override
   public BookDto convert(@NonNull Book book) {
-    return new BookDto(book.getId(), book.getName(),
-        book.getAuthor().getName(), book.getGenre().getName());
+    return new BookDto(book.getId(), book.getName(), book.getAuthor().getId(),
+        book.getAuthor().getName(), book.getGenre().getId(), book.getGenre().getName());
   }
 }
