@@ -2,10 +2,12 @@ package ru.otus.homework.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import ru.otus.homework.domain.Author;
-import ru.otus.homework.exceptions.AuthorNotExistException;
-import ru.otus.homework.exceptions.AuthorRelatedBookExistException;
+import ru.otus.homework.dto.AuthorDto;
+import ru.otus.homework.exceptions.not_exist.AuthorNotExistException;
+import ru.otus.homework.exceptions.relation.AuthorRelatedBookExistException;
 import ru.otus.homework.repository.base.AuthorRepository;
 import ru.otus.homework.repository.base.BookRepository;
 
@@ -16,41 +18,49 @@ public class AuthorServiceImpl implements AuthorService {
 
   private final BookRepository bookRepository;
 
+  private final ConversionService conversionService;
+
   @Autowired
-  public AuthorServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository) {
+  public AuthorServiceImpl(AuthorRepository authorRepository, BookRepository bookRepository,
+      ConversionService conversionService) {
     this.authorRepository = authorRepository;
     this.bookRepository = bookRepository;
+    this.conversionService = conversionService;
   }
 
   @Override
-  public Author add(String name) {
-    return authorRepository.save(new Author(name));
+  public AuthorDto add(String name) {
+    Author author = authorRepository.save(new Author(name));
+    return conversionService.convert(author, AuthorDto.class);
   }
 
   @Override
-  public List<Author> getAll() {
-    return authorRepository.findAll();
+  public List<AuthorDto> getAll() {
+    return authorRepository.findAll().stream()
+        .map(a -> conversionService.convert(a, AuthorDto.class)).toList();
   }
 
   @Override
-  public Author get(String id) {
-    return getAuthorByIdOrThrowException(id);
+  public AuthorDto get(String id) {
+    Author author = getAuthorByIdOrThrowException(id);
+    return conversionService.convert(author, AuthorDto.class);
   }
 
   @Override
-  public Author update(String id, String name) {
+  public AuthorDto update(String id, String name) {
     Author author = getAuthorByIdOrThrowException(id);
     author.setName(name);
-    return authorRepository.updateWithBooks(author);
+    Author updatedAuthor = authorRepository.updateWithBooks(author);
+    return conversionService.convert(updatedAuthor, AuthorDto.class);
   }
 
   @Override
   public void remove(String id) {
     authorRepository.findById(id).ifPresent(author -> {
-          if (bookRepository.existsByAuthorId(id)) {
+          if (bookRepository.existsByAuthorId(author.getId())) {
             throw new AuthorRelatedBookExistException("Books exist for author " + author.getName());
           }
-          authorRepository.deleteById(id);
+          authorRepository.deleteById(author.getId());
         }
     );
   }

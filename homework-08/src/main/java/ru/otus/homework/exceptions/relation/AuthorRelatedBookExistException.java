@@ -1,4 +1,4 @@
-package ru.otus.homework.exceptions;
+package ru.otus.homework.exceptions.relation;
 
 public class AuthorRelatedBookExistException extends RuntimeException {
 

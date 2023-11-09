@@ -28,7 +28,7 @@ class AuthorRepositoryTest {
 
 
   @Test
-  @DisplayName("should update author, related books and comments")
+  @DisplayName("should update author and related books")
   void shouldCorrectlyUpdateAuthor() {
     List<Author> authors = authorRepository.findAll();
     assertThat(authors).hasSizeGreaterThan(0);
@@ -39,7 +39,7 @@ class AuthorRepositoryTest {
     Author updatedAuthor = authorRepository.updateWithBooks(targetAuthor);
 
     //checking author updated
-    assertThat(updatedAuthor).isEqualTo(targetAuthor);
+    assertThat(updatedAuthor).usingRecursiveComparison().isEqualTo(targetAuthor);
     // checking books updated
     Query bookQuery = new Query(Criteria.where("author._id").is(targetAuthorObjectId));
     List<Book> books = mongoOperations.find(bookQuery, Book.class);

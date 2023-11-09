@@ -2,15 +2,18 @@ package ru.otus.homework.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.homework.dto.BookDto;
-import ru.otus.homework.exceptions.BookNotExistException;
-import ru.otus.homework.exceptions.BookRelationNotExistException;
+import ru.otus.homework.exceptions.not_exist.BookNotExistException;
+import ru.otus.homework.exceptions.not_exist.BookRelationNotExistException;
 import ru.otus.homework.service.BookService;
+import ru.otus.homework.service.validation.StringFields;
+import ru.otus.homework.service.validation.Ids;
+import ru.otus.homework.service.validation.ValidationResult;
+import ru.otus.homework.service.validation.ValidationService;
 
 @ShellComponent
 public class BookCommandsController {
@@ -19,19 +22,22 @@ public class BookCommandsController {
 
   private final ConversionService conversionService;
 
+  private final ValidationService validationService;
+
   @Autowired
-  public BookCommandsController(BookService bookService, ConversionService conversionService) {
+  public BookCommandsController(BookService bookService, ConversionService conversionService,
+      ValidationService validationService) {
     this.bookService = bookService;
     this.conversionService = conversionService;
+    this.validationService = validationService;
   }
 
   @ShellMethod(value = "Add book. Enter name, authorId, genreId", key = {"addBook", "ab"})
   public String add(String name, String authorId, String genreId) {
-    if (checkIdForInvalidity(authorId, genreId)) {
-      return "Invalid id";
-    }
-    if (name == null || name.isBlank()) {
-      return "Name can not be blank";
+    ValidationResult result = validationService.validate(Ids.of(authorId, genreId),
+        StringFields.of(name));
+    if (!result.isOk()) {
+      return result.getMessage();
     }
     BookDto insertedBook;
     try {
@@ -44,8 +50,9 @@ public class BookCommandsController {
 
   @ShellMethod(value = "Get book. Enter id", key = {"getBook", "gb"})
   public String get(String id) {
-    if (checkIdForInvalidity(id)) {
-      return "Invalid id";
+    ValidationResult result = validationService.validate(Ids.of(id));
+    if (!result.isOk()) {
+      return result.getMessage();
     }
     BookDto book;
     try {
@@ -67,11 +74,10 @@ public class BookCommandsController {
 
   @ShellMethod(value = "Update book. Enter id, name, authorId, genreId", key = {"updateBook", "ub"})
   public String update(String id, String name, String authorId, String genreId) {
-    if (checkIdForInvalidity(id, authorId, genreId)) {
-      return "Invalid id";
-    }
-    if (name == null || name.isBlank()) {
-      return "Name can not be blank";
+    ValidationResult result = validationService.validate(Ids.of(id, authorId, genreId),
+        StringFields.of(name));
+    if (!result.isOk()) {
+      return result.getMessage();
     }
     BookDto bookDto;
     try {
@@ -86,19 +92,11 @@ public class BookCommandsController {
 
   @ShellMethod(value = "Remove book. Enter id", key = {"removeBook", "rb"})
   public String remove(String id) {
-    if (checkIdForInvalidity(id)) {
-      return "Invalid id";
+    ValidationResult result = validationService.validate(Ids.of(id));
+    if (!result.isOk()) {
+      return result.getMessage();
     }
     bookService.remove(id);
     return "Book with id " + id + " removed";
-  }
-
-  private boolean checkIdForInvalidity(String... ids) {
-    for (String id : ids) {
-      if (id == null || !ObjectId.isValid(id)) {
-        return true;
-      }
-    }
-    return false;
   }
 }

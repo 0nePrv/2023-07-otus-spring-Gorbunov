@@ -40,7 +40,7 @@ class GenreRepositoryTest {
     Genre updatedGenre = genreRepository.updateWithBooks(targetGenre);
 
     //checking genre updated
-    assertThat(updatedGenre.getName()).isEqualTo(NEW_GENRE_NAME);
+    assertThat(updatedGenre).usingRecursiveComparison().isEqualTo(targetGenre);
     // checking books updated
     Query query = new Query(Criteria.where("genre._id").is(targetGenreObjectId));
     List<Book> books = mongoOperations.find(query, Book.class);

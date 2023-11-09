@@ -39,7 +39,7 @@ class BookRepositoryTest {
   private MongoOperations mongoOperations;
 
   @Test
-  @DisplayName("should update author, related books and comments")
+  @DisplayName("should update books and related comments")
   void shouldCorrectlyUpdateAuthor() {
     List<Book> books = bookRepository.findAll();
     assertThat(books).hasSizeGreaterThan(0);

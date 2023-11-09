@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.dto.CommentDto;
-import ru.otus.homework.exceptions.BookNotExistException;
-import ru.otus.homework.exceptions.CommentNotFoundException;
+import ru.otus.homework.exceptions.not_exist.BookNotExistException;
+import ru.otus.homework.exceptions.not_exist.CommentNotExistException;
 import ru.otus.homework.repository.base.BookRepository;
 import ru.otus.homework.repository.base.CommentRepository;
 
@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
 
   private Comment getCommentByIdOrThrowException(String commentId) {
     return commentRepository.findById(commentId).orElseThrow(
-        () -> new CommentNotFoundException("Comment with id " + commentId + "not found"));
+        () -> new CommentNotExistException("Comment with id " + commentId + " does not exist"));
   }
 
   private Book getBookByIdOrThrowException(String bookId) {
