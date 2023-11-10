@@ -22,7 +22,7 @@ public class ValidationResult {
     if (!otherMessage.isEmpty()) {
       this.messageBuilder.append("\n").append(otherMessage);
     }
-    this.isOk |= other.isOk();
+    this.isOk &= other.isOk();
     return this;
   }
 
