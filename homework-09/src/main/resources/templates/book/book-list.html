@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>List of all books</title>
+		<link rel="stylesheet" href="/list-style.css" th:href="@{/list-style.css}">
+	</head>
+	<body>
+		<div class="heading">
+			<h1>
+				<span>Books</span>
+				<a class="action save" href="/book/new" th:href="@{book/new}">&#43</a>
+			</h1>
+		</div>
+		<table>
+			<thead>
+				<tr>
+					<th>№</th>
+					<th>Name</th>
+					<th>Author</th>
+					<th>Genre</th>
+					<th>Update</th>
+					<th>Delete</th>
+					<th>Comments</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="book, bookStat : ${books}" th:object="${book}">
+					<td th:text="${bookStat.count}">0</td>
+					<td th:text="*{name}">Book name</td>
+					<td th:text="*{authorName}">Author of the book</td>
+					<td th:text="*{genreName}">Genre of the book</td>
+					<td>
+						<a class="action save" href="book-edit.html"
+						   th:href="@{book/update(id=*{id})}">&#9998</a>
+					</td>
+					<td>
+						<a class="action delete" href="#"
+						   th:href="@{book/delete(id=*{id})}">&#10005</a>
+					</td>
+					<td>
+						<a class="action comment" href="#"
+						   th:href="@{book/{id}/comment(id=${book.id})}">&#128077</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+
+</html>

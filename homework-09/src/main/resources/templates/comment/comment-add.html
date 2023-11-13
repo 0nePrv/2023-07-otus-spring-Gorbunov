@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>New comment page</title>
+		<link rel="stylesheet" href="/static/form-style.css" th:href="@{/form-style.css}">
+	</head>
+	<body>
+		<h3>New comment</h3>
+		<form class="edit-form" method="post" action="comment-list.html"
+		      th:object="${targetComment}"
+		      th:method="post" th:action="@{new}">
+			<div class="row">
+				<label for="name-input">Text:</label>
+				<input id="name-input" type="text" th:field="*{text}"/>
+				<span class="errors" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">
+					Wrong comment text
+				</span>
+			</div>
+			<div class="row">
+				<input type="submit" value="Submit">
+				<a href="comment-list.html" th:href="@{/book/{id}/comment(id=${bookId})}">
+					<button type="button">Cancel</button>
+				</a>
+			</div>
+		</form>
+	</body>
+</html>

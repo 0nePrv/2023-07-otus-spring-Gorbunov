@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>List of comments</title>
+		<link rel="stylesheet" href="/list-style.css" th:href="@{/list-style.css}">
+	</head>
+	<body>
+		<h3>
+			<span th:text="'Comments for book ' + ${targetBook.name}">Comments</span>
+			<a class="action save" href="comment-add.html" th:href="@{comment/new}">&#43</a>
+		</h3>
+		<table>
+			<thead>
+				<tr>
+					<th>№</th>
+					<th>Text</th>
+					<th>Update</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="comment, commentStat : ${comments}" th:object="${comment}">
+					<td th:text="${commentStat.count}">0</td>
+					<td th:text="*{text}">Comment text</td>
+					<td>
+						<a class="action save" href="comment-edit.html"
+						   th:href="@{comment/update(id=*{id})}">&#9998</a>
+					</td>
+					<td>
+						<a class="action delete" href="#"
+						   th:href="@{comment/delete(id=*{id})}">&#10005</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

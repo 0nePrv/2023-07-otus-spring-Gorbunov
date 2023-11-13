@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>Error Page</title>
+		<style>
+          body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+          }
+          h1 {
+            color: #d9534f;
+          }
+          p {
+            font-size: 18px;
+            color: #333;
+          }
+		</style>
+	</head>
+	<body>
+		<h1>Error</h1>
+		<p th:text="${errorText == null ? 'Internal server error' : errorText}">
+			Internal server error
+		</p>
+		<p th:text="${cause}">No cause found</p>
+		<p th:text="${errorCode == null ? 'HTTP Status code 500' : errorCode}">
+			HTTP Status code 500
+		</p>
+	</body>
+</html>
