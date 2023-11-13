@@ -56,13 +56,10 @@ public class AuthorServiceImpl implements AuthorService {
 
   @Override
   public void remove(String id) {
-    authorRepository.findById(id).ifPresent(author -> {
-          if (bookRepository.existsByAuthorId(author.getId())) {
-            throw new AuthorRelatedBookExistException("Books exist for author " + author.getName());
-          }
-          authorRepository.deleteById(author.getId());
-        }
-    );
+    if (bookRepository.existsByAuthorId(id)) {
+      throw new AuthorRelatedBookExistException("Books exist for author with id" + id);
+    }
+    authorRepository.deleteById(id);
   }
 
   private Author getAuthorByIdOrThrowException(String id) {

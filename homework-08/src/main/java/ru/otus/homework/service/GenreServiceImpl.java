@@ -56,13 +56,10 @@ public class GenreServiceImpl implements GenreService {
 
   @Override
   public void remove(String id) {
-    genreRepository.findById(id).ifPresent(genre -> {
-          if (bookRepository.existsByGenreId(genre.getId())) {
-            throw new GenreRelatedBookExistException("Books exist for genre " + genre.getName());
-          }
-          genreRepository.deleteById(id);
-        }
-    );
+    if (bookRepository.existsByGenreId(id)) {
+      throw new GenreRelatedBookExistException("Books exist for genre with id " + id);
+    }
+    genreRepository.deleteById(id);
   }
 
   private Genre getGenreByIdOrThrowException(String id) {
