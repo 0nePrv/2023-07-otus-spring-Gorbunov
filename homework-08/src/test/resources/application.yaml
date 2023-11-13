@@ -1,0 +1,27 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 0
+      database: test
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+logging:
+  level:
+    com.github.cloudyrock.mongock: debug
+    root: info
+mongock:
+  change-logs-scan-package:
+    - ru.otus.homework.changelog
+  runner-type: initializingbean
+
+
+
+
+
+
+
+
