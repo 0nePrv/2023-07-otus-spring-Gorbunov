@@ -21,7 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.homework.dto.BookDto;
 import ru.otus.homework.dto.CommentDto;
-import ru.otus.homework.dto.CommentWithBookNameDto;
 import ru.otus.homework.service.BookService;
 import ru.otus.homework.service.CommentService;
 
@@ -33,9 +32,6 @@ class CommentControllerTest {
 
   private static final CommentDto EXISTING_COMMENT = new CommentDto(1L, "Some text",
       EXISTING_BOOK.getId());
-
-  private static final CommentWithBookNameDto EXISTING_COMMENT_WITH_BOOK_NAME = new CommentWithBookNameDto(
-      1L, "Some text", EXISTING_BOOK.getId(), EXISTING_BOOK.getName());
 
   private static final long NEW_COMMENT_BOOK_ID = 2L;
 
@@ -99,13 +95,13 @@ class CommentControllerTest {
   @DisplayName("should correctly process GET-request for editing comment by id")
   void shouldCorrectlyProvideEditingCommentById() throws Exception {
     List<BookDto> books = Collections.singletonList(EXISTING_BOOK);
-    when(commentService.get(EXISTING_COMMENT.getId())).thenReturn(EXISTING_COMMENT_WITH_BOOK_NAME);
+    when(commentService.get(EXISTING_COMMENT.getId())).thenReturn(EXISTING_COMMENT);
     when(bookService.getAll()).thenReturn(books);
 
     mockMvc.perform(get("/book/{bookId}/comment/update", EXISTING_BOOK.getId())
             .param("id", String.valueOf(EXISTING_COMMENT.getId())))
         .andExpect(status().isOk())
-        .andExpect(model().attribute("targetComment", EXISTING_COMMENT_WITH_BOOK_NAME))
+        .andExpect(model().attribute("targetComment", EXISTING_COMMENT))
         .andExpect(model().attribute("books", books))
         .andExpect(view().name("comment/comment-edit"));
   }

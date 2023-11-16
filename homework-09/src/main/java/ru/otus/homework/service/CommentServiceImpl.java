@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.dto.CommentDto;
-import ru.otus.homework.dto.CommentWithBookNameDto;
 import ru.otus.homework.exception.CommentNotExistException;
 import ru.otus.homework.repository.CommentRepository;
 
@@ -35,10 +34,10 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   @Transactional(readOnly = true)
-  public CommentWithBookNameDto get(long id) {
+  public CommentDto get(long id) {
     Comment comment = commentRepository.findById(id).orElseThrow(
         () -> new CommentNotExistException("Comment with id " + id + " does not exist"));
-    return conversionService.convert(comment, CommentWithBookNameDto.class);
+    return conversionService.convert(comment, CommentDto.class);
   }
 
   @Override

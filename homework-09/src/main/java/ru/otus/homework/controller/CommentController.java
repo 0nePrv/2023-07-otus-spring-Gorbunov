@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.homework.dto.BookDto;
 import ru.otus.homework.dto.CommentDto;
-import ru.otus.homework.dto.CommentWithBookNameDto;
 import ru.otus.homework.service.BookService;
 import ru.otus.homework.service.CommentService;
 
@@ -33,17 +32,17 @@ public class CommentController {
 
   @GetMapping("book/{bookId}/comment/new")
   public String create(@PathVariable("bookId") long bookId, Model model) {
-    List<BookDto> books = bookService.getAll();
-    model.addAttribute("books", books);
+    model.addAttribute("books", bookService.getAll());
     model.addAttribute("targetComment", new CommentDto(bookId));
     return "comment/comment-add";
   }
 
-  @PostMapping("book/{bookId}/comment/new")
-  public String add(@Valid @ModelAttribute("targetComment") CommentDto comment, Errors errors,
-      Model model) {
+  @PostMapping("book/{}/comment/new")
+  public String add(@Valid @ModelAttribute("targetComment") CommentDto comment,
+      Errors errors, Model model) {
     if (errors.hasErrors()) {
       model.addAttribute("books", bookService.getAll());
+      model.addAttribute("targetComment", comment);
       return "comment/comment-add";
     }
     commentService.add(comment.getBookId(), comment.getText());
@@ -61,14 +60,14 @@ public class CommentController {
 
   @GetMapping("book/{}/comment/update")
   public String edit(@RequestParam("id") long id, Model model) {
-    CommentWithBookNameDto commentDto = commentService.get(id);
+    CommentDto comment = commentService.get(id);
     List<BookDto> books = bookService.getAll();
-    model.addAttribute("targetComment", commentDto);
+    model.addAttribute("targetComment", comment);
     model.addAttribute("books", books);
     return "comment/comment-edit";
   }
 
-  @PostMapping("book/{bookId}/comment/update")
+  @PostMapping("book/{}/comment/update")
   public String update(@Valid @ModelAttribute("targetComment") CommentDto comment, Errors errors,
       Model model) {
     if (errors.hasErrors()) {

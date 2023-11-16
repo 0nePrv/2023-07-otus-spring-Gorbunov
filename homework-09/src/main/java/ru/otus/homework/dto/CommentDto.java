@@ -15,7 +15,7 @@ public class CommentDto {
   private Long id;
 
   @NotBlank(message = "Comment text has to be not blank")
-  @Size(min = 5, max = 100, message = "Comment text size should be between 5 and 100 characters")
+  @Size(min = 5, max = 250, message = "Comment text size should be between 5 and 250 characters")
   private String text;
 
   @Min(value = 1, message = "Book in not chosen")
