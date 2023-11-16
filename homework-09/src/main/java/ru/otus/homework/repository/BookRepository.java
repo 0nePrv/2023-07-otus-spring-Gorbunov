@@ -9,8 +9,7 @@ import ru.otus.homework.domain.Book;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-  @Query("select b from Book b join fetch Author a on b.author.id = a.id "
-      + "join fetch Genre g on b.genre.id = g.id")
+  @Query("select b from Book b")
   @EntityGraph(value = "books-entity-graph", type = EntityGraphType.FETCH)
   List<Book> findAllFetchAuthorsAndGenres();
 }
