@@ -42,7 +42,6 @@ public class CommentController {
       Errors errors, Model model) {
     if (errors.hasErrors()) {
       model.addAttribute("books", bookService.getAll());
-      model.addAttribute("targetComment", comment);
       return "comment/comment-add";
     }
     commentService.add(comment.getBookId(), comment.getText());
