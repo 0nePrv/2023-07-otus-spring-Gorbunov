@@ -65,6 +65,8 @@ class GenreControllerTest {
         .andExpect(status().isOk())
         .andExpect(view().name("genre/genre-list"))
         .andExpect(model().attribute("genres", genres));
+
+    verify(genreService, times(1)).getAll();
   }
 
   @Test
@@ -72,31 +74,29 @@ class GenreControllerTest {
   void shouldCorrectlyProvideEditingGenreById() throws Exception {
     when(genreService.get(EXISTING_GENRE.getId())).thenReturn(EXISTING_GENRE);
 
-    mockMvc.perform(get("/genre/update")
-            .param("id", String.valueOf(EXISTING_GENRE.getId())))
+    mockMvc.perform(get("/genre/update/" + EXISTING_GENRE.getId()))
         .andExpect(status().isOk())
         .andExpect(view().name("genre/genre-edit"))
         .andExpect(model().attribute("targetGenre", EXISTING_GENRE));
+
+    verify(genreService, times(1)).get(EXISTING_GENRE.getId());
   }
 
   @Test
   @DisplayName("should correctly process POST-request for updating genre and redirect")
   void shouldCorrectlyProvideUpdatingGenre() throws Exception {
-    mockMvc.perform(post("/genre/update")
-            .param("id", String.valueOf(EXISTING_GENRE.getId()))
+    mockMvc.perform(post("/genre/update/" + EXISTING_GENRE.getId())
             .param("name", NEW_AUTHOR_NAME))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/genre"));
 
-    verify(genreService, times(1))
-        .update(EXISTING_GENRE.getId(), NEW_AUTHOR_NAME);
+    verify(genreService, times(1)).update(EXISTING_GENRE.getId(), NEW_AUTHOR_NAME);
   }
 
   @Test
   @DisplayName("should correctly process POST-request for deleting genre and redirect")
   void shouldCorrectlyProvideDeletingGenre() throws Exception {
-    mockMvc.perform(get("/genre/delete")
-            .param("id", String.valueOf(EXISTING_GENRE.getId())))
+    mockMvc.perform(post("/genre/delete/" + EXISTING_GENRE.getId()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/genre"));
 

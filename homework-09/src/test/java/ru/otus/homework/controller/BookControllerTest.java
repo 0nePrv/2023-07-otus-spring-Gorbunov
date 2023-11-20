@@ -118,8 +118,7 @@ class BookControllerTest {
     when(authorService.getAll()).thenReturn(authors);
     when(genreService.getAll()).thenReturn(genres);
 
-    mockMvc.perform(get("/book/update")
-            .param("id", String.valueOf(EXISTING_AUTHOR.getId())))
+    mockMvc.perform(get("/book/update/" + EXISTING_BOOK.getId()))
         .andExpect(status().isOk())
         .andExpect(model().attribute("targetBook", EXISTING_BOOK))
         .andExpect(model().attribute("authors", authors))
@@ -134,9 +133,8 @@ class BookControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for updating book and redirect")
   void shouldCorrectlyProvideUpdatingBook() throws Exception {
-    mockMvc.perform(post("/book/update")
+    mockMvc.perform(post("/book/update/" + EXISTING_BOOK.getId())
             .params(new LinkedMultiValueMap<>() {{
-              add("id", String.valueOf(EXISTING_BOOK.getId()));
               add("name", NEW_BOOK_NAME);
               add("authorId", String.valueOf(NEW_AUTHOR_ID));
               add("genreId", String.valueOf(NEW_GENRE_ID));
@@ -151,8 +149,7 @@ class BookControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for deleting book and redirect")
   void shouldCorrectlyProvideDeletingBook() throws Exception {
-    mockMvc.perform(get("/book/delete")
-            .param("id", String.valueOf(EXISTING_BOOK.getId())))
+    mockMvc.perform(post("/book/delete/" + EXISTING_BOOK.getId()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/book"));
 

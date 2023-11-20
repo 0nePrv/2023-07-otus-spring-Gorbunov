@@ -98,19 +98,22 @@ class CommentControllerTest {
     when(commentService.get(EXISTING_COMMENT.getId())).thenReturn(EXISTING_COMMENT);
     when(bookService.getAll()).thenReturn(books);
 
-    mockMvc.perform(get("/book/{bookId}/comment/update", EXISTING_BOOK.getId())
-            .param("id", String.valueOf(EXISTING_COMMENT.getId())))
+    mockMvc.perform(get("/book/{bookId}/comment/update/" + EXISTING_COMMENT.getId(),
+            EXISTING_BOOK.getId()))
         .andExpect(status().isOk())
         .andExpect(model().attribute("targetComment", EXISTING_COMMENT))
         .andExpect(model().attribute("books", books))
         .andExpect(view().name("comment/comment-edit"));
+
+    verify(commentService, times(1)).get(EXISTING_COMMENT.getId());
+    verify(bookService, times(1)).getAll();
   }
 
   @Test
   @DisplayName("should correctly process POST-request for updating comment and redirect")
   void shouldCorrectlyProvideUpdatingComment() throws Exception {
-    mockMvc.perform(post("/book/{bookId}/comment/update", EXISTING_BOOK.getId())
-            .param("id", String.valueOf(EXISTING_COMMENT.getId()))
+    mockMvc.perform(post("/book/{bookId}/comment/update/" + EXISTING_COMMENT.getId(),
+            EXISTING_BOOK.getId())
             .param("bookId", String.valueOf(NEW_COMMENT_BOOK_ID))
             .param("text", NEW_COMMENT_TEXT))
         .andExpect(status().is3xxRedirection())
@@ -123,8 +126,8 @@ class CommentControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for deleting comment and redirect")
   void shouldCorrectlyProvideDeletingComment() throws Exception {
-    mockMvc.perform(get("/book/{bookId}/comment/delete", EXISTING_BOOK.getId())
-            .param("id", String.valueOf(EXISTING_COMMENT.getId())))
+    mockMvc.perform(post("/book/{bookId}/comment/delete/" + EXISTING_COMMENT.getId(),
+            EXISTING_BOOK.getId()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(String.format("/book/%d/comment", EXISTING_BOOK.getId())));
 

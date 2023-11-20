@@ -65,6 +65,8 @@ class AuthorControllerTest {
         .andExpect(status().isOk())
         .andExpect(view().name("author/author-list"))
         .andExpect(model().attribute("authors", authors));
+
+    verify(authorService, times(1)).getAll();
   }
 
   @Test
@@ -72,31 +74,29 @@ class AuthorControllerTest {
   void shouldCorrectlyProvideEditingAuthorById() throws Exception {
     when(authorService.get(EXISTING_AUTHOR.getId())).thenReturn(EXISTING_AUTHOR);
 
-    mockMvc.perform(get("/author/update")
-            .param("id", String.valueOf(EXISTING_AUTHOR.getId())))
+    mockMvc.perform(get("/author/update/" + EXISTING_AUTHOR.getId()))
         .andExpect(status().isOk())
-        .andExpect(view().name("author/author-edit"))
-        .andExpect(model().attribute("targetAuthor", EXISTING_AUTHOR));
+        .andExpect(model().attribute("targetAuthor", EXISTING_AUTHOR))
+        .andExpect(view().name("author/author-edit"));
+
+    verify(authorService, times(1)).get(EXISTING_AUTHOR.getId());
   }
 
   @Test
   @DisplayName("should correctly process POST-request for updating author and redirect")
   void shouldCorrectlyProvideUpdatingAuthor() throws Exception {
-    mockMvc.perform(post("/author/update")
-            .param("id", String.valueOf(EXISTING_AUTHOR.getId()))
+    mockMvc.perform(post("/author/update/" + EXISTING_AUTHOR.getId())
             .param("name", NEW_AUTHOR_NAME))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/author"));
 
-    verify(authorService, times(1))
-        .update(EXISTING_AUTHOR.getId(), NEW_AUTHOR_NAME);
+    verify(authorService, times(1)).update(EXISTING_AUTHOR.getId(), NEW_AUTHOR_NAME);
   }
 
   @Test
   @DisplayName("should correctly process POST-request for deleting author and redirect")
   void shouldCorrectlyProvideDeletingAuthor() throws Exception {
-    mockMvc.perform(get("/author/delete")
-            .param("id", String.valueOf(EXISTING_AUTHOR.getId())))
+    mockMvc.perform(post("/author/delete/" + EXISTING_AUTHOR.getId()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/author"));
 
