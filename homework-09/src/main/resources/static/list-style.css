@@ -5,6 +5,7 @@ body {
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 
 th {
@@ -21,36 +22,58 @@ td, th {
   text-align: center;
 }
 
+th a {
+  color: white;
+  border-bottom: white solid thin;
+  text-decoration: none;
+}
+
 a {
   text-decoration: none;
 }
 
-a.save {
-  color: #007bff;
+.heading, .empty {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-a.delete {
-  color: red;
-}
-
-a.action {
+.action {
   display: inline-block;
   width: 30px;
   height: 30px;
   line-height: 30px;
   text-align: center;
   border-radius: 50%;
-  font-size: 30px;
+  font-size: 18px;
   background-color: #fff;
   transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+  margin-right: 5px;
 }
 
-a.save:hover {
-  color: #fff;
-  background-color: #007bff;
+.action:hover {
+  background-color: #eee;
 }
 
-a.delete:hover {
+.action.delete {
+  color: red;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.action.delete:hover {
   color: white;
   background-color: red;
+}
+
+.action.save {
+  color: #007bff;
+}
+
+.action.save:hover {
+  color: #fff;
+  background-color: #007bff;
 }

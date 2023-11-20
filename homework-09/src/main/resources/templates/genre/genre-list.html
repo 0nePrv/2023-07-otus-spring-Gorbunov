@@ -9,10 +9,11 @@
 		<div class="heading">
 			<h1>
 				<span>Genres</span>
-				<a class="action save" href="/genre/new" th:href="@{genre/new}">&#43</a>
+				<a class="action save" href="genre-add.html" th:href="@{genre/new}">&#43</a>
 			</h1>
 		</div>
-		<table>
+		<p class="empty" th:if="${genres.isEmpty()}">There is no genres present. Create one</p>
+		<table th:if="${!genres.isEmpty()}">
 			<thead>
 				<tr>
 					<th>№</th>
@@ -21,17 +22,19 @@
 					<th>Delete</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class="genre-table">
 				<tr th:each="genre, genreStat : ${genres}" th:object="${genre}">
 					<td th:text="${genreStat.count}">0</td>
 					<td th:text="*{name}">Genre name</td>
 					<td>
 						<a class="action save" href="genre-edit.html"
-						   th:href="@{genre/update(id=*{id})}">&#9998</a>
+						   th:href="@{/genre/update/{id}(id=*{id})}">&#9998;</a>
 					</td>
 					<td>
-						<a class="action delete" href="#"
-						   th:href="@{genre/delete(id=*{id})}">&#10005</a>
+						<form action="#" th:action="@{/genre/delete/{id}(id=*{id})}"
+						      method="post" th:method="post">
+							<input class="action delete" type="submit" name="id" value="&#10005;">
+						</form>
 					</td>
 				</tr>
 			</tbody>

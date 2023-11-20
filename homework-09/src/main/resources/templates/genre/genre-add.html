@@ -3,13 +3,12 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>New genre page</title>
-		<link rel="stylesheet" href="/static/form-style.css" th:href="@{/form-style.css}">
+		<link rel="stylesheet" href="/form-style.css" th:href="@{/form-style.css}">
 	</head>
 	<body>
 		<h3>New genre:</h3>
-		<form class="edit-form" action="/genre/new"
-		      th:object="${targetGenre}" th:method="post"
-		      th:action="@{/genre/new}">
+		<form class="edit-form" method="post" action="/genre/new"
+		      th:method="post" th:object="${targetGenre}" th:action="@{/genre/new}">
 			<div class="row">
 				<label for="name-input">Name:</label>
 				<input id="name-input" type="text" th:field="*{name}"/>

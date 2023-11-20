@@ -9,8 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.homework.dto.GenreDto;
 import ru.otus.homework.service.GenreService;
 
@@ -47,24 +47,25 @@ public class GenreController {
     return "genre/genre-list";
   }
 
-  @GetMapping("genre/update")
-  public String edit(@RequestParam("id") long id, Model model) {
+  @GetMapping("genre/update/{id}")
+  public String edit(@PathVariable("id") long id, Model model) {
     GenreDto genreDto = genreService.get(id);
     model.addAttribute("targetGenre", genreDto);
     return "genre/genre-edit";
   }
 
-  @PostMapping("genre/update")
-  public String update(@Valid @ModelAttribute("targetGenre") GenreDto genre, Errors errors) {
+  @PostMapping("genre/update/{id}")
+  public String update(@PathVariable("id") long id,
+      @Valid @ModelAttribute("targetGenre") GenreDto genre, Errors errors) {
     if (errors.hasErrors()) {
       return "genre/genre-edit";
     }
-    genreService.update(genre.getId(), genre.getName());
+    genreService.update(id, genre.getName());
     return "redirect:/genre";
   }
 
-  @GetMapping("genre/delete")
-  public String remove(@RequestParam("id") long id) {
+  @PostMapping("genre/delete/{id}")
+  public String remove(@PathVariable("id") long id) {
     genreService.remove(id);
     return "redirect:/genre";
   }

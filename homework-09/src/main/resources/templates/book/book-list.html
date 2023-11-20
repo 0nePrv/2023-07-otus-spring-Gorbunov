@@ -9,16 +9,17 @@
 		<div class="heading">
 			<h1>
 				<span>Books</span>
-				<a class="action save" href="/book/new" th:href="@{book/new}">&#43</a>
+				<a class="action save" href="book-add.html" th:href="@{/book/new}">&#43;</a>
 			</h1>
 		</div>
-		<table>
+		<p class="empty" th:if="${books.isEmpty()}">There is no books present. Create one</p>
+		<table th:if="${!books.isEmpty()}">
 			<thead>
 				<tr>
 					<th>№</th>
 					<th>Name</th>
-					<th>Author</th>
-					<th>Genre</th>
+					<th><a href="../author/author-list.html" th:href="@{/author}">Author</a></th>
+					<th><a href="../genre/genre-list.html" th:href="@{/genre}">Genre</a></th>
 					<th>Update</th>
 					<th>Delete</th>
 					<th>Comments</th>
@@ -32,19 +33,20 @@
 					<td th:text="*{genreName}">Genre of the book</td>
 					<td>
 						<a class="action save" href="book-edit.html"
-						   th:href="@{book/update(id=*{id})}">&#9998</a>
+						   th:href="@{/book/update/{id}(id=*{id})}">&#9998;</a>
 					</td>
 					<td>
-						<a class="action delete" href="#"
-						   th:href="@{book/delete(id=*{id})}">&#10005</a>
+						<form action="#" th:action="@{/book/delete/{id}(id=*{id})}"
+						      method="post" th:method="post">
+							<input class="action delete" type="submit" name="id" value="&#10005;">
+						</form>
 					</td>
 					<td>
-						<a class="action comment" href="#"
-						   th:href="@{book/{id}/comment(id=${book.id})}">&#128077</a>
+						<a class="action comment" href="../comment/comment-list.html"
+						   th:href="@{/book/{id}/comment(id=*{id})}">&#128077;</a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</body>
-
 </html>

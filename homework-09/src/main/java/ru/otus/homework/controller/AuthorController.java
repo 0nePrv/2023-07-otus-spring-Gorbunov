@@ -9,8 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.homework.dto.AuthorDto;
 import ru.otus.homework.service.AuthorService;
 
@@ -47,24 +47,25 @@ public class AuthorController {
     return "author/author-list";
   }
 
-  @GetMapping("author/update")
-  public String edit(@RequestParam long id, Model model) {
+  @GetMapping("author/update/{id}")
+  public String edit(@PathVariable("id") long id, Model model) {
     AuthorDto authorDto = authorService.get(id);
     model.addAttribute("targetAuthor", authorDto);
     return "author/author-edit";
   }
 
-  @PostMapping("author/update")
-  public String update(@Valid @ModelAttribute("targetAuthor") AuthorDto author, Errors errors) {
+  @PostMapping("author/update/{id}")
+  public String update(@PathVariable("id") long id,
+      @Valid @ModelAttribute("targetAuthor") AuthorDto author, Errors errors) {
     if (errors.hasErrors()) {
       return "author/author-edit";
     }
-    authorService.update(author.getId(), author.getName());
+    authorService.update(id, author.getName());
     return "redirect:/author";
   }
 
-  @GetMapping("author/delete")
-  public String remove(@RequestParam("id") long id) {
+  @PostMapping("author/delete/{id}")
+  public String remove(@PathVariable("id") long id) {
     authorService.remove(id);
     return "redirect:/author";
   }

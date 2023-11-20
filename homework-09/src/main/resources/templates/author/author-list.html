@@ -9,10 +9,11 @@
 		<div class="heading">
 			<h1>
 				<span>Authors</span>
-				<a class="action save" href="/author/new" th:href="@{author/new}">&#43</a>
+				<a class="action save" href="author-add.html" th:href="@{author/new}">&#43;</a>
 			</h1>
 		</div>
-		<table>
+		<p class="empty" th:if="${authors.isEmpty()}">There is no authors present. Create one</p>
+		<table th:if="${!authors.isEmpty()}">
 			<thead>
 				<tr>
 					<th>№</th>
@@ -21,17 +22,19 @@
 					<th>Delete</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class="author-table">
 				<tr th:each="author, authorStat : ${authors}" th:object="${author}">
 					<td th:text="${authorStat.count}">0</td>
 					<td th:text="*{name}">Author name</td>
 					<td>
 						<a class="action save" href="author-edit.html"
-						   th:href="@{author/update(id=*{id})}">&#9998</a>
+						   th:href="@{author/update/{id}(id=*{id})}">&#9998;</a>
 					</td>
 					<td>
-						<a class="action delete" href="#"
-						   th:href="@{author/delete(id=*{id})}">&#10005</a>
+						<form action="#" th:action="@{/author/delete/{id}(id=*{id})}"
+						      method="post" th:method="post">
+							<input class="action delete" type="submit" name="id" value="&#10005;">
+						</form>
 					</td>
 				</tr>
 			</tbody>

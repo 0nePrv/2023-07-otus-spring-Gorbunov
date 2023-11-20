@@ -3,20 +3,18 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>New book page</title>
-		<link rel="stylesheet" href="/static/form-style.css" th:href="@{/form-style.css}">
+		<link rel="stylesheet" href="/form-style.css" th:href="@{/form-style.css}">
 	</head>
 	<body>
 		<h3>New book:</h3>
-		<form class="edit-form" action="/book/new"
-		      th:object="${targetBook}"
-		      th:method="post"
-		      th:action="@{/book/new}">
+		<form class="edit-form" method="post" action="/book/new"
+		      th:method="post" th:object="${targetBook}" th:action="@{/book/new}">
 			<div class="row">
 				<label for="name-input">Name:</label>
 				<input id="name-input" type="text" th:field="*{name}"/>
-				<div class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+				<span class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
 					Wrong book name
-				</div>
+				</span>
 			</div>
 			<div class="row">
 				<label for="author-select">Choose author:</label>

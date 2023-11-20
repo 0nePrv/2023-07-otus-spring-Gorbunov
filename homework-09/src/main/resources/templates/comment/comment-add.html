@@ -3,18 +3,30 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>New comment page</title>
-		<link rel="stylesheet" href="/static/form-style.css" th:href="@{/form-style.css}">
+		<link rel="stylesheet" href="/form-style.css" th:href="@{/form-style.css}">
 	</head>
 	<body>
 		<h3>New comment</h3>
 		<form class="edit-form" method="post" action="comment-list.html"
-		      th:object="${targetComment}"
-		      th:method="post" th:action="@{new}">
+		      th:method="post" th:object="${targetComment}"
+		      th:action="@{/book/{id}/comment/new(id=*{bookId})}">
 			<div class="row">
 				<label for="name-input">Text:</label>
 				<input id="name-input" type="text" th:field="*{text}"/>
 				<span class="errors" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">
 					Wrong comment text
+				</span>
+			</div>
+			<div class="row">
+				<label for="book-select">Choose book:</label>
+				<select id="book-select" name="books" th:field="*{bookId}">
+					<option th:value="-1">-- Choose book --</option>
+					<option th:each="book : ${books}"
+					        th:value="${book.id}"
+					        th:text="${book.name}"></option>
+				</select>
+				<span class="errors" th:if="${#fields.hasErrors('bookId')}" th:errors="*{bookId}">
+					Book is not selected
 				</span>
 			</div>
 			<div class="row">
