@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>List of comments</title>
+		<link rel="stylesheet" href="/list-style.css" th:href="@{/list-style.css}">
+	</head>
+	<body>
+		<h3>
+			<span th:text="'Comments for book ' + ${targetBook.name}">Comments</span>
+			<a class="action save" href="comment-add.html"
+			   th:href="@{/book/{bookId}/comment/new(bookId=${targetBook.id})}">&#43</a>
+		</h3>
+		<p class="empty" th:if="${comments.isEmpty()}">There is no comments present. Create one</p>
+		<table th:if="${!comments.isEmpty()}">
+			<thead>
+				<tr>
+					<th>№</th>
+					<th>Text</th>
+					<th>Update</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="comment, commentStat : ${comments}" th:object="${comment}">
+					<td th:text="${commentStat.count}">0</td>
+					<td th:text="*{text}">Comment text</td>
+					<td>
+						<a class="action save" href="comment-edit.html"
+						   th:href="@{/book/{bookId}/comment/update/{id}(bookId=*{bookId},id=*{id})}">
+							&#9998;
+						</a>
+					</td>
+					<td>
+						<form action="#" method="post" th:method="post"
+						      th:action="@{/book/{bookId}/comment/delete/{id}(bookId=*{bookId},id=*{id})}">
+							<input class="action delete" type="submit" name="id" value="&#10005;">
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

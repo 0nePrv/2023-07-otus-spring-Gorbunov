@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>List of all authors</title>
+		<link rel="stylesheet" href="/list-style.css" th:href="@{/list-style.css}">
+	</head>
+	<body>
+		<div class="heading">
+			<h1>
+				<span>Authors</span>
+				<a class="action save" href="author-add.html" th:href="@{author/new}">&#43;</a>
+			</h1>
+		</div>
+		<p class="empty" th:if="${authors.isEmpty()}">There is no authors present. Create one</p>
+		<table th:if="${!authors.isEmpty()}">
+			<thead>
+				<tr>
+					<th>№</th>
+					<th>Name</th>
+					<th>Update</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody class="author-table">
+				<tr th:each="author, authorStat : ${authors}" th:object="${author}">
+					<td th:text="${authorStat.count}">0</td>
+					<td th:text="*{name}">Author name</td>
+					<td>
+						<a class="action save" href="author-edit.html"
+						   th:href="@{author/update/{id}(id=*{id})}">&#9998;</a>
+					</td>
+					<td>
+						<form action="#" th:action="@{/author/delete/{id}(id=*{id})}"
+						      method="post" th:method="post">
+							<input class="action delete" type="submit" name="id" value="&#10005;">
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>Comment edit page</title>
+		<link rel="stylesheet" href="/form-style.css" th:href="@{/form-style.css}">
+	</head>
+	<body>
+		<h3>Comment Info:</h3>
+		<form class="edit-form" method="post" action="comment-list.html"
+		      th:method="post" th:object="${targetComment}"
+		      th:action="@{/book/{bookId}/comment/update/{id}(bookId=*{bookId},id=*{id})}">
+			<div class="row">
+				<label for="name-input">Text:</label>
+				<input id="name-input" type="text" th:field="*{text}" th:value="*{text}"/>
+				<span class="errors" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">
+					Wrong comment text
+				</span>
+			</div>
+			<div class="row">
+				<label for="book-select">Choose book:</label>
+				<select id="book-select" name="books" th:field="*{bookId}">
+					<option th:value="-1">-- Choose book --</option>
+					<option th:each="book : ${books}"
+					        th:value="${book.id}"
+					        th:text="${book.name}"></option>
+				</select>
+				<span class="errors" th:if="${#fields.hasErrors('bookId')}" th:errors="*{bookId}">
+					Book is not selected
+				</span>
+			</div>
+			<div class="row">
+				<input type="submit" value="Submit">
+				<a href="comment-list.html" th:href="@{/book/{bookId}/comment(bookId=*{bookId})}">
+					<button type="button">Cancel</button>
+				</a>
+			</div>
+		</form>
+	</body>
+</html>
