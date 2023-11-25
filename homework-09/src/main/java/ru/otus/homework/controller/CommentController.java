@@ -36,10 +36,12 @@ public class CommentController {
     return "comment/comment-add";
   }
 
-  @PostMapping("book/{}/comment/new")
-  public String add(@Valid @ModelAttribute("targetComment") CommentDto comment, Errors errors,
-      Model model) {
+  @PostMapping("book/{bookId}/comment/new")
+  public String add(@PathVariable("bookId") long bookId,
+      @Valid @ModelAttribute("targetComment") CommentDto comment, Errors errors, Model model) {
     if (errors.hasErrors()) {
+      comment.setBookId(bookId);
+      model.addAttribute("targetComment", comment);
       model.addAttribute("books", bookService.getAll());
       return "comment/comment-add";
     }
@@ -69,6 +71,7 @@ public class CommentController {
   public String update(@PathVariable("id") long id,
       @Valid @ModelAttribute("targetComment") CommentDto comment, Errors errors, Model model) {
     if (errors.hasErrors()) {
+      model.addAttribute("targetComment", commentService.get(id));
       model.addAttribute("books", bookService.getAll());
       return "comment/comment-edit";
     }
