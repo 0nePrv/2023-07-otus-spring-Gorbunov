@@ -71,7 +71,9 @@ function ListPage<T extends DomainType>({resource}: PageProps<T>) {
       <div>
         <div className={"header"}>
           <h1>{name} page</h1>
-          <button className={"button"} title={"refresh"} onClick={() => refetch()}>
+          <button className={"button"} title={"refresh"} onClick={async () => {
+            return await refetch()
+          }}>
             <img src="/icons/refresh.png" alt={"refresh"}/>
           </button>
           <button className={"button"} title={"add"} onClick={onCreate}>
