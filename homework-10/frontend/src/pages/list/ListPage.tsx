@@ -51,8 +51,7 @@ function ListPage<T extends DomainType>({resource}: PageProps<T>) {
 
   const onDelete = async (obj: T) => {
     try {
-      let emptyFetchResult = await remove(type, obj.id.toString());
-      console.log(emptyFetchResult)
+      await remove(type, obj.id.toString())
       await refetch()
       setApiError(null)
     } catch (error) {
