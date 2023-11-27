@@ -1,0 +1,1 @@
+export {ListPageLazy as ListPage} from './ListPage.lazy'
