@@ -1,9 +1,8 @@
 const {createProxyMiddleware} = require('http-proxy-middleware');
-const {proxying} = require('../package.json');
 
 module.exports = function (app) {
 
-  const {host, port} = proxying
+  const [host, port] = ['localhost', 8080]
 
   app.use(
       '/api',

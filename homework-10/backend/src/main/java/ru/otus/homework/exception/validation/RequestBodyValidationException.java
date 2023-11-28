@@ -10,15 +10,18 @@ import org.springframework.web.ErrorResponse;
 
 public class RequestBodyValidationException extends RuntimeException implements ErrorResponse {
 
-  private final List<ValidationError> body;
-
   private final HttpStatus status;
 
-  public RequestBodyValidationException(HttpStatus status, Class<?> clazz,
-      List<FieldError> errors) {
+  private final ProblemDetail body;
+
+  public RequestBodyValidationException(HttpStatus status, Class<?> clazz, List<FieldError> errors) {
     super(clazz.getSimpleName() + " validation error");
     this.status = status;
-    this.body = errors.stream().map(ValidationError::fromFieldError).toList();
+    ProblemDetail detail = ProblemDetail.forStatusAndDetail(status, super.getMessage());
+    List<ValidationError> validationErrors = errors.stream()
+        .map(ValidationError::fromFieldError).toList();
+    detail.setProperty("errors", validationErrors);
+    this.body = detail;
   }
 
   public RequestBodyValidationException(Class<?> clazz, List<FieldError> errors) {
@@ -34,8 +37,6 @@ public class RequestBodyValidationException extends RuntimeException implements 
   @Override
   @NonNull
   public ProblemDetail getBody() {
-    ProblemDetail detail = ProblemDetail.forStatusAndDetail(status, getMessage());
-    detail.setProperty("errors", body);
-    return detail;
+    return body;
   }
 }
