@@ -6,13 +6,13 @@ import ru.otus.homework.dto.GenreDto;
 
 public interface GenreService {
 
-  Mono<GenreDto> add(String name);
+  Mono<GenreDto> add(Mono<GenreDto> genreDtoMono);
 
-  Mono<GenreDto> update(String id, String name);
+  Mono<GenreDto> get(String id);
 
   Flux<GenreDto> getAll();
 
-  Mono<GenreDto> get(String id);
+  Mono<GenreDto> update(String id, Mono<GenreDto> genreDtoMono);
 
   Mono<Void> remove(String id);
 }

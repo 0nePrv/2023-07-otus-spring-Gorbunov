@@ -1,0 +1,24 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 50px;
+  padding: 0 50px 50px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.notFound {
+  font-size: x-large;
+  display: block;
+  text-align: center;
+}
+
+.header .button {
+  margin-right: 10px;
+  margin-left: 10px;
+}

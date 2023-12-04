@@ -9,8 +9,8 @@ import ru.otus.homework.domain.Genre;
 import ru.otus.homework.dto.GenreDto;
 import ru.otus.homework.exception.dataConsistency.GenreRelatedBookExistException;
 import ru.otus.homework.exception.notExist.GenreNotExistException;
-import ru.otus.homework.repository.base.BookRepository;
-import ru.otus.homework.repository.base.GenreRepository;
+import ru.otus.homework.repository.BookRepository;
+import ru.otus.homework.repository.GenreRepository;
 
 @Service
 public class GenreServiceImpl implements GenreService {
@@ -30,9 +30,9 @@ public class GenreServiceImpl implements GenreService {
   }
 
   @Override
-  public Mono<GenreDto> add(String name) {
-    return genreRepository.save(new Genre(name))
-        .mapNotNull(g -> conversionService.convert(g, GenreDto.class));
+  public Mono<GenreDto> add(Mono<GenreDto> genreDtoMono) {
+    return genreDtoMono.flatMap(genreDto -> genreRepository.save(new Genre(genreDto.getName()))
+        .mapNotNull(g -> conversionService.convert(g, GenreDto.class)));
   }
 
   @Override
@@ -48,29 +48,26 @@ public class GenreServiceImpl implements GenreService {
   }
 
   @Override
-  public Mono<GenreDto> update(String id, String name) {
-    return getGenreByIdOrCreateError(id)
-        .doOnSuccess(existingGenre -> existingGenre.setName(name))
+  public Mono<GenreDto> update(String id, Mono<GenreDto> genreDtoMono) {
+    return genreDtoMono.flatMap(genreDto -> getGenreByIdOrCreateError(id)
+        .doOnSuccess(existingGenre -> existingGenre.setName(genreDto.getName()))
         .flatMap(genreRepository::updateWithBooks)
-        .mapNotNull(updatedGenre -> conversionService.convert(updatedGenre, GenreDto.class));
+        .mapNotNull(updatedGenre -> conversionService.convert(updatedGenre, GenreDto.class)));
   }
 
   @Override
   public Mono<Void> remove(String id) {
     return bookRepository.existsByGenreId(id)
-        .flatMap(exists -> {
-          if (exists) {
-            return Mono.error(
-                () -> new GenreRelatedBookExistException("Books exist for genre with id " + id));
-          } else {
-            return genreRepository.deleteById(id);
-          }
-        });
+        .flatMap(exists -> exists ?
+            Mono.error(() ->
+                new GenreRelatedBookExistException("Books exist for genre with id " + id))
+            : genreRepository.deleteById(id));
   }
 
   private Mono<Genre> getGenreByIdOrCreateError(String id) {
     return genreRepository.findById(id)
         .switchIfEmpty(
-            Mono.error(() -> new GenreNotExistException("Book with id " + id + " does not exist")));
+            Mono.error(() ->
+                new GenreNotExistException("Genre with id " + id + " does not exist")));
   }
 }

@@ -1,10 +1,8 @@
 package ru.otus.homework.controller;
 
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.otus.homework.domain.Genre;
 import ru.otus.homework.dto.GenreDto;
-import ru.otus.homework.exception.validation.RequestBodyValidationException;
 import ru.otus.homework.service.GenreService;
 
 
@@ -33,11 +29,8 @@ public class GenreController {
 
   @PostMapping("api/genre")
   @ResponseStatus(HttpStatus.CREATED)
-  public Mono<GenreDto> add(@Valid @RequestBody GenreDto genre, Errors errors) {
-    if (errors.hasErrors()) {
-      throw new RequestBodyValidationException(Genre.class, errors.getFieldErrors());
-    }
-    return genreService.add(genre.getName());
+  public Mono<GenreDto> add(@RequestBody Mono<GenreDto> genreDtoMono) {
+    return genreService.add(genreDtoMono);
   }
 
   @GetMapping("api/genre")
@@ -52,11 +45,8 @@ public class GenreController {
 
   @PutMapping("api/genre/{id}")
   public Mono<GenreDto> update(@PathVariable("id") String id,
-      @Valid @RequestBody GenreDto genre, Errors errors) {
-    if (errors.hasErrors()) {
-      throw new RequestBodyValidationException(Genre.class, errors.getFieldErrors());
-    }
-    return genreService.update(id, genre.getName());
+      @RequestBody Mono<GenreDto> genreDtoMono) {
+    return genreService.update(id, genreDtoMono);
   }
 
   @DeleteMapping("api/genre/{id}")

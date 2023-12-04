@@ -10,10 +10,10 @@ import ru.otus.homework.domain.Author;
 import ru.otus.homework.domain.Book;
 import ru.otus.homework.domain.Comment;
 import ru.otus.homework.domain.Genre;
-import ru.otus.homework.repository.base.AuthorRepository;
-import ru.otus.homework.repository.base.BookRepository;
-import ru.otus.homework.repository.base.CommentRepository;
-import ru.otus.homework.repository.base.GenreRepository;
+import ru.otus.homework.repository.AuthorRepository;
+import ru.otus.homework.repository.BookRepository;
+import ru.otus.homework.repository.CommentRepository;
+import ru.otus.homework.repository.GenreRepository;
 
 @ChangeLog
 @SuppressWarnings({"unused", "deprecation"})
@@ -59,7 +59,7 @@ public class DatabaseChangelog {
 
   @ChangeSet(order = "004", id = "insertBooks", author = "0nePrv", runAlways = true)
   public void insertBooks(BookRepository bookRepository) {
-    books = List.of(
+    books = bookRepository.saveAll(List.of(
         new Book("Hamlet", authors.get(0), genres.get(0)),
         new Book("Crime and Punishment", authors.get(1), genres.get(1)),
         new Book("War and Peace", authors.get(2), genres.get(1)),
@@ -69,31 +69,30 @@ public class DatabaseChangelog {
         new Book("1984", authors.get(6), genres.get(3)),
         new Book("Farewell to Arms", authors.get(7), genres.get(3)),
         new Book("The Portrait of a Lady", authors.get(8), genres.get(1))
-    );
-    books = bookRepository.saveAll(books).collectList().block();
+    )).collectList().block();
   }
 
   @ChangeSet(order = "005", id = "insertComments", author = "0nePrv", runAlways = true)
   public void insertComments(CommentRepository commentRepository) {
     commentRepository.saveAll(List.of(
         new Comment("Intriguing and thought-provoking; a must-read for anyone who loves a"
-            + " captivating blend of science, adventure, and suspense", books.get(0)),
+            + " captivating blend of science, adventure, and suspense", books.get(0).getId()),
         new Comment("A spellbinding tale that weaves together mystery, romance, "
-            + "and the complexities of human nature", books.get(1)),
+            + "and the complexities of human nature", books.get(1).getId()),
         new Comment("An epic of Russian literature that delves deep into the human psyche, "
-            + "exploring the moral dilemmas of its compelling characters", books.get(2)),
+            + "exploring the moral dilemmas of its compelling characters", books.get(2).getId()),
         new Comment("A timeless classic exploring the intricacies of societal expectations"
-            + " and the power of love", books.get(3)),
+            + " and the power of love", books.get(3).getId()),
         new Comment("A Dickensian masterpiece filled with vivid characters and a compelling"
-            + " narrative", books.get(4)),
+            + " narrative", books.get(4).getId()),
         new Comment("A literary marvel that transports readers to a world of magical realism",
-            books.get(5)),
+            books.get(5).getId()),
         new Comment("A dystopian masterpiece that serves as a stark warning about the dangers"
-            + " of totalitarianism", books.get(6)),
+            + " of totalitarianism", books.get(6).getId()),
         new Comment("Hemingway's poignant portrayal of love and loss during wartime",
-            books.get(7)),
+            books.get(7).getId()),
         new Comment("A rich and intricate exploration of society, identity, and personal "
-            + "freedom", books.get(8))
-    )).collectList().block();
+            + "freedom", books.get(8).getId())
+    )).subscribe();
   }
 }

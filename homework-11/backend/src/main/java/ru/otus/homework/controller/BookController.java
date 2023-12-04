@@ -1,9 +1,7 @@
 package ru.otus.homework.controller;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,9 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.otus.homework.domain.Book;
 import ru.otus.homework.dto.BookDto;
-import ru.otus.homework.exception.validation.RequestBodyValidationException;
 import ru.otus.homework.service.BookService;
 
 
@@ -32,11 +28,8 @@ public class BookController {
 
   @PostMapping("api/book")
   @ResponseStatus(HttpStatus.CREATED)
-  public Mono<BookDto> add(@Valid @RequestBody BookDto book, Errors errors) {
-    if (errors.hasErrors()) {
-      throw new RequestBodyValidationException(Book.class, errors.getFieldErrors());
-    }
-    return bookService.add(book.getName(), book.getAuthorId(), book.getGenreId());
+  public Mono<BookDto> add(@RequestBody Mono<BookDto> bookDtoMono) {
+    return bookService.add(bookDtoMono);
   }
 
   @GetMapping(value = "api/book")
@@ -50,12 +43,9 @@ public class BookController {
   }
 
   @PutMapping("api/book/{id}")
-  public Mono<BookDto> update(@PathVariable("id") String id, @Valid @RequestBody BookDto book,
-      Errors errors) {
-    if (errors.hasErrors()) {
-      throw new RequestBodyValidationException(Book.class, errors.getFieldErrors());
-    }
-    return bookService.update(id, book.getName(), book.getAuthorId(), book.getGenreId());
+  public Mono<BookDto> update(@PathVariable("id") String id,
+      @RequestBody Mono<BookDto> bookDtoMono) {
+    return bookService.update(id, bookDtoMono);
   }
 
   @DeleteMapping("api/book/{id}")

@@ -1,6 +1,5 @@
 package ru.otus.homework.service;
 
-import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -11,8 +10,8 @@ import ru.otus.homework.domain.Comment;
 import ru.otus.homework.dto.CommentDto;
 import ru.otus.homework.exception.notExist.BookNotExistException;
 import ru.otus.homework.exception.notExist.CommentNotExistException;
-import ru.otus.homework.repository.base.BookRepository;
-import ru.otus.homework.repository.base.CommentRepository;
+import ru.otus.homework.repository.BookRepository;
+import ru.otus.homework.repository.CommentRepository;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -32,15 +31,11 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  public Mono<CommentDto> add(String bookId, String text) {
-    return getBookByIdOrCreateError(bookId)
-        .flatMap(book -> {
-          Comment comment = new Comment(text, book);
-          return commentRepository.save(comment)
-              .flatMap(savedComment ->
-                  Mono.just(Objects.requireNonNull(
-                      conversionService.convert(savedComment, CommentDto.class))));
-        });
+  public Mono<CommentDto> add(Mono<CommentDto> commentDtoMono) {
+    return commentDtoMono.flatMap(commentDto -> getBookByIdOrCreateError(commentDto.getBookId())
+        .flatMap(book -> commentRepository.save(new Comment(commentDto.getText(), book.getId()))
+            .mapNotNull(
+                savedComment -> conversionService.convert(savedComment, CommentDto.class))));
   }
 
 
@@ -58,17 +53,19 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  public Mono<CommentDto> update(String id, String bookId, String text) {
-    return getCommentByIdOrCreateError(id)
-        .flatMap(comment -> getBookByIdOrCreateError(bookId)
-            .flatMap(book -> {
-              comment.setText(text);
-              comment.setBook(book);
-              return commentRepository.save(comment)
-                  .flatMap(savedComment ->
-                      Mono.just(Objects.requireNonNull(
-                          conversionService.convert(savedComment, CommentDto.class))));
-            }));
+  public Mono<CommentDto> update(String id, Mono<CommentDto> commentDtoMono) {
+    return commentDtoMono.flatMap(commentDto ->
+        Mono.zip(
+            getCommentByIdOrCreateError(id),
+            getBookByIdOrCreateError(commentDto.getBookId())
+        ).flatMap(objects -> {
+          Comment comment = objects.getT1();
+          comment.setText(commentDto.getText());
+          comment.setBookId(objects.getT2().getId());
+          return commentRepository.save(comment)
+              .mapNotNull(
+                  savedComment -> conversionService.convert(savedComment, CommentDto.class));
+        }));
   }
 
 

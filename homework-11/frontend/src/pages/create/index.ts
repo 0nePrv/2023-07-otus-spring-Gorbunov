@@ -1,0 +1,1 @@
+export {CreatePageLazy as CreatePage} from './CreatePage.lazy'

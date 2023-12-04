@@ -7,13 +7,13 @@ import ru.otus.homework.dto.BookDto;
 
 public interface BookService {
 
-  Mono<BookDto> add(String name, String authorId, String genreId);
+  Mono<BookDto> add(Mono<BookDto> bookDtoMono);
 
   Flux<BookDto> getAll();
 
   Mono<BookDto> get(String id);
 
-  Mono<BookDto> update(String id, String name, String authorId, String genreId);
+  Mono<BookDto> update(String id, Mono<BookDto> bookDtoMono);
 
   Mono<Void> remove(String id);
 }

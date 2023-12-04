@@ -1,0 +1,1 @@
+export {EditPageLazy as EditPage} from './EditPage.lazy'

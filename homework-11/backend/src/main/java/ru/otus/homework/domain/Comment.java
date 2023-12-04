@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Field.Write;
 
@@ -24,11 +23,11 @@ public class Comment {
   @Field(name = "text", write = Write.NON_NULL)
   private String text;
 
-  @DocumentReference(collection = "book", lazy = true)
-  private Book book;
+  @Field(name = "bookId", write = Write.NON_NULL)
+  private String bookId;
 
-  public Comment(String text, Book book) {
+  public Comment(String text, String bookId) {
     this.text = text;
-    this.book = book;
+    this.bookId = bookId;
   }
 }

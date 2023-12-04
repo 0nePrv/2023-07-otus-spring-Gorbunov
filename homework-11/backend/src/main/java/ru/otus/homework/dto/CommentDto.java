@@ -2,11 +2,13 @@ package ru.otus.homework.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 public class CommentDto {
 
   private String id;

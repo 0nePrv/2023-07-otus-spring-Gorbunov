@@ -9,8 +9,8 @@ import ru.otus.homework.domain.Author;
 import ru.otus.homework.dto.AuthorDto;
 import ru.otus.homework.exception.dataConsistency.AuthorRelatedBookExistException;
 import ru.otus.homework.exception.notExist.AuthorNotExistException;
-import ru.otus.homework.repository.base.AuthorRepository;
-import ru.otus.homework.repository.base.BookRepository;
+import ru.otus.homework.repository.AuthorRepository;
+import ru.otus.homework.repository.BookRepository;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -30,9 +30,10 @@ public class AuthorServiceImpl implements AuthorService {
   }
 
   @Override
-  public Mono<AuthorDto> add(String name) {
-    return authorRepository.save(new Author(name))
-        .mapNotNull(a -> conversionService.convert(a, AuthorDto.class));
+  public Mono<AuthorDto> add(Mono<AuthorDto> authorDtoMono) {
+    return authorDtoMono.flatMap(authorDto ->
+        authorRepository.save(new Author(authorDto.getName()))
+            .mapNotNull(a -> conversionService.convert(a, AuthorDto.class)));
   }
 
   @Override
@@ -48,28 +49,26 @@ public class AuthorServiceImpl implements AuthorService {
   }
 
   @Override
-  public Mono<AuthorDto> update(String id, String name) {
-    return getAuthorByIdOrCreateError(id)
-        .doOnSuccess(existingAuthor -> existingAuthor.setName(name))
-        .flatMap(authorRepository::updateWithBooks)
-        .mapNotNull(updatedAuthor -> conversionService.convert(updatedAuthor, AuthorDto.class));
+  public Mono<AuthorDto> update(String id, Mono<AuthorDto> authorDtoMono) {
+    return authorDtoMono.flatMap(author ->
+        getAuthorByIdOrCreateError(id)
+            .doOnSuccess(existingAuthor -> existingAuthor.setName(author.getName()))
+            .flatMap(authorRepository::updateWithBooks)
+            .mapNotNull(
+                updatedAuthor -> conversionService.convert(updatedAuthor, AuthorDto.class)));
   }
 
   @Override
   public Mono<Void> remove(String id) {
     return bookRepository.existsByAuthorId(id)
-        .flatMap(exists -> {
-          if (exists) {
-            return Mono.error(
-                () -> new AuthorRelatedBookExistException("Books exist for author with id " + id));
-          } else {
-            return authorRepository.deleteById(id);
-          }
-        });
+        .flatMap(exists -> exists ?
+            Mono.error(
+                () -> new AuthorRelatedBookExistException("Books exist for author with id " + id))
+            : authorRepository.deleteById(id));
   }
 
   private Mono<Author> getAuthorByIdOrCreateError(String id) {
     return authorRepository.findById(id).switchIfEmpty(
-        Mono.error(() -> new AuthorNotExistException("Book with id " + id + " does not exist")));
+        Mono.error(() -> new AuthorNotExistException("Author with id " + id + " does not exist")));
   }
 }

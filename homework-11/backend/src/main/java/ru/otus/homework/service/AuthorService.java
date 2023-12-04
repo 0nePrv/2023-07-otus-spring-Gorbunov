@@ -6,13 +6,13 @@ import ru.otus.homework.dto.AuthorDto;
 
 public interface AuthorService {
 
-  Mono<AuthorDto> add(String name);
+  Mono<AuthorDto> add(Mono<AuthorDto> authorDtoMono);
 
   Flux<AuthorDto> getAll();
 
   Mono<AuthorDto> get(String id);
 
-  Mono<AuthorDto> update(String id, String name);
+  Mono<AuthorDto> update(String id, Mono<AuthorDto> authorDtoMono);
 
   Mono<Void> remove(String id);
 }
