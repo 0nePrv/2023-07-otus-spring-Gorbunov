@@ -1,0 +1,15 @@
+logging:
+  level:
+    root: info
+spring:
+  data:
+    mongodb:
+      database: library
+      host: localhost
+      port: 27017
+      repositories:
+        type: reactive
+mongock:
+  runner-type: initializingbean
+  enabled: true
+  migration-scan-package: ru.otus.homework.migration

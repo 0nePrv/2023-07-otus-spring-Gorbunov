@@ -1,0 +1,22 @@
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: large;
+}
+
+.error-content {
+  padding: 10px;
+  border-radius: 5px;
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 400px;
+}
+
+.error-container p {
+  font-size: larger;
+  margin: 0;
+}
