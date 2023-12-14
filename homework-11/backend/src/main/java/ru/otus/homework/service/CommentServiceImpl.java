@@ -33,9 +33,8 @@ public class CommentServiceImpl implements CommentService {
   @Override
   public Mono<CommentDto> add(Mono<CommentDto> commentDtoMono) {
     return commentDtoMono.flatMap(commentDto -> getBookByIdOrCreateError(commentDto.getBookId())
-        .flatMap(book -> commentRepository.save(new Comment(commentDto.getText(), book.getId()))
-            .mapNotNull(
-                savedComment -> conversionService.convert(savedComment, CommentDto.class))));
+        .flatMap(book -> commentRepository.save(new Comment(commentDto.getText(), book.getId())))
+        .mapNotNull(c -> conversionService.convert(c, CommentDto.class)));
   }
 
 

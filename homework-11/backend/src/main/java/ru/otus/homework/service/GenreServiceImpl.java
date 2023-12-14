@@ -31,8 +31,11 @@ public class GenreServiceImpl implements GenreService {
 
   @Override
   public Mono<GenreDto> add(Mono<GenreDto> genreDtoMono) {
-    return genreDtoMono.flatMap(genreDto -> genreRepository.save(new Genre(genreDto.getName()))
-        .mapNotNull(g -> conversionService.convert(g, GenreDto.class)));
+    return genreDtoMono
+        .mapNotNull(GenreDto::getName)
+        .mapNotNull(Genre::new)
+        .mapNotNull(genreRepository::save)
+        .mapNotNull(g -> conversionService.convert(g, GenreDto.class));
   }
 
   @Override

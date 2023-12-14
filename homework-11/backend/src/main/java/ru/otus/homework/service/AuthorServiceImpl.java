@@ -31,9 +31,11 @@ public class AuthorServiceImpl implements AuthorService {
 
   @Override
   public Mono<AuthorDto> add(Mono<AuthorDto> authorDtoMono) {
-    return authorDtoMono.flatMap(authorDto ->
-        authorRepository.save(new Author(authorDto.getName()))
-            .mapNotNull(a -> conversionService.convert(a, AuthorDto.class)));
+    return authorDtoMono
+        .mapNotNull(AuthorDto::getName)
+        .mapNotNull(Author::new)
+        .mapNotNull(authorRepository::save)
+        .mapNotNull(a -> conversionService.convert(a, AuthorDto.class));
   }
 
   @Override
@@ -45,7 +47,7 @@ public class AuthorServiceImpl implements AuthorService {
   @Override
   public Mono<AuthorDto> get(String id) {
     return getAuthorByIdOrCreateError(id).mapNotNull(
-        (author) -> conversionService.convert(author, AuthorDto.class));
+        a -> conversionService.convert(a, AuthorDto.class));
   }
 
   @Override

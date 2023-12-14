@@ -1,6 +1,5 @@
 package ru.otus.homework.service;
 
-import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -46,8 +45,7 @@ public class BookServiceImpl implements BookService {
         ).flatMap(objects -> {
           Book book = new Book(bookDto.getName(), objects.getT1(), objects.getT2());
           return bookRepository.save(book)
-              .flatMap(savedBook -> Mono.just(
-                  Objects.requireNonNull(conversionService.convert(savedBook, BookDto.class))));
+              .mapNotNull(b -> conversionService.convert(b, BookDto.class));
         }));
   }
 
