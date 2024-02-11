@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>Book edit page</title>
+		<link rel="stylesheet" href="/form-style.css" th:href="@{/form-style.css}">
+	</head>
+	<body>
+		<h3>Book Info:</h3>
+		<form class="edit-form" method="post" action="/book/update"
+		      th:method="post" th:object="${targetBook}" th:action="@{/book/update/{id}(id=*{id})}">
+			<div class="row">
+				<label for="name-input">Name:</label>
+				<input id="name-input" type="text" th:field="*{name}" th:value="*{name}"/>
+				<span class="errors" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+					Wrong book name
+				</span>
+			</div>
+			<div class="row">
+				<label for="author-select">Choose author:</label>
+				<select id="author-select" name="authors" th:field="*{authorId}">
+					<option th:value="-1">-- Choose author --</option>
+					<option th:each="author : ${authors}"
+					        th:value="${author.id}"
+					        th:text="${author.name}"></option>
+				</select>
+				<span class="errors" th:if="${#fields.hasErrors('authorId')}" th:errors="*{authorId}">
+					Wrong author
+				</span>
+			</div>
+			<div class="row">
+				<label for="genre-select">Choose genre:</label>
+				<select id="genre-select" name="genres" th:field="*{genreId}">
+					<option th:value="-1">-- Choose genre --</option>
+					<option th:each="genre : ${genres}"
+					        th:value="${genre.id}"
+					        th:text="${genre.name}"></option>
+				</select>
+				<span class="errors" th:if="${#fields.hasErrors('genreId')}" th:errors="*{genreId}">
+					Wrong genre
+				</span>
+			</div>
+			<div class="row">
+				<input type="submit" value="Submit">
+				<a href="book-list.html" th:href="@{/book}">
+					<button type="button">Cancel</button>
+				</a>
+			</div>
+		</form>
+	</body>
+</html>
