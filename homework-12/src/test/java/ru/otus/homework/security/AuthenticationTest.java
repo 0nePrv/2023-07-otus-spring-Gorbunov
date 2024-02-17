@@ -59,7 +59,7 @@ public class AuthenticationTest {
     mockMvc.perform(request(method, uri)).andExpect(unauthenticated());
   }
 
-  public static Stream<Arguments> getMethodAndURI() {
+  private static Stream<Arguments> getMethodAndURI() {
     var resources = List.of("author", "genre", "book", "book/1/comment");
     var actions = List.of(
         of("", GET),
