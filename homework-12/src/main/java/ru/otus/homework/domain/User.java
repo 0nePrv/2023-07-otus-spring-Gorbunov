@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Accessors(chain = true)
 @Entity
 @Table(schema = "public", name = "users")
+@NoArgsConstructor
 public class User implements UserDetails {
 
   @Id
@@ -32,6 +34,11 @@ public class User implements UserDetails {
 
   @Column(nullable = false)
   private String password;
+
+  public User(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

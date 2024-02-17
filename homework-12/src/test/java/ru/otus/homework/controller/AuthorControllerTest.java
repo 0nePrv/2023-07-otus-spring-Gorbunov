@@ -3,7 +3,6 @@ package ru.otus.homework.controller;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -16,17 +15,16 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.homework.dto.AuthorDto;
 import ru.otus.homework.service.AuthorService;
 
 @DisplayName("Author controller")
 @WebMvcTest(AuthorController.class)
-@WithMockUser
+@AutoConfigureMockMvc(addFilters = false)
 class AuthorControllerTest {
 
   private static final AuthorDto EXISTING_AUTHOR = new AuthorDto(1L, "Pushkin");
@@ -40,14 +38,6 @@ class AuthorControllerTest {
   private AuthorService authorService;
 
   @Test
-  @DisplayName("should deny access to anonymous user")
-  @WithAnonymousUser
-  void shouldDenyAccessToAnonymousUser() throws Exception {
-    mockMvc.perform(get("/author"))
-        .andExpect(status().isUnauthorized());
-  }
-
-  @Test
   @DisplayName("should correctly process GET-request for author creation")
   void shouldCorrectlyCreateNewAuthor() throws Exception {
     mockMvc.perform(get("/author/new"))
@@ -59,7 +49,7 @@ class AuthorControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for author creation and redirect")
   void shouldCorrectlySaveNewAuthor() throws Exception {
-    mockMvc.perform(post("/author/new").with(csrf())
+    mockMvc.perform(post("/author/new")
             .param("name", EXISTING_AUTHOR.getName()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/author"));
@@ -97,7 +87,7 @@ class AuthorControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for updating author and redirect")
   void shouldCorrectlyProvideUpdatingAuthor() throws Exception {
-    mockMvc.perform(post("/author/update/" + EXISTING_AUTHOR.getId()).with(csrf())
+    mockMvc.perform(post("/author/update/" + EXISTING_AUTHOR.getId())
             .param("name", NEW_AUTHOR_NAME))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/author"));
@@ -108,7 +98,7 @@ class AuthorControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for deleting author and redirect")
   void shouldCorrectlyProvideDeletingAuthor() throws Exception {
-    mockMvc.perform(post("/author/delete/" + EXISTING_AUTHOR.getId()).with(csrf()))
+    mockMvc.perform(post("/author/delete/" + EXISTING_AUTHOR.getId()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/author"));
 

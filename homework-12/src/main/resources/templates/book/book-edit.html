@@ -3,12 +3,13 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Book edit page</title>
-		<link rel="stylesheet" href="/form-style.css" th:href="@{/form-style.css}">
+		<link rel="stylesheet" href="/css/form-style.css" th:href="@{/css/form-style.css}">
 	</head>
 	<body>
 		<h3>Book Info:</h3>
 		<form class="edit-form" method="post" action="/book/update"
-		      th:method="post" th:object="${targetBook}" th:action="@{/book/update/{id}(id=*{id})}">
+		      th:method="post" th:if="${targetBook} != null"
+		      th:object="${targetBook}" th:action="@{/book/update/{id}(id=*{id})}">
 			<div class="row">
 				<label for="name-input">Name:</label>
 				<input id="name-input" type="text" th:field="*{name}" th:value="*{name}"/>

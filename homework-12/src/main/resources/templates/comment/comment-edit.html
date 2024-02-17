@@ -3,12 +3,12 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Comment edit page</title>
-		<link rel="stylesheet" href="/form-style.css" th:href="@{/form-style.css}">
+		<link rel="stylesheet" href="/css/form-style.css" th:href="@{/css/form-style.css}">
 	</head>
 	<body>
 		<h3>Comment Info:</h3>
 		<form class="edit-form" method="post" action="comment-list.html"
-		      th:method="post" th:object="${targetComment}"
+		      th:method="post" th:if="${targetComment} != null" th:object="${targetComment}"
 		      th:action="@{/book/{bookId}/comment/update/{id}(bookId=*{bookId},id=*{id})}">
 			<div class="row">
 				<label for="name-input">Text:</label>

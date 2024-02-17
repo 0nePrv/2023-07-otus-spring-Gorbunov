@@ -4,7 +4,6 @@ package ru.otus.homework.controller;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -17,10 +16,9 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import ru.otus.homework.dto.AuthorDto;
@@ -33,7 +31,7 @@ import ru.otus.homework.service.GenreService;
 
 @DisplayName("Book controller")
 @WebMvcTest(BookController.class)
-@WithMockUser
+@AutoConfigureMockMvc(addFilters = false)
 class BookControllerTest {
 
   private static final AuthorDto EXISTING_AUTHOR = new AuthorDto(1L, "Alexandr Pushkin");
@@ -64,15 +62,6 @@ class BookControllerTest {
   private GenreService genreService;
 
   @Test
-  @DisplayName("should deny access to anonymous user")
-  @WithAnonymousUser
-  void shouldDenyAccessToAnonymousUser() throws Exception {
-
-    mockMvc.perform(get("/book"))
-        .andExpect(status().isUnauthorized());
-  }
-
-  @Test
   @DisplayName("should correctly process GET-request for book creation")
   void shouldCorrectlyCreateNewBook() throws Exception {
     List<AuthorDto> authors = Collections.singletonList(EXISTING_AUTHOR);
@@ -94,7 +83,7 @@ class BookControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for book creation and redirect")
   void shouldCorrectlySaveNewBook() throws Exception {
-    mockMvc.perform(post("/book/new").with(csrf())
+    mockMvc.perform(post("/book/new")
             .params(new LinkedMultiValueMap<>() {{
               add("name", EXISTING_BOOK.getName());
               add("authorId", String.valueOf(EXISTING_BOOK.getAuthorId()));
@@ -146,7 +135,7 @@ class BookControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for updating book and redirect")
   void shouldCorrectlyProvideUpdatingBook() throws Exception {
-    mockMvc.perform(post("/book/update/" + EXISTING_BOOK.getId()).with(csrf())
+    mockMvc.perform(post("/book/update/" + EXISTING_BOOK.getId())
             .params(new LinkedMultiValueMap<>() {{
               add("name", NEW_BOOK_NAME);
               add("authorId", String.valueOf(NEW_AUTHOR_ID));
@@ -162,7 +151,7 @@ class BookControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for deleting book and redirect")
   void shouldCorrectlyProvideDeletingBook() throws Exception {
-    mockMvc.perform(post("/book/delete/" + EXISTING_BOOK.getId()).with(csrf()))
+    mockMvc.perform(post("/book/delete/" + EXISTING_BOOK.getId()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/book"));
 

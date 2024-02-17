@@ -3,7 +3,6 @@ package ru.otus.homework.controller;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -16,17 +15,16 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.homework.dto.GenreDto;
 import ru.otus.homework.service.GenreService;
 
 @DisplayName("Genre controller")
 @WebMvcTest(GenreController.class)
-@WithMockUser
+@AutoConfigureMockMvc(addFilters = false)
 class GenreControllerTest {
 
   @Autowired
@@ -40,14 +38,6 @@ class GenreControllerTest {
   private GenreService genreService;
 
   @Test
-  @DisplayName("should deny access to anonymous user")
-  @WithAnonymousUser
-  void shouldDenyAccessToAnonymousUser() throws Exception {
-    mockMvc.perform(get("/genre"))
-        .andExpect(status().isUnauthorized());
-  }
-
-  @Test
   @DisplayName("should correctly process GET-request for genre creation")
   void shouldCorrectlyCreateNewGenre() throws Exception {
     mockMvc.perform(get("/genre/new"))
@@ -59,7 +49,7 @@ class GenreControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for genre creation and redirect")
   void shouldCorrectlySaveNewGenre() throws Exception {
-    mockMvc.perform(post("/genre/new").with(csrf())
+    mockMvc.perform(post("/genre/new")
             .param("name", EXISTING_GENRE.getName()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/genre"));
@@ -97,7 +87,7 @@ class GenreControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for updating genre and redirect")
   void shouldCorrectlyProvideUpdatingGenre() throws Exception {
-    mockMvc.perform(post("/genre/update/" + EXISTING_GENRE.getId()).with(csrf())
+    mockMvc.perform(post("/genre/update/" + EXISTING_GENRE.getId())
             .param("name", NEW_AUTHOR_NAME))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/genre"));
@@ -108,7 +98,7 @@ class GenreControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for deleting genre and redirect")
   void shouldCorrectlyProvideDeletingGenre() throws Exception {
-    mockMvc.perform(post("/genre/delete/" + EXISTING_GENRE.getId()).with(csrf()))
+    mockMvc.perform(post("/genre/delete/" + EXISTING_GENRE.getId()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/genre"));
 

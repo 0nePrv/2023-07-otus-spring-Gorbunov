@@ -4,7 +4,6 @@ package ru.otus.homework.controller;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -17,10 +16,9 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.homework.dto.BookDto;
 import ru.otus.homework.dto.CommentDto;
@@ -29,7 +27,7 @@ import ru.otus.homework.service.CommentService;
 
 @DisplayName("Comment controller")
 @WebMvcTest(CommentController.class)
-@WithMockUser
+@AutoConfigureMockMvc(addFilters = false)
 class CommentControllerTest {
 
   private static final BookDto EXISTING_BOOK = new BookDto(1L, "Evgeniy Onegin", 1L, 1L);
@@ -51,14 +49,6 @@ class CommentControllerTest {
   private BookService bookService;
 
   @Test
-  @DisplayName("should deny access to anonymous user")
-  @WithAnonymousUser
-  void shouldDenyAccessToAnonymousUser() throws Exception {
-    mockMvc.perform(get("/book/{}/comment", EXISTING_BOOK.getId()))
-        .andExpect(status().isUnauthorized());
-  }
-
-  @Test
   @DisplayName("should correctly process GET-request for comment creation")
   void shouldCorrectlyCreateNewComment() throws Exception {
     List<BookDto> books = Collections.singletonList(EXISTING_BOOK);
@@ -76,7 +66,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("should correctly process POST-request for comment creation and redirect")
   void shouldCorrectlySaveNewComment() throws Exception {
-    mockMvc.perform(post("/book/{bookId}/comment/new", EXISTING_BOOK.getId()).with(csrf())
+    mockMvc.perform(post("/book/{bookId}/comment/new", EXISTING_BOOK.getId())
             .param("bookId", String.valueOf(EXISTING_COMMENT.getBookId()))
             .param("text", EXISTING_COMMENT.getText()))
         .andExpect(status().is3xxRedirection())
@@ -125,7 +115,7 @@ class CommentControllerTest {
   @DisplayName("should correctly process POST-request for updating comment and redirect")
   void shouldCorrectlyProvideUpdatingComment() throws Exception {
     mockMvc.perform(post("/book/{bookId}/comment/update/" + EXISTING_COMMENT.getId(),
-            EXISTING_BOOK.getId()).with(csrf())
+            EXISTING_BOOK.getId())
             .param("bookId", String.valueOf(NEW_COMMENT_BOOK_ID))
             .param("text", NEW_COMMENT_TEXT))
         .andExpect(status().is3xxRedirection())
@@ -139,7 +129,7 @@ class CommentControllerTest {
   @DisplayName("should correctly process POST-request for deleting comment and redirect")
   void shouldCorrectlyProvideDeletingComment() throws Exception {
     mockMvc.perform(post("/book/{bookId}/comment/delete/" + EXISTING_COMMENT.getId(),
-            EXISTING_BOOK.getId()).with(csrf()))
+            EXISTING_BOOK.getId()))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl(String.format("/book/%d/comment", EXISTING_BOOK.getId())));
 

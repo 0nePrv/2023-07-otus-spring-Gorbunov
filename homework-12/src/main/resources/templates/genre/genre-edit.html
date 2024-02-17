@@ -3,12 +3,13 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Genre edit page</title>
-		<link rel="stylesheet" href="/form-style.css" th:href="@{/form-style.css}">
+		<link rel="stylesheet" href="/css/form-style.css" th:href="@{/css/form-style.css}">
 	</head>
 	<body>
 		<h3>Genre Info:</h3>
 		<form class="edit-form" method="post" action="/genre/update"
-		      th:method="post" th:object="${targetGenre}" th:action="@{/genre/update/{id}(id=*{id})}">
+		      th:method="post" th:if="${targetGenre} != null" th:object="${targetGenre}"
+		      th:action="@{/genre/update/{id}(id=*{id})}">
 			<div class="row">
 				<label for="name-input">Name:</label>
 				<input id="name-input" type="text" th:field="*{name}" th:value="*{name}"/>
