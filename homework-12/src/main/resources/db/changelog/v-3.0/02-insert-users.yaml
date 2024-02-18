@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 22
+      author: 0nePrv
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: user
+              - column:
+                  name: password
+                  value: $2a$10$8dMZO6YB/KgLzIGKXpSf5OcWnLF/Mr7XxVIOyNm6SBal816kBZ/LC
