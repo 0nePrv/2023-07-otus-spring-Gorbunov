@@ -67,6 +67,13 @@ public class SecurityTestUtils {
     );
   }
 
+  static Stream<Pair<String, HttpMethod>> generateResourceActionPairs() {
+    return RESOURCES.stream().flatMap(resource ->
+        ACTIONS.stream()
+            .map(action -> Pair.of("/" + resource + action.getFirst(), action.getSecond()))
+    );
+  }
+
   static List<Verifier> getVerifiers() {
     return List.of(VERIFIER_1, VERIFIER_2, VERIFIER_3);
   }
