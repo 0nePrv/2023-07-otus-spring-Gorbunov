@@ -1,0 +1,86 @@
+databaseChangeLog:
+  - changeSet:
+      id: 14
+      author: 0nePrv
+      changes:
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'Intriguing and thought-provoking; a must-read for anyone who loves a captivating blend of science, adventure, and suspense'
+              - column:
+                  name: book_id
+                  value: '1'
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'A spellbinding tale that weaves together mystery, romance, and the complexities of human nature'
+              - column:
+                  name: book_id
+                  value: '2'
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'An epic of Russian literature that delves deep into the human psyche, exploring the moral dilemmas of its compelling characters'
+              - column:
+                  name: book_id
+                  value: '3'
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'A timeless classic exploring the intricacies of societal expectations and the power of love'
+              - column:
+                  name: book_id
+                  value: '4'
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'A Dickensian masterpiece filled with vivid characters and a compelling narrative'
+              - column:
+                  name: book_id
+                  value: '5'
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'A literary marvel that transports readers to a world of magical realism'
+              - column:
+                  name: book_id
+                  value: '6'
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'A dystopian masterpiece that serves as a stark warning about the dangers of totalitarianism'
+              - column:
+                  name: book_id
+                  value: '7'
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'Hemingway''s poignant portrayal of love and loss during wartime'
+              - column:
+                  name: book_id
+                  value: '8'
+        - insert:
+            tableName: comments
+            columns:
+              - column:
+                  name: text
+                  value: 'A rich and intricate exploration of society, identity, and personal freedom'
+              - column:
+                  name: book_id
+                  value: '9'

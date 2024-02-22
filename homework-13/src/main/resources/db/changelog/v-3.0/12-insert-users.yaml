@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 32
+      author: 0nePrv
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: admin
+              - column:
+                  name: password
+                  value: $2a$10$bVFBFxTCKJIy/e79LhSW3uYWThHZMR.hIHGKtGOrfd/.iWrRzy3em
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: user
+              - column:
+                  name: password
+                  value: $2a$10$u1NaDiM6xTrmIfBum7mF..yfbySV4N3fdzMtxpoykP41X0DksS5p6
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: guest
+              - column:
+                  name: password
+                  value: $2a$10$03YZ9yJC5wnxLH5xZh9o/uDmtqk7SXH9gQvAbptTGykAsKv/ioNFy

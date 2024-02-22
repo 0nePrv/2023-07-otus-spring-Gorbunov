@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - includeAll:
+      path: /db/changelog/v-1.0
+      context: ddl
+  - includeAll:
+      path: /db/changelog/v-2.0
+      context: dml
+  - includeAll:
+      path: /db/changelog/v-3.0
+      context: auth

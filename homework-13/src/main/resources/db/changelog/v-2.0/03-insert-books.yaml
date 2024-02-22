@@ -1,0 +1,113 @@
+databaseChangeLog:
+  - changeSet:
+      id: 13
+      author: 0nePrv
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: 'Hamlet'
+              - column:
+                  name: author_id
+                  value: '1'
+              - column:
+                  name: genre_id
+                  value: '1'
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: 'Crime and Punishment'
+              - column:
+                  name: author_id
+                  value: '2'
+              - column:
+                  name: genre_id
+                  value: '2'
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: 'War and Peace'
+              - column:
+                  name: author_id
+                  value: '3'
+              - column:
+                  name: genre_id
+                  value: '2'
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: 'Pride and Prejudice'
+              - column:
+                  name: author_id
+                  value: '4'
+              - column:
+                  name: genre_id
+                  value: '2'
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: 'Oliver Twist'
+              - column:
+                  name: author_id
+                  value: '5'
+              - column:
+                  name: genre_id
+                  value: '3'
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: 'One Hundred Years of Solitude'
+              - column:
+                  name: author_id
+                  value: '6'
+              - column:
+                  name: genre_id
+                  value: '2'
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: '1984'
+              - column:
+                  name: author_id
+                  value: '7'
+              - column:
+                  name: genre_id
+                  value: '3'
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: 'Farewell to Arms'
+              - column:
+                  name: author_id
+                  value: '8'
+              - column:
+                  name: genre_id
+                  value: '4'
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: name
+                  value: 'The Portrait of a Lady'
+              - column:
+                  name: author_id
+                  value: '9'
+              - column:
+                  name: genre_id
+                  value: '2'
