@@ -50,7 +50,7 @@ public class SecurityTest {
   @MethodSource("getTestParams")
   void shouldCheckEndpointAccessToTargetUser(TestEntity entity) throws Exception {
     mockMvc.perform(request(entity.getMethod(), entity.getUri()).with(csrf())
-            .with(user(entity.getUser()))).andExpectAll(getExpectedResult(entity));
+            .with(user(entity.getUser()))).andExpect(getExpectedResult(entity));
   }
 
   private static ResultMatcher getExpectedResult(TestEntity entity) {
