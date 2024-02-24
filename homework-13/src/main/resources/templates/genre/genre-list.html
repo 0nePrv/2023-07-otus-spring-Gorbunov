@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>List of all genres</title>
+		<link rel="stylesheet" href="/css/list-style.css" th:href="@{/css/list-style.css}">
+	</head>
+	<body>
+		<div class="heading">
+			<h1>
+				<span>Genres</span>
+				<a class="action save" href="genre-add.html" th:href="@{genre/new}">&#43</a>
+			</h1>
+			<form th:action="@{/logout}" method="post" class="logout-form">
+				<input type="submit" value="Log out" class="logout-btn"/>
+			</form>
+		</div>
+		<p class="empty" th:if="${genres.isEmpty()}">There is no genres present. Create one</p>
+		<table th:if="${!genres.isEmpty()}">
+			<thead>
+				<tr>
+					<th>№</th>
+					<th>Name</th>
+					<th>Update</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody class="genre-table">
+				<tr th:each="genre, genreStat : ${genres}" th:object="${genre}">
+					<td th:text="${genreStat.count}">0</td>
+					<td th:text="*{name}">Genre name</td>
+					<td>
+						<a class="action save" href="genre-edit.html"
+						   th:href="@{/genre/update/{id}(id=*{id})}">&#9998;</a>
+					</td>
+					<td>
+						<form action="#" th:action="@{/genre/delete/{id}(id=*{id})}"
+						      method="post" th:method="post">
+							<input class="action delete" type="submit" name="id" value="&#10005;">
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>
