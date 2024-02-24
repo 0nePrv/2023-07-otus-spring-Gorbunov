@@ -3,7 +3,6 @@ package ru.otus.homework.service;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.domain.Author;
@@ -52,7 +51,6 @@ public class BookServiceImpl implements BookService {
   }
 
   @Override
-  @Secured("ROLE_ADMIN")
   public List<BookDto> getAll() {
     return bookRepository.findAll().stream()
         .map(b -> conversionService.convert(b, BookDto.class)).toList();

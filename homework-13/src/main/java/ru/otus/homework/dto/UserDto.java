@@ -19,11 +19,11 @@ public class UserDto implements UserDetails {
 
   private String password;
 
-  private List<? extends GrantedAuthority> roles;
+  private List<? extends GrantedAuthority> authorities;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles;
+    return authorities;
   }
 
   @Override
