@@ -20,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.homework.domain.mongo.DComment;
 import ru.otus.homework.domain.relational.EComment;
 import ru.otus.homework.processor.CommentProcessor;
-import ru.otus.homework.provider.ChunkSizePropertyProvider;
+import ru.otus.homework.config.properties.ChunkSizePropertyProvider;
 
 @Configuration
 public class CommentMigrationConfiguration {

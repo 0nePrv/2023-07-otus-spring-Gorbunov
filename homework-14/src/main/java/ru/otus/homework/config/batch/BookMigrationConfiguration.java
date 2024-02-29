@@ -7,8 +7,6 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -19,10 +17,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.transaction.PlatformTransactionManager;
+import ru.otus.homework.config.properties.ChunkSizePropertyProvider;
 import ru.otus.homework.domain.mongo.DBook;
 import ru.otus.homework.domain.relational.EBook;
 import ru.otus.homework.processor.BookProcessor;
-import ru.otus.homework.provider.ChunkSizePropertyProvider;
 
 @Configuration
 public class BookMigrationConfiguration {
@@ -45,7 +43,7 @@ public class BookMigrationConfiguration {
     return new JpaPagingItemReaderBuilder<EBook>()
         .name("bookItemReader")
         .entityManagerFactory(factory)
-        .queryString("select b from EBook b")
+        .queryString("select b from EBook b join fetch b.author join fetch b.genre")
         .transacted(true)
         .build();
   }
@@ -81,20 +79,5 @@ public class BookMigrationConfiguration {
     return new FlowBuilder<SimpleFlow>("bookMigrationFlow")
         .start(bookMigrationStep)
         .end();
-  }
-
-  @Bean
-  public Tasklet bookCleanUpTasklet(BookProcessor bookProcessor) {
-    MethodInvokingTaskletAdapter tasklet = new MethodInvokingTaskletAdapter();
-    tasklet.setTargetObject(bookProcessor);
-    tasklet.setTargetMethod("doCleanUp");
-    return tasklet;
-  }
-
-  @Bean
-  public Step bookCleanUpStep(Tasklet bookCleanUpTasklet) {
-    return new StepBuilder("bookCleanUpStep", jobRepository)
-        .tasklet(bookCleanUpTasklet, platformTransactionManager)
-        .build();
   }
 }

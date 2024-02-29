@@ -2,8 +2,8 @@ package ru.otus.homework.processor;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import ru.otus.homework.domain.relational.EBook;
 import ru.otus.homework.domain.mongo.DBook;
+import ru.otus.homework.domain.relational.EBook;
 
 
 public interface BookProcessor {
@@ -13,7 +13,4 @@ public interface BookProcessor {
 
   @NonNull
   String checkAndRetrieveDocumentId(Long id);
-
-  @SuppressWarnings("unused")
-  void doCleanUp();
 }

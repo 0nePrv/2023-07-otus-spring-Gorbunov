@@ -11,8 +11,5 @@ public interface AuthorProcessor {
   DAuthor process(EAuthor author);
 
   @NonNull
-  DAuthor checkAndRetrieveById(Long id);
-
-  @SuppressWarnings("unused")
-  void doCleanUp();
+  String checkAndRetrieveDocumentId(Long id);
 }

@@ -7,8 +7,6 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -22,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.homework.domain.mongo.DGenre;
 import ru.otus.homework.domain.relational.EGenre;
 import ru.otus.homework.processor.GenreProcessor;
-import ru.otus.homework.provider.ChunkSizePropertyProvider;
+import ru.otus.homework.config.properties.ChunkSizePropertyProvider;
 
 @Configuration
 public class GenreMigrationConfiguration {
@@ -83,20 +81,5 @@ public class GenreMigrationConfiguration {
     return new FlowBuilder<SimpleFlow>("genreMigrationFlow")
         .start(genreMigrationStep)
         .end();
-  }
-
-  @Bean
-  public Tasklet genreCleanUpTasklet(GenreProcessor genreProcessor) {
-    MethodInvokingTaskletAdapter tasklet = new MethodInvokingTaskletAdapter();
-    tasklet.setTargetObject(genreProcessor);
-    tasklet.setTargetMethod("doCleanUp");
-    return tasklet;
-  }
-
-  @Bean
-  public Step genreCleanUpStep(Tasklet genreCleanUpTasklet) {
-    return new StepBuilder("genreCleanUpStep", jobRepository)
-        .tasklet(genreCleanUpTasklet, platformTransactionManager)
-        .build();
   }
 }

@@ -1,4 +1,4 @@
-package ru.otus.homework.provider;
+package ru.otus.homework.config.properties;
 
 public interface ChunkSizePropertyProvider {
 

@@ -39,5 +39,4 @@ de:
 app:
   job-name: testMigrationJob
   chunk-size: 10
-  cache-size-limit: 20
   h2-server-enabled: false

@@ -1,7 +1,6 @@
 package ru.otus.homework.config.batch;
 
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.Flow;
@@ -12,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import ru.otus.homework.provider.JobNamePropertyProvider;
+import ru.otus.homework.config.properties.JobNamePropertyProvider;
 
 @Configuration
 public class JobConfiguration {
@@ -37,23 +36,13 @@ public class JobConfiguration {
   }
 
   @Bean
-  public Flow cleanUpFlow(Step authorCleanUpStep, Step bookCleanUpStep, Step genreCleanUpStep) {
-    return new FlowBuilder<SimpleFlow>("cleanUpFlow")
-        .start(bookCleanUpStep)
-        .next(authorCleanUpStep)
-        .next(genreCleanUpStep)
-        .build();
-  }
-
-  @Bean
   public Job migrationJob(Flow authorAndGenreAsyncMigrationFlow, Flow bookMigrationFlow,
-      Flow commentMigrationFlow, Flow cleanUpFlow) {
+      Flow commentMigrationFlow) {
     return new JobBuilder(jobNamePropertyProvider.getJobName(), jobRepository)
         .incrementer(new RunIdIncrementer())
         .start(authorAndGenreAsyncMigrationFlow)
         .next(bookMigrationFlow)
         .next(commentMigrationFlow)
-        .next(cleanUpFlow)
         .end()
         .build();
   }

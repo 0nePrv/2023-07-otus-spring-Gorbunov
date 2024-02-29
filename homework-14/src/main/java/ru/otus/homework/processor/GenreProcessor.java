@@ -2,8 +2,8 @@ package ru.otus.homework.processor;
 
 import com.mongodb.lang.Nullable;
 import org.springframework.lang.NonNull;
-import ru.otus.homework.domain.relational.EGenre;
 import ru.otus.homework.domain.mongo.DGenre;
+import ru.otus.homework.domain.relational.EGenre;
 
 public interface GenreProcessor {
 
@@ -11,8 +11,5 @@ public interface GenreProcessor {
   DGenre process(EGenre genre);
 
   @NonNull
-  DGenre checkAndRetrieveById(Long id);
-
-  @SuppressWarnings("unused")
-  void doCleanUp();
+  String checkAndRetrieveDocumentId(Long id);
 }

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.homework.config.properties.JobNamePropertyProvider;
 import ru.otus.homework.domain.mongo.DAuthor;
 import ru.otus.homework.domain.mongo.DBook;
 import ru.otus.homework.domain.mongo.DComment;
@@ -26,7 +27,6 @@ import ru.otus.homework.domain.relational.EAuthor;
 import ru.otus.homework.domain.relational.EBook;
 import ru.otus.homework.domain.relational.EComment;
 import ru.otus.homework.domain.relational.EGenre;
-import ru.otus.homework.provider.JobNamePropertyProvider;
 
 @SpringBootTest
 @SpringBatchTest

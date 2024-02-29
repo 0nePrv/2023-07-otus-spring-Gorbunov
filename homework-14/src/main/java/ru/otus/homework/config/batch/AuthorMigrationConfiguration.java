@@ -7,8 +7,6 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -22,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.homework.domain.mongo.DAuthor;
 import ru.otus.homework.domain.relational.EAuthor;
 import ru.otus.homework.processor.AuthorProcessor;
-import ru.otus.homework.provider.ChunkSizePropertyProvider;
+import ru.otus.homework.config.properties.ChunkSizePropertyProvider;
 
 @Configuration
 public class AuthorMigrationConfiguration {
@@ -81,20 +79,5 @@ public class AuthorMigrationConfiguration {
     return new FlowBuilder<SimpleFlow>("authorMigrationFlow")
         .start(authorMigrationStep)
         .end();
-  }
-
-  @Bean
-  public Tasklet authorCleanUpTasklet(AuthorProcessor authorProcessor) {
-    MethodInvokingTaskletAdapter tasklet = new MethodInvokingTaskletAdapter();
-    tasklet.setTargetObject(authorProcessor);
-    tasklet.setTargetMethod("doCleanUp");
-    return tasklet;
-  }
-
-  @Bean
-  public Step authorCleanUpStep(Tasklet authorCleanUpTasklet) {
-    return new StepBuilder("authorCleanUpStep", jobRepository)
-        .tasklet(authorCleanUpTasklet, platformTransactionManager)
-        .build();
   }
 }
