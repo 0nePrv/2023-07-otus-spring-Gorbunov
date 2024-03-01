@@ -38,5 +38,4 @@ de:
 
 app:
   job-name: testMigrationJob
-  chunk-size: 10
   h2-server-enabled: false

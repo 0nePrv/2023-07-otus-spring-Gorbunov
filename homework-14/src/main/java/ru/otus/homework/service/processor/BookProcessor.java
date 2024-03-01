@@ -1,4 +1,4 @@
-package ru.otus.homework.processor;
+package ru.otus.homework.service.processor;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;

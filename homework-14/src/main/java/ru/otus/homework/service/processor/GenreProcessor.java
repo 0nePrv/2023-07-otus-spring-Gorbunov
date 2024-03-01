@@ -1,4 +1,4 @@
-package ru.otus.homework.processor;
+package ru.otus.homework.service.processor;
 
 import com.mongodb.lang.Nullable;
 import org.springframework.lang.NonNull;
@@ -11,5 +11,5 @@ public interface GenreProcessor {
   DGenre process(EGenre genre);
 
   @NonNull
-  String checkAndRetrieveDocumentId(Long id);
+  DGenre checkAndRetrieveGenre(Long id);
 }

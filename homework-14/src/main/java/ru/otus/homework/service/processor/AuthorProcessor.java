@@ -1,4 +1,4 @@
-package ru.otus.homework.processor;
+package ru.otus.homework.service.processor;
 
 import com.mongodb.lang.Nullable;
 import org.springframework.lang.NonNull;
@@ -11,5 +11,5 @@ public interface AuthorProcessor {
   DAuthor process(EAuthor author);
 
   @NonNull
-  String checkAndRetrieveDocumentId(Long id);
+  DAuthor checkAndRetrieveAuthor(Long id);
 }

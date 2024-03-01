@@ -1,8 +1,7 @@
-package ru.otus.homework.processor;
+package ru.otus.homework.service.processor;
 
 import com.mongodb.lang.Nullable;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bson.types.ObjectId;
 import org.springframework.lang.NonNull;
@@ -18,7 +17,7 @@ import ru.otus.homework.exception.BookNotExistException;
 @Service
 public class BookProcessorImpl implements BookProcessor {
 
-  private final Map<Long, String> cache = new ConcurrentHashMap<>();
+  private final Map<Long, String> idMap = new ConcurrentHashMap<>();
 
   private final AuthorProcessor authorProcessor;
 
@@ -31,37 +30,42 @@ public class BookProcessorImpl implements BookProcessor {
 
   @Override
   @Nullable
-  public DBook process(EBook book) {
-    if (cache.containsKey(book.getId())) {
+  public DBook process(@NonNull EBook book) {
+    if (idMap.containsKey(book.getId())) {
       return null;
     }
     String documentId = new ObjectId().toString();
     DAuthor dAuthor = processAuthor(book.getAuthor());
     DGenre dGenre = processGenre(book.getGenre());
 
-    cache.put(book.getId(), documentId);
+    idMap.put(book.getId(), documentId);
     return new DBook(documentId, book.getName(), dAuthor, dGenre);
   }
 
   @Override
   @NonNull
-  public String checkAndRetrieveDocumentId(Long id) {
-    Objects.requireNonNull(id);
-    String fromCache = cache.get(id);
-    if (fromCache == null) {
+  public String checkAndRetrieveDocumentId(@NonNull Long id) {
+    String documentId = idMap.get(id);
+    if (documentId == null) {
       throw new BookNotExistException(
           "Book with relational id: %d does not exist in temporary storage".formatted(id));
     }
-    return fromCache;
+    return documentId;
   }
 
   private DAuthor processAuthor(EAuthor author) {
-    String authorId = authorProcessor.checkAndRetrieveDocumentId(author.getId());
-    return new DAuthor(authorId, author.getName());
+    DAuthor dAuthor = authorProcessor.checkAndRetrieveAuthor(author.getId());
+    if (dAuthor.getName() == null) {
+      dAuthor.setName(author.getName());
+    }
+    return dAuthor;
   }
 
   private DGenre processGenre(EGenre genre) {
-    String genreId = genreProcessor.checkAndRetrieveDocumentId(genre.getId());
-    return new DGenre(genreId, genre.getName());
+    DGenre dGenre = genreProcessor.checkAndRetrieveGenre(genre.getId());
+    if (dGenre.getName() == null) {
+      dGenre.setName(genre.getName());
+    }
+    return dGenre;
   }
 }

@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.homework.domain.mongo.DAuthor;
 import ru.otus.homework.domain.relational.EAuthor;
-import ru.otus.homework.processor.AuthorProcessor;
+import ru.otus.homework.service.processor.AuthorProcessor;
 import ru.otus.homework.config.properties.ChunkSizePropertyProvider;
 
 @Configuration

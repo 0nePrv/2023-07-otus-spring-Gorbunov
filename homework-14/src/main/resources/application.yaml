@@ -34,4 +34,5 @@ spring:
 app:
   job-name: migrationJob
   chunk-size: 10
+  cache-size-limit: 100
   h2-server-enabled: true

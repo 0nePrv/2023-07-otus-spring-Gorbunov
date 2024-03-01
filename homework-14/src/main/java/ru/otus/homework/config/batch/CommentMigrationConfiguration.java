@@ -19,7 +19,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.homework.domain.mongo.DComment;
 import ru.otus.homework.domain.relational.EComment;
-import ru.otus.homework.processor.CommentProcessor;
+import ru.otus.homework.service.processor.CommentProcessor;
 import ru.otus.homework.config.properties.ChunkSizePropertyProvider;
 
 @Configuration

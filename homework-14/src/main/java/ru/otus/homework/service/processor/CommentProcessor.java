@@ -1,4 +1,4 @@
-package ru.otus.homework.processor;
+package ru.otus.homework.service.processor;
 
 import org.springframework.lang.Nullable;
 import ru.otus.homework.domain.mongo.DComment;

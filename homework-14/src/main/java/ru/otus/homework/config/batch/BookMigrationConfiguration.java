@@ -20,7 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.homework.config.properties.ChunkSizePropertyProvider;
 import ru.otus.homework.domain.mongo.DBook;
 import ru.otus.homework.domain.relational.EBook;
-import ru.otus.homework.processor.BookProcessor;
+import ru.otus.homework.service.processor.BookProcessor;
 
 @Configuration
 public class BookMigrationConfiguration {
@@ -43,7 +43,7 @@ public class BookMigrationConfiguration {
     return new JpaPagingItemReaderBuilder<EBook>()
         .name("bookItemReader")
         .entityManagerFactory(factory)
-        .queryString("select b from EBook b join fetch b.author join fetch b.genre")
+        .queryString("select b from EBook b")
         .transacted(true)
         .build();
   }
