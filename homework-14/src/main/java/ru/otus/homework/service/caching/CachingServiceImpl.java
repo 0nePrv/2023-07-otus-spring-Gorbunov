@@ -4,24 +4,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
-import ru.otus.homework.config.properties.CacheSizeLimitPropertyProvider;
 
 @Service
 public class CachingServiceImpl implements CachingService {
 
-  private final CacheSizeLimitPropertyProvider provider;
-
   private final Map<CachingIdentifier, Object> cache = new ConcurrentHashMap<>();
-
-  public CachingServiceImpl(CacheSizeLimitPropertyProvider provider) {
-    this.provider = provider;
-  }
 
   @Override
   public void save(@NonNull Class<?> targetClass, @NonNull Long key, @NonNull Object value) {
-    if (cache.size() < provider.getCacheSizeLimit()) {
-      cache.put(new CachingIdentifier(targetClass, key), value);
-    }
+    cache.put(new CachingIdentifier(targetClass, key), value);
   }
 
   @Override
