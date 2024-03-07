@@ -1,0 +1,6 @@
+application:
+  request-delay: 1_000
+
+logging:
+  level:
+    root: info
