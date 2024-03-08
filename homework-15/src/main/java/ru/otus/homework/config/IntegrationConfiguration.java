@@ -45,22 +45,20 @@ public class IntegrationConfiguration {
 
   @Bean
   public AsyncTaskExecutor exec() {
-    return new ConcurrentTaskExecutor(Executors.newFixedThreadPool(2));
+    return new ConcurrentTaskExecutor(Executors.newFixedThreadPool(7));
   }
 
   @Bean
   public PollerSpec inputChannelPoller(RequestDelayProvider requestDelayProvider) {
     return Pollers.fixedDelay(requestDelayProvider.getRequestDelay())
-        .taskExecutor(exec())
-        .maxMessagesPerPoll(1)
-        .receiveTimeout(10_000L);
+        .taskExecutor(exec()).maxMessagesPerPoll(1);
   }
 
   @Bean
   public RestTemplate restTemplate() {
     return new RestTemplateBuilder()
         .rootUri("http://api.weatherapi.com/v1")
-        .setConnectTimeout(Duration.ofMillis(5_000L))
+        .setConnectTimeout(Duration.ofMillis(3_000L))
         .additionalMessageConverters(new MappingJackson2HttpMessageConverter())
         .build();
   }
