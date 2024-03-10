@@ -10,11 +10,11 @@ public class PressureWeatherWeatherSolver implements WeatherSolver {
 
   @Override
   public Decision solve(Weather weather) {
-    String pressureSolved = processTemperature(weather.getPressureMb());
+    String pressureSolved = decide(weather.getPressureMb());
     return new Decision(Metric.PRESSURE, pressureSolved);
   }
 
-  private String processTemperature(double pressure) {
+  private String decide(double pressure) {
     if (pressure < 1015) {
       return "Low";
     } else if (pressure > 1020) {

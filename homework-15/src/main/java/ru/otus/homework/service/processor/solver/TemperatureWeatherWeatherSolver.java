@@ -10,11 +10,11 @@ public class TemperatureWeatherWeatherSolver implements WeatherSolver {
 
   @Override
   public Decision solve(Weather weather) {
-    String temperatureDecision = process(weather.getTemperature());
+    String temperatureDecision = decide(weather.getTemperature());
     return new Decision(Metric.TEMPERATURE_F, temperatureDecision);
   }
 
-  private String process(double temperature) {
+  private String decide(double temperature) {
     if (temperature < 32) {
       return "Cold";
     } else if (temperature < 59) {

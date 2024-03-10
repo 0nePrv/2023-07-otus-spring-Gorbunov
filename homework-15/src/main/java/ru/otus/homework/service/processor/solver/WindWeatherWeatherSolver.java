@@ -10,11 +10,11 @@ public class WindWeatherWeatherSolver implements WeatherSolver {
 
   @Override
   public Decision solve(Weather weather) {
-    String windDecision = process(weather.getWindMph());
+    String windDecision = decide(weather.getWindMph());
     return new Decision(Metric.WIND, windDecision);
   }
 
-  private String process(double getWindMph) {
+  private String decide(double getWindMph) {
     if (getWindMph < 10) {
       return "Slow";
     } else if (getWindMph < 24) {
