@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11
+      author: 0nePrv
+      changes:
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'William Shakespeare'
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'Fyodor Dostoevsky'
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'Leo Tolstoy'
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'Jane Austen'
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'Charles Dickens'
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'Gabriel Garcia Marquez'
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'George Orwell'
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'Ernest Hemingway'
+        - insert:
+            tableName: authors
+            columns:
+              - column:
+                  name: name
+                  value: 'Henry James'
