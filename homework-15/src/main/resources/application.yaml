@@ -1,0 +1,13 @@
+application:
+  api-key: e7b3c99f137443168c2115810242702
+  request-delay: 5_000
+
+logging:
+  level:
+    root: warn
+    ru:
+      otus:
+        homework: info
+    org:
+      springframework:
+        integration: info
