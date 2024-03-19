@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: 0nePrv
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: BIGINT
+              - column:
+                  name: genre_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            constraintName: books_author_fk
+            baseTableName: books
+            baseColumnNames: author_id
+            referencedTableName: authors
+            referencedColumnNames: id
+            onUpdate: CASCADE
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            constraintName: books_genre_fk
+            baseTableName: books
+            baseColumnNames: genre_id
+            referencedTableName: genres
+            referencedColumnNames: id
+            onUpdate: CASCADE
+            onDelete: CASCADE
