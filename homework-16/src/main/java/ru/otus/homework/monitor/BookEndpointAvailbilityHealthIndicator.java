@@ -1,6 +1,6 @@
 package ru.otus.homework.monitor;
 
-import java.net.URL;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -15,10 +15,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookEndpointAvailbilityHealthIndicator implements HealthIndicator {
 
-  private final int port;
+  private final String bookEndPointUrlString;
 
-  public BookEndpointAvailbilityHealthIndicator(@Value("${server.port}") int port) {
-    this.port = port;
+  public BookEndpointAvailbilityHealthIndicator(
+      @Value("${app.book-endpoint-url}") String bookEndPointUrlString) {
+    this.bookEndPointUrlString = bookEndPointUrlString;
   }
 
   @Override
@@ -36,8 +37,8 @@ public class BookEndpointAvailbilityHealthIndicator implements HealthIndicator {
   }
 
   private HttpResponse<Void> performRequest() throws Exception {
-    URL url = new URL("http", "localhost", port, "/book");
-    HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(url.toURI()).build();
+    URI uri = URI.create(bookEndPointUrlString);
+    HttpRequest httpRequest = HttpRequest.newBuilder().GET().uri(uri).build();
     return HttpClient.newHttpClient().send(httpRequest, BodyHandlers.discarding());
   }
 }

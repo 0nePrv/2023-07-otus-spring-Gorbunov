@@ -45,7 +45,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include:
+          - metrics
+          - health
+          - logfile
       base-path: /monitor
 
 logging:
@@ -55,3 +58,6 @@ logging:
     path: log
   pattern:
     file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n'
+
+app:
+  book-endpoint-url: http://localhost:${server.port}/book
