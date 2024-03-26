@@ -1,0 +1,59 @@
+version: '3.9'
+services:
+  database:
+    restart: always
+    image: postgres:16.2-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=library
+    networks:
+      - postgres-spring
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: "pg_isready -q -U postgres -d library"
+      start_period: 5s
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  backend:
+    restart: unless-stopped
+    build:
+      context: backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/library
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    networks:
+      - postgres-spring
+      - spring-react
+    ports:
+      - '8080:8080'
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: "wget -q -O - localhost:8080/actuator/health | grep UP || exit 1"
+      start_period: 5s
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  frontend:
+    restart: unless-stopped
+    build:
+      context: frontend
+    networks:
+      - spring-react
+    links:
+      - backend
+    ports:
+      - '80:80'
+    depends_on:
+      backend:
+        condition: service_healthy
+networks:
+  postgres-spring:
+    driver: bridge
+  spring-react:
+    driver: bridge

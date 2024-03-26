@@ -1,0 +1,31 @@
+.button {
+  display: inline-block;
+  padding: 5px 5px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button img {
+  max-width: 20px;
+  max-height: 20px;
+}
+
+.button {
+  background-color: peru;
+  color: #f9f9f9;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button:hover {
+  background-color: #cf9359;
+}
+
+.button:active {
+  background-color: #f9f9f9;
+  color: peru;
+}
