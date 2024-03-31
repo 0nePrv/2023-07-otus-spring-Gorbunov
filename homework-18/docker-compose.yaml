@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  database:
+    restart: always
+    image: postgres:16.2-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=library
+    ports:
+      - '5432:5432'
+  cache:
+    image: redis/redis-stack-server:6.2.0
+    restart: always
+    ports:
+      - '6379:6379'
+    environment:
+      - REDIS_PASSWORD=redis
+  application:
+    restart: unless-stopped
+    build:
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/library
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATA_REDIS_HOST=cache
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_DATA_REDIS_PASSWORD=redis
+    ports:
+      - '8080:8080'
+    depends_on: [database, cache]

@@ -1,0 +1,85 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    rest:
+      base-path: data-rest
+      default-page-size: 10
+      detection-strategy: annotated
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      connect-timeout: 2000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          max-wait: -1
+  cache:
+    redis:
+      time-to-live: 1500
+      cache-null-values: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/library
+    username: postgres
+    password: postgres
+  jpa:
+    open-in-view: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  sql:
+    init:
+      mode: always
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    contexts: ddl,dml,auth
+
+management:
+  endpoint:
+    health:
+      show-details: when_authorized
+      roles: 'ACTUATOR'
+    shutdown:
+      enabled: true
+    prometheus:
+      enabled: true
+    logfile:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - metrics
+          - health
+          - logfile
+      base-path: /monitor
+logging:
+  level:
+    root: info
+  file:
+    path: log
+  pattern:
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n'
+
+app:
+  book-endpoint-url: http://localhost:${server.port}/book
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      original:
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 50
+        permitted-number-of-calls-in-half-open-state: 10
+
+        slow-call-rate-threshold: 20
+        slow-call-duration-threshold: 1000
