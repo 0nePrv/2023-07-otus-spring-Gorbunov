@@ -1,7 +1,6 @@
 package ru.otus.homework.service;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -97,12 +96,12 @@ public class GenreServiceImpl implements GenreService {
       return genreDto;
     }
     log.error("Error occurred while retrieving genre with id {}\n{}", id, t.getMessage());
-    return new GenreDto(id, "N/A");
+    throw new GenreNotExistException(t);
   }
 
   private List<GenreDto> getAllFallback(Throwable t) {
     log.error("Error occurred while retrieving all genres {}", t.getMessage());
-    return Collections.emptyList();
+    throw new GenreNotExistException(t);
   }
 
   private GenreDto updateFallback(long id, String name, Throwable t) {

@@ -1,7 +1,6 @@
 package ru.otus.homework.service;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
@@ -98,12 +97,12 @@ public class CommentServiceImpl implements CommentService {
       return commentDto;
     }
     log.error("Error occurred while retrieving comment with id {}\n{}", id, t.getMessage());
-    return new CommentDto(id, "N/A", 0L);
+    throw new CommentNotExistException(t);
   }
 
   private List<CommentDto> getAllFallback(Throwable t) {
-    log.error("Error occurred while retrieving all comments \n{}" , t.getMessage());
-    return Collections.emptyList();
+    log.error("Error occurred while retrieving all comments \n{}", t.getMessage());
+    throw new CommentNotExistException(t);
   }
 
   private CommentDto updateFallback(long id, String text, long bookId, Throwable t) {

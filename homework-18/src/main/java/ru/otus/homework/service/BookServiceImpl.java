@@ -113,12 +113,12 @@ public class BookServiceImpl implements BookService {
       return bookDto;
     }
     log.error("Error occurred while retrieving book with id {}\n{}", id, t.getMessage());
-    return new BookDto(id, "N/A", 0L, 0L);
+    throw new BookNotExistException(t);
   }
 
   private List<BookDto> getAllFallback(Throwable t) {
     log.error("Error occurred while retrieving all books \n{}", t.getMessage());
-    return Collections.emptyList();
+    throw new BookNotExistException(t);
   }
 
   private List<BookWithGenreAndAuthorNamesDto> getAllWithGenreAndAuthorNamesFallback(Throwable t) {
