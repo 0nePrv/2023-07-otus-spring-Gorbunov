@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Error</title>
+		<style>
+          body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+          }
+
+          h1 {
+            color: #d9534f;
+          }
+
+          p {
+            font-size: 18px;
+            color: #333;
+          }
+		</style>
+	</head>
+	<body>
+		<h1>Error :(</h1>
+		<p><strong>Timestamp:</strong> <span th:text="${timestamp}"></span></p>
+		<p><strong>Status:</strong> <span th:text="${status}"></span></p>
+		<p><strong>Path:</strong> <span th:text="${path}"></span></p>
+		<a th:text="'Home page'" th:href="@{/}"></a>
+	</body>
+</html>

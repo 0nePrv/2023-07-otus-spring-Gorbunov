@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 12
+      author: 0nePrv
+      changes:
+        - insert:
+            tableName: genres
+            columns:
+              - column:
+                  name: name
+                  value: 'Drama'
+        - insert:
+            tableName: genres
+            columns:
+              - column:
+                  name: name
+                  value: 'Novel'
+        - insert:
+            tableName: genres
+            columns:
+              - column:
+                  name: name
+                  value: 'Satire'
+        - insert:
+            tableName: genres
+            columns:
+              - column:
+                  name: name
+                  value: 'Adventure'
